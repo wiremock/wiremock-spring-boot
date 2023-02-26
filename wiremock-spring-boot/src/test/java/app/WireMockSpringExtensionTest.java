@@ -16,7 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(classes = WireMockSpringExtensionTest.AppConfiguration.class)
 @EnableWiremock({
-        @ConfigureWiremock(name = "user-service", property = "user-service.url")
+        @ConfigureWiremock(name = "user-service", property = "user-service.url"),
+        @ConfigureWiremock(name = "todo-service", property = "todo-service.url"),
+        @ConfigureWiremock(name = "noproperty-service")
 })
 public class WireMockSpringExtensionTest {
 
@@ -25,7 +27,7 @@ public class WireMockSpringExtensionTest {
 
     }
 
-    @ConfigureWiremock(name = "todo-service", property = "todo-service.url")
+    @Wiremock("todo-service")
     private WireMockServer todoWireMockServer;
 
     @Autowired
@@ -42,12 +44,7 @@ public class WireMockSpringExtensionTest {
     }
 
     @Test
-    void createsWiremockWithMethodLevelConfigureWiremock(@ConfigureWiremock(name = "method-service", property = "method-service.url") WireMockServer wireMockServer) {
-        assertWireMockServer(wireMockServer, "method-service.url");
-    }
-
-    @Test
-    void doesNotSetPropertyWhenNotProvided(@ConfigureWiremock(name = "noproperty-service") WireMockServer wireMockServer) {
+    void doesNotSetPropertyWhenNotProvided(@Wiremock("noproperty-service") WireMockServer wireMockServer) {
         assertThat(wireMockServer)
                 .as("creates WireMock instance")
                 .isNotNull();
