@@ -12,7 +12,6 @@ import com.github.tomakehurst.wiremock.WireMockServer;
  *
  * @author Maciej Walkowiak
  */
-@Target({ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigureWiremock {
 
