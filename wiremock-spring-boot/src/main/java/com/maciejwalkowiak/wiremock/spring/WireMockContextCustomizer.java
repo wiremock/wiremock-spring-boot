@@ -21,19 +21,19 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 public class WireMockContextCustomizer implements ContextCustomizer {
     private static final Logger LOGGER = LoggerFactory.getLogger(WireMockContextCustomizer.class);
 
-    private final List<ConfigureWiremock> configuration;
+    private final List<ConfigureWireMock> configuration;
 
-    public WireMockContextCustomizer(List<ConfigureWiremock> configuration) {
+    public WireMockContextCustomizer(List<ConfigureWireMock> configuration) {
         this.configuration = configuration;
     }
 
     @Override public void customizeContext(ConfigurableApplicationContext context, MergedContextConfiguration mergedConfig) {
-        for (ConfigureWiremock configureWiremock : configuration) {
+        for (ConfigureWireMock configureWiremock : configuration) {
             resolveOrCreateWireMockServer(context, configureWiremock);
         }
     }
 
-    private WireMockServer resolveOrCreateWireMockServer(ConfigurableApplicationContext context, ConfigureWiremock options) {
+    private WireMockServer resolveOrCreateWireMockServer(ConfigurableApplicationContext context, ConfigureWireMock options) {
         LOGGER.info("Configuring WireMockServer with name {} on port: {}", options.name(), options.port());
 
         Map<String, WireMockServer> wiremockStore = Store.INSTANCE.resolve(context);
@@ -63,7 +63,7 @@ public class WireMockContextCustomizer implements ContextCustomizer {
 
             return newServer;
         } else {
-            LOGGER.info("WiremockServer with name {} is already configured", options.name());
+            LOGGER.info("WireMockServer with name {} is already configured", options.name());
             return wireMockServer;
         }
     }

@@ -1,9 +1,9 @@
 package app;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.maciejwalkowiak.wiremock.spring.ConfigureWiremock;
-import com.maciejwalkowiak.wiremock.spring.EnableWiremock;
-import com.maciejwalkowiak.wiremock.spring.Wiremock;
+import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
+import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
+import com.maciejwalkowiak.wiremock.spring.WireMock;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +14,15 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@EnableWiremock({
-        @ConfigureWiremock(name = "todo-client", property = "todo-client.url")
+@EnableWireMock({
+        @ConfigureWireMock(name = "todo-client", property = "todo-client.url")
 })
 class TodoClientTests {
 
     @Autowired
     private TodoClient todoClient;
 
-    @Wiremock("todo-client")
+    @WireMock("todo-client")
     private WireMockServer wiremock;
 
     @Test

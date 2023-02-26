@@ -12,7 +12,7 @@ import org.springframework.test.context.ContextCustomizerFactory;
 public class WireMockContextCustomizerFactory implements ContextCustomizerFactory {
     @Override public ContextCustomizer createContextCustomizer(Class<?> testClass,
             List<ContextConfigurationAttributes> configAttributes) {
-        EnableWiremock annotation = AnnotationUtils.findAnnotation(testClass, EnableWiremock.class);
+        EnableWireMock annotation = AnnotationUtils.findAnnotation(testClass, EnableWireMock.class);
 
         return new WireMockContextCustomizer(annotation != null ? Arrays.asList(annotation.value()) : Collections.emptyList());
     }

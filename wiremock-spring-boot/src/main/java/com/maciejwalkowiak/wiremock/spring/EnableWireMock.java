@@ -15,6 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(WireMockSpringExtension.class)
-public @interface EnableWiremock {
-    ConfigureWiremock[] value() default {};
+public @interface EnableWireMock {
+    ConfigureWireMock[] value() default {};
 }

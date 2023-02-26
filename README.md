@@ -25,16 +25,16 @@ Add the dependency:
 </dependency>
 ```
 
-Use `@EnableWiremock` with `@ConfigureWiremock` with tests annotated that use `SpringExtension`, like `@SpringBootTest`:
+Use `@EnableWireMock` with `@ConfigureWireMock` with tests annotated that use `SpringExtension`, like `@SpringBootTest`:
 
 ```java
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@EnableWiremock({
-        @ConfigureWiremock(name = "user-service", property = "user-client.url")
+@EnableWireMock({
+        @ConfigureWireMock(name = "user-service", property = "user-client.url")
 })
 class TodoControllerTests {
 
-    @Wiremock("user-service")
+    @WireMock("user-service")
     private WireMockServer wiremock;
 
     @Test
@@ -44,9 +44,9 @@ class TodoControllerTests {
 }
 ```
 
-- `@EnableWiremock` adds test context customizer and enables `WireMockSpringExtension` 
-- `@ConfigureWiremock` creates a `WireMockServer` and passes the `WireMockServer#baseUrl` to a Spring environment property with a name given by `property`.
-- `@Wiremock` injects `WireMockServer` instance to a test
+- `@EnableWireMock` adds test context customizer and enables `WireMockSpringExtension` 
+- `@ConfigureWireMock` creates a `WireMockServer` and passes the `WireMockServer#baseUrl` to a Spring environment property with a name given by `property`.
+- `@WireMock` injects `WireMockServer` instance to a test
 
 Note that `WireMockServer` instances are not added as beans to Spring application context to avoid polluting it with test-related infrastructure. Instead, instances are kept in a separate store associated with an application context.
 

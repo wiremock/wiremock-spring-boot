@@ -19,9 +19,9 @@ public class WireMockSpringExtension implements BeforeEachCallback, ParameterRes
         Store.INSTANCE.resolve(extensionContext).values().forEach(WireMockServer::resetAll);
 
         // inject properties
-        List<Field> annotatedFields = AnnotationSupport.findAnnotatedFields(extensionContext.getRequiredTestClass(), Wiremock.class);
+        List<Field> annotatedFields = AnnotationSupport.findAnnotatedFields(extensionContext.getRequiredTestClass(), WireMock.class);
         for (Field annotatedField : annotatedFields) {
-            Wiremock annotation = annotatedField.getAnnotation(Wiremock.class);
+            WireMock annotation = annotatedField.getAnnotation(WireMock.class);
             annotatedField.setAccessible(true);
 
             WireMockServer wiremock = Store.INSTANCE.findWireMockInstance(extensionContext, annotation.value());
@@ -31,12 +31,12 @@ public class WireMockSpringExtension implements BeforeEachCallback, ParameterRes
 
     @Override public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        return parameterContext.getParameter().getType() == WireMockServer.class && parameterContext.isAnnotated(Wiremock.class);
+        return parameterContext.getParameter().getType() == WireMockServer.class && parameterContext.isAnnotated(WireMock.class);
     }
 
     @Override public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        Wiremock wiremock = parameterContext.findAnnotation(Wiremock.class).get();
+        WireMock wiremock = parameterContext.findAnnotation(WireMock.class).get();
         return Store.INSTANCE.findWireMockInstance(extensionContext, wiremock.value());
     }
 }

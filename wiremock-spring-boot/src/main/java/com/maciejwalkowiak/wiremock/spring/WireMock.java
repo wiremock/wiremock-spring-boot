@@ -6,13 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Injects WireMock instance previously configured on the class or field level with {@link ConfigureWiremock}.
+ * Injects WireMock instance previously configured on the class or field level with {@link ConfigureWireMock}.
  *
  * @author Maciej Walkowiak
  */
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Wiremock {
+public @interface WireMock {
 
     /**
      * The name of WireMock instance to inject.

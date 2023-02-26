@@ -1,9 +1,7 @@
 package com.maciejwalkowiak.wiremock.spring;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 
@@ -13,7 +11,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
  * @author Maciej Walkowiak
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConfigureWiremock {
+public @interface ConfigureWireMock {
 
     /**
      * Port on which WireMock server is going to listen. {@code 0} means WireMock will pick random port.

@@ -1,9 +1,9 @@
 package app;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.maciejwalkowiak.wiremock.spring.ConfigureWiremock;
-import com.maciejwalkowiak.wiremock.spring.EnableWiremock;
-import com.maciejwalkowiak.wiremock.spring.Wiremock;
+import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
+import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
+import com.maciejwalkowiak.wiremock.spring.WireMock;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(classes = WireMockSpringExtensionTest.AppConfiguration.class)
-@EnableWiremock({
-        @ConfigureWiremock(name = "user-service", property = "user-service.url"),
-        @ConfigureWiremock(name = "todo-service", property = "todo-service.url"),
-        @ConfigureWiremock(name = "noproperty-service")
+@EnableWireMock({
+        @ConfigureWireMock(name = "user-service", property = "user-service.url"),
+        @ConfigureWireMock(name = "todo-service", property = "todo-service.url"),
+        @ConfigureWireMock(name = "noproperty-service")
 })
 public class WireMockSpringExtensionTest {
 
@@ -27,14 +27,14 @@ public class WireMockSpringExtensionTest {
 
     }
 
-    @Wiremock("todo-service")
+    @WireMock("todo-service")
     private WireMockServer todoWireMockServer;
 
     @Autowired
     private Environment environment;
 
     @Test
-    void createsWiremockWithClassLevelConfigureWiremock(@Wiremock("user-service") WireMockServer wireMockServer) {
+    void createsWiremockWithClassLevelConfigureWiremock(@WireMock("user-service") WireMockServer wireMockServer) {
         assertWireMockServer(wireMockServer, "user-service.url");
     }
 
@@ -44,7 +44,7 @@ public class WireMockSpringExtensionTest {
     }
 
     @Test
-    void doesNotSetPropertyWhenNotProvided(@Wiremock("noproperty-service") WireMockServer wireMockServer) {
+    void doesNotSetPropertyWhenNotProvided(@WireMock("noproperty-service") WireMockServer wireMockServer) {
         assertThat(wireMockServer)
                 .as("creates WireMock instance")
                 .isNotNull();
