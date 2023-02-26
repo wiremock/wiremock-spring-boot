@@ -1,7 +1,7 @@
 package com.maciejwalkowiak.wiremock.spring;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -27,6 +27,10 @@ public class WireMockContextCustomizer implements ContextCustomizer {
         this.configuration = configuration;
     }
 
+    public WireMockContextCustomizer(ConfigureWireMock[] value) {
+        this(Arrays.asList(value));
+    }
+
     @Override public void customizeContext(ConfigurableApplicationContext context, MergedContextConfiguration mergedConfig) {
         for (ConfigureWireMock configureWiremock : configuration) {
             resolveOrCreateWireMockServer(context, configureWiremock);
@@ -36,9 +40,8 @@ public class WireMockContextCustomizer implements ContextCustomizer {
     private WireMockServer resolveOrCreateWireMockServer(ConfigurableApplicationContext context, ConfigureWireMock options) {
         LOGGER.info("Configuring WireMockServer with name {} on port: {}", options.name(), options.port());
 
-        Map<String, WireMockServer> wiremockStore = Store.INSTANCE.resolve(context);
+        WireMockServer wireMockServer = Store.INSTANCE.findWireMockInstance(context, options.name());
 
-        WireMockServer wireMockServer = wiremockStore.get(options.name());
         if (wireMockServer == null) {
             // create & start wiremock server
             WireMockServer newServer = new WireMockServer(options().port(options.port()));
@@ -46,8 +49,9 @@ public class WireMockContextCustomizer implements ContextCustomizer {
 
             LOGGER.info("Started WireMockServer with name {}:{}", options.name(), newServer.baseUrl());
 
-            // save server to JUnit store
-            wiremockStore.put(options.name(), newServer);
+            // save server to store
+            Store.INSTANCE.store(context, options.name(), newServer);
+
             // add shutdown hook
             context.addApplicationListener((ApplicationListener<ContextClosedEvent>) event -> {
                 LOGGER.info("Stopping WireMockServer with name {}", options.name());

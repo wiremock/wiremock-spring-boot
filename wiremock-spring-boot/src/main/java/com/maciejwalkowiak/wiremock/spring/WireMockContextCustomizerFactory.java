@@ -1,7 +1,6 @@
 package com.maciejwalkowiak.wiremock.spring;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.core.annotation.AnnotationUtils;
@@ -14,6 +13,10 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
             List<ContextConfigurationAttributes> configAttributes) {
         EnableWireMock annotation = AnnotationUtils.findAnnotation(testClass, EnableWireMock.class);
 
-        return new WireMockContextCustomizer(annotation != null ? Arrays.asList(annotation.value()) : Collections.emptyList());
+        if (annotation != null) {
+            return new WireMockContextCustomizer(annotation.value());
+        } else {
+            return null;
+        }
     }
 }

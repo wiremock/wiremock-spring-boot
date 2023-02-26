@@ -15,28 +15,30 @@ public class WireMockSpringExtension implements BeforeEachCallback, ParameterRes
 
     @Override
     public void beforeEach(ExtensionContext extensionContext) throws Exception {
-        // reset
-        Store.INSTANCE.resolve(extensionContext).values().forEach(WireMockServer::resetAll);
+        // reset all wiremock servers associated with application context
+        Store.INSTANCE.findAllInstances(extensionContext).forEach(WireMockServer::resetAll);
 
-        // inject properties
+        // inject properties into test class fields
         List<Field> annotatedFields = AnnotationSupport.findAnnotatedFields(extensionContext.getRequiredTestClass(), WireMock.class);
         for (Field annotatedField : annotatedFields) {
             WireMock annotation = annotatedField.getAnnotation(WireMock.class);
             annotatedField.setAccessible(true);
 
-            WireMockServer wiremock = Store.INSTANCE.findWireMockInstance(extensionContext, annotation.value());
+            WireMockServer wiremock = Store.INSTANCE.findRequiredWireMockInstance(extensionContext, annotation.value());
             annotatedField.set(extensionContext.getRequiredTestInstance(), wiremock);
         }
     }
 
-    @Override public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
+    @Override
+    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
             throws ParameterResolutionException {
         return parameterContext.getParameter().getType() == WireMockServer.class && parameterContext.isAnnotated(WireMock.class);
     }
 
-    @Override public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
+    @Override
+    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
             throws ParameterResolutionException {
         WireMock wiremock = parameterContext.findAnnotation(WireMock.class).get();
-        return Store.INSTANCE.findWireMockInstance(extensionContext, wiremock.value());
+        return Store.INSTANCE.findRequiredWireMockInstance(extensionContext, wiremock.value());
     }
 }

@@ -1,5 +1,6 @@
 package com.maciejwalkowiak.wiremock.spring;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,9 +17,13 @@ enum Store {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Store.class);
 
-    private Map<ApplicationContext, Map<String, WireMockServer>> store = new ConcurrentHashMap<>();
+    private final Map<ApplicationContext, Map<String, WireMockServer>> store = new ConcurrentHashMap<>();
 
-    WireMockServer findWireMockInstance(ExtensionContext extensionContext, String name) {
+    WireMockServer findWireMockInstance(ApplicationContext applicationContext, String name) {
+        return resolve(applicationContext).get(name);
+    }
+
+    WireMockServer findRequiredWireMockInstance(ExtensionContext extensionContext, String name) {
         WireMockServer wiremock = resolve(extensionContext).get(name);
 
         if (wiremock == null) {
@@ -28,11 +33,19 @@ enum Store {
         return wiremock;
     }
 
-    Map<String, WireMockServer> resolve(ExtensionContext extensionContext) {
+    void store(ApplicationContext applicationContext, String name, WireMockServer wireMockServer) {
+        resolve(applicationContext).put(name, wireMockServer);
+    }
+
+    Collection<WireMockServer> findAllInstances(ExtensionContext extensionContext) {
+        return resolve(extensionContext).values();
+    }
+
+    private Map<String, WireMockServer> resolve(ExtensionContext extensionContext) {
         return resolve(SpringExtension.getApplicationContext(extensionContext));
     }
 
-    Map<String, WireMockServer> resolve(ApplicationContext applicationContext) {
+    private Map<String, WireMockServer> resolve(ApplicationContext applicationContext) {
         LOGGER.info("Resolving store from context: {}", applicationContext);
         return store.computeIfAbsent(applicationContext, ctx -> new ConcurrentHashMap<>());
     }
