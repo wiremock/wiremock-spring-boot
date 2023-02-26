@@ -28,7 +28,7 @@ Add the dependency:
 Use `@EnableWireMock` with `@ConfigureWireMock` with tests annotated that use `SpringExtension`, like `@SpringBootTest`:
 
 ```java
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 @EnableWireMock({
         @ConfigureWireMock(name = "user-service", property = "user-client.url")
 })
