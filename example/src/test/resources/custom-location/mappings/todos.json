@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": [
+      { "id": 1, "userId": 1, "title": "custom location todo 1" },
+      { "id": 2, "userId": 1, "title": "custom location todo 2" }
+    ],
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

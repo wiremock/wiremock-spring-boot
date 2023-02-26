@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableWireMock({
-        @ConfigureWireMock(name = "user-service", property = "user-client.url"),
+        @ConfigureWireMock(name = "user-client", property = "user-client.url"),
         @ConfigureWireMock(name = "todo-service", property = "todo-client.url")
 })
 class TodoControllerTests {
@@ -26,7 +26,7 @@ class TodoControllerTests {
     @WireMock("todo-service")
     private WireMockServer todoService;
 
-    @WireMock("user-service")
+    @WireMock("user-client")
     private WireMockServer userService;
 
     @Autowired
