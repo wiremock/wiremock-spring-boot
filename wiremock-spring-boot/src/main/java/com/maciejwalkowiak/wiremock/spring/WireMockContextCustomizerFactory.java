@@ -1,6 +1,5 @@
 package com.maciejwalkowiak.wiremock.spring;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.core.annotation.AnnotationUtils;

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.junit.platform.commons.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,10 +45,15 @@ public class WireMockContextCustomizer implements ContextCustomizer {
 
         if (wireMockServer == null) {
             // create & start wiremock server
-            WireMockServer newServer = new WireMockServer(options()
+            WireMockConfiguration serverOptions = options()
                     .usingFilesUnderClasspath(resolveStubLocation(options))
-                    .port(options.port()));
+                    .port(options.port());
 
+            if (options.extensions().length > 0) {
+                serverOptions.extensions(options.extensions());
+            }
+
+            WireMockServer newServer = new WireMockServer(serverOptions);
             newServer.start();
 
             LOGGER.info("Started WireMockServer with name {}:{}", options.name(), newServer.baseUrl());
