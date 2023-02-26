@@ -12,9 +12,21 @@ WireMock Spring Boot drastically simplifies testing HTTP clients in **Spring Boo
 - automatically sets Spring environment properties
 - does not pollute Spring application context with extra beans
 
-## 🤔 How to use
+## 🤔 How to install
 
-Add the dependency:
+Temporarily, until the package is published to Maven Central, either check out this project locally or include the dependency using [jitpack.io](https://jitpack.io).
+
+### Local build
+
+1. Build project locally:
+
+```
+$ git clone https://github.com/maciejwalkowiak/wiremock-spring-boot
+$ cd wiremock-spring-boot
+$ ./mvnw install
+```
+
+2. Add the dependency:
 
 ```xml
 <dependency>
@@ -24,6 +36,35 @@ Add the dependency:
     <scope>test</scope>
 </dependency>
 ```
+
+### With Jitpack
+
+1. Add Jitpack repository:
+
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+
+2. Add the dependency to `wiremock-spring-boot`:
+
+```xml
+<dependency>
+    <groupId>com.github.maciejwalkowiak.wiremock-spring-boot</groupId>
+    <artifactId>wiremock-spring-boot</artifactId>
+    <version>main-SNAPSHOT</version>
+    <scope>test</scope>
+</dependency>
+```
+
+> **Note**
+> First build on Jitpack may take a minute or two so be patient.
+
+## ✨ How to use
 
 Use `@EnableWireMock` with `@ConfigureWireMock` with tests annotated that use `SpringExtension`, like `@SpringBootTest`:
 
