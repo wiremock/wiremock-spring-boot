@@ -26,16 +26,24 @@ class UserClientTests {
     private WireMockServer wiremock;
 
     @Test
-    void findUserById() {
-        wiremock.stubFor(get("/1").willReturn(aResponse()
+    void usesJavaStubbing() {
+        wiremock.stubFor(get("/2").willReturn(aResponse()
                 .withHeader("Content-Type", "application/json")
                 .withBody("""
-                        { "id": 1, "name": "Amy" }
+                        { "id": 2, "name": "Amy" }
                         """)));
+        User user = userClient.findOne(2L);
+        assertThat(user).isNotNull();
+        assertThat(user.id()).isEqualTo(2L);
+        assertThat(user.name()).isEqualTo("Amy");
+    }
+
+    @Test
+    void usesStubFiles() {
         User user = userClient.findOne(1L);
         assertThat(user).isNotNull();
         assertThat(user.id()).isEqualTo(1L);
-        assertThat(user.name()).isEqualTo("Amy");
+        assertThat(user.name()).isEqualTo("Jenna");
     }
 
 }

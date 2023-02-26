@@ -44,7 +44,10 @@ public class WireMockContextCustomizer implements ContextCustomizer {
 
         if (wireMockServer == null) {
             // create & start wiremock server
-            WireMockServer newServer = new WireMockServer(options().port(options.port()));
+            WireMockServer newServer = new WireMockServer(options()
+                    .usingFilesUnderClasspath(resolveStubLocation(options))
+                    .port(options.port()));
+
             newServer.start();
 
             LOGGER.info("Started WireMockServer with name {}:{}", options.name(), newServer.baseUrl());
@@ -72,7 +75,12 @@ public class WireMockContextCustomizer implements ContextCustomizer {
         }
     }
 
-    @Override public boolean equals(Object o) {
+    private String resolveStubLocation(ConfigureWireMock options) {
+        return StringUtils.isBlank(options.stubLocation()) ? "wiremock/" + options.name() : options.stubLocation();
+    }
+
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
@@ -81,7 +89,8 @@ public class WireMockContextCustomizer implements ContextCustomizer {
         return Objects.equals(configuration, that.configuration);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return Objects.hash(configuration);
     }
 }
