@@ -4,6 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.extension.Extension;
 
 /**
  * Configures WireMock instance.
@@ -42,4 +43,11 @@ public @interface ConfigureWireMock {
      * @return the stub location
      */
     String stubLocation() default "";
+
+    /**
+     * WireMock extensions to register in {@link WireMockServer}.
+     *
+     * @return the extensions
+     */
+    Class<? extends Extension>[] extensions() default {};
 }
