@@ -2,8 +2,8 @@
 
 **WireMock Spring Boot** library drastically simplifies [WireMock](https://wiremock.org) configuration in a **Spring Boot** and **JUnit 5** application. 
 
-> **Warning**
-> Project is in development stage, artifacts are not yet published to Maven Central.
+> **Note**
+> Project is in early stage, artifacts are not yet published to Maven Central.
 
 ## 🤩 Highlights
 
@@ -14,30 +14,8 @@
 
 ## 🤔 How to install
 
-Temporarily, until the package is published to Maven Central, either check out this project locally or include the dependency using [jitpack.io](https://jitpack.io).
+Temporarily, until the package is published to Maven Central, include the dependency using [jitpack.io](https://jitpack.io).
 
-### Local build
-
-1. Build project locally:
-
-```
-$ git clone https://github.com/maciejwalkowiak/wiremock-spring-boot
-$ cd wiremock-spring-boot
-$ ./mvnw install
-```
-
-2. Add the dependency:
-
-```xml
-<dependency>
-    <groupId>com.maciejwalkowiak</groupId>
-    <artifactId>wiremock-spring-boot</artifactId>
-    <version>{version}</version>
-    <scope>test</scope>
-</dependency>
-```
-
-### With Jitpack
 
 1. Add Jitpack repository:
 
@@ -56,13 +34,10 @@ $ ./mvnw install
 <dependency>
     <groupId>com.github.maciejwalkowiak.wiremock-spring-boot</groupId>
     <artifactId>wiremock-spring-boot</artifactId>
-    <version>main-SNAPSHOT</version>
+    <version>0.1.0</version>
     <scope>test</scope>
 </dependency>
 ```
-
-> **Note**
-> First build on Jitpack may take a minute or two so be patient.
 
 ## ✨ How to use
 
@@ -94,6 +69,24 @@ class TodoControllerTests {
 - `@WireMock` injects `WireMockServer` instance to a test
 
 Note that `WireMockServer` instances are not added as beans to Spring application context to avoid polluting it with test-related infrastructure. Instead, instances are kept in a separate store associated with an application context.
+
+### Registering WireMock extensions
+
+WireMock extensions can be registered independently with each `@ConfigureWireMock`:
+
+```java
+@ConfigureWireMock(name = "...", property = "...", extensions = { ... })
+```
+
+### Customizing mappings directory
+
+By default, each `WireMockServer` is configured to load mapping files from a classpath directory `wiremock/{server-name}/mappings`.
+
+It can be changed with setting `stubLocation` on `@ConfigureWireMock`:
+
+```java
+@ConfigureWireMock(name = "...", property = "...", stubLocation = "my-stubs")
+```
 
 Sounds good? Consider [❤️ Sponsoring](https://github.com/sponsors/maciejwalkowiak) the project! Thank you!
 
