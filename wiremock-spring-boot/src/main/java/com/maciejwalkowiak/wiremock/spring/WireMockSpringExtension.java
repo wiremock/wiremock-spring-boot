@@ -11,6 +11,11 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 
+/**
+ * JUnit 5 extension that sets {@link WireMockServer} instances previously registered with {@link ConfigureWireMock} on test class fields.
+ *
+ * @author Maciej Walkowiak
+ */
 public class WireMockSpringExtension implements BeforeEachCallback, ParameterResolver {
 
     @Override
