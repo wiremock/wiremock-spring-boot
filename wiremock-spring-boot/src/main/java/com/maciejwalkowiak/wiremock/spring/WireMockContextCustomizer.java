@@ -39,7 +39,7 @@ public class WireMockContextCustomizer implements ContextCustomizer {
     }
 
     private WireMockServer resolveOrCreateWireMockServer(ConfigurableApplicationContext context, ConfigureWireMock options) {
-        LOGGER.info("Configuring WireMockServer with name {} on port: {}", options.name(), options.port());
+        LOGGER.info("Configuring WireMockServer with name '{}' on port: {}", options.name(), options.port());
 
         WireMockServer wireMockServer = Store.INSTANCE.findWireMockInstance(context, options.name());
 
@@ -56,27 +56,27 @@ public class WireMockContextCustomizer implements ContextCustomizer {
             WireMockServer newServer = new WireMockServer(serverOptions);
             newServer.start();
 
-            LOGGER.info("Started WireMockServer with name {}:{}", options.name(), newServer.baseUrl());
+            LOGGER.info("Started WireMockServer with name '{}':{}", options.name(), newServer.baseUrl());
 
             // save server to store
             Store.INSTANCE.store(context, options.name(), newServer);
 
             // add shutdown hook
             context.addApplicationListener((ApplicationListener<ContextClosedEvent>) event -> {
-                LOGGER.info("Stopping WireMockServer with name {}", options.name());
+                LOGGER.info("Stopping WireMockServer with name '{}'", options.name());
                 newServer.stop();
             });
 
             // configure Spring environment property
             if (StringUtils.isNotBlank(options.property())) {
                 String property = options.property() + "=" + newServer.baseUrl();
-                LOGGER.debug("Adding property {} to Spring application context", property);
+                LOGGER.debug("Adding property '{}' to Spring application context", property);
                 TestPropertyValues.of(property).applyTo(context.getEnvironment());
             }
 
             return newServer;
         } else {
-            LOGGER.info("WireMockServer with name {} is already configured", options.name());
+            LOGGER.info("WireMockServer with name '{}' is already configured", options.name());
             return wireMockServer;
         }
     }
