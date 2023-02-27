@@ -14,31 +14,48 @@ import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextCustomizer;
 import org.springframework.test.context.MergedContextConfiguration;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
+/**
+ * Attaches properties with urls pointing to {@link WireMockServer} instances to the Spring {@link Environment}.
+ *
+ * @author Maciej Walkowiak
+ */
 public class WireMockContextCustomizer implements ContextCustomizer {
     private static final Logger LOGGER = LoggerFactory.getLogger(WireMockContextCustomizer.class);
 
     private final List<ConfigureWireMock> configuration;
 
-    public WireMockContextCustomizer(List<ConfigureWireMock> configuration) {
-        this.configuration = configuration;
+    /**
+     * Creates an instance of {@link WireMockContextCustomizer}.
+     *
+     * @param configurations the configurations
+     */
+    public WireMockContextCustomizer(List<ConfigureWireMock> configurations) {
+        this.configuration = configurations;
     }
 
-    public WireMockContextCustomizer(ConfigureWireMock[] value) {
-        this(Arrays.asList(value));
+    /**
+     * Creates an instance of {@link WireMockContextCustomizer}.
+     *
+     * @param configurations the configurations
+     */
+    public WireMockContextCustomizer(ConfigureWireMock[] configurations) {
+        this(Arrays.asList(configurations));
     }
 
-    @Override public void customizeContext(ConfigurableApplicationContext context, MergedContextConfiguration mergedConfig) {
+    @Override
+    public void customizeContext(ConfigurableApplicationContext context, MergedContextConfiguration mergedConfig) {
         for (ConfigureWireMock configureWiremock : configuration) {
             resolveOrCreateWireMockServer(context, configureWiremock);
         }
     }
 
-    private WireMockServer resolveOrCreateWireMockServer(ConfigurableApplicationContext context, ConfigureWireMock options) {
+    private void resolveOrCreateWireMockServer(ConfigurableApplicationContext context, ConfigureWireMock options) {
         LOGGER.info("Configuring WireMockServer with name '{}' on port: {}", options.name(), options.port());
 
         WireMockServer wireMockServer = Store.INSTANCE.findWireMockInstance(context, options.name());
@@ -73,11 +90,8 @@ public class WireMockContextCustomizer implements ContextCustomizer {
                 LOGGER.debug("Adding property '{}' to Spring application context", property);
                 TestPropertyValues.of(property).applyTo(context.getEnvironment());
             }
-
-            return newServer;
         } else {
             LOGGER.info("WireMockServer with name '{}' is already configured", options.name());
-            return wireMockServer;
         }
     }
 

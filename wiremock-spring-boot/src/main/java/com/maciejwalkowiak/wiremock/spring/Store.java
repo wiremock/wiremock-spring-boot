@@ -12,6 +12,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+/**
+ * Stores references to the instances of {@link WireMockServer} associated with Spring application context.
+ *
+ * @author Maciej Walkowiak
+ */
 enum Store {
     INSTANCE;
 
