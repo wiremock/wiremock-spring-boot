@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.maciejwalkowiak</groupId>
 	<artifactId>wiremock-spring-boot-parent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0</version>
 
 	<packaging>pom</packaging>
 	<properties>
