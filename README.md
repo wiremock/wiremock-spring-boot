@@ -1,6 +1,6 @@
 # WireMock Spring Boot
 
-WireMock Spring Boot drastically simplifies testing HTTP clients in **Spring Boot** & **Junit 5** based integration tests.
+**WireMock Spring Boot** library drastically simplifies [WireMock](https://wiremock.org) configuration in a **Spring Boot** and **JUnit 5** application. 
 
 > **Warning**
 > Project is in development stage, artifacts are not yet published to Maven Central.
@@ -8,7 +8,7 @@ WireMock Spring Boot drastically simplifies testing HTTP clients in **Spring Boo
 ## 🤩 Highlights
 
 - fully declarative [WireMock](https://wiremock.org/) setup
-- support for multiple `WireMockServer` instances - one per HTTP client as recommended in the WireMock documentation
+- support for **multiple** `WireMockServer` **instances** - one per HTTP client as recommended in the WireMock documentation
 - automatically sets Spring environment properties
 - does not pollute Spring application context with extra beans
 
@@ -77,9 +77,13 @@ class TodoControllerTests {
 
     @WireMock("user-service")
     private WireMockServer wiremock;
+    
+    @Autowired
+    private Environment env;
 
     @Test
     void aTest() {
+        env.getProperty("user-client.url"); // returns a URL to WireMockServer instance
         wiremock.stubFor(...);
     }
 }
