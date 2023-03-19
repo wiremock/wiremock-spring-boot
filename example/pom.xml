@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.maciejwalkowiak</groupId>
+        <groupId>com.maciejwalkowiak.spring</groupId>
         <artifactId>wiremock-spring-boot-parent</artifactId>
-        <version>0.2.0</version>
+        <version>1.0.0</version>
     </parent>
 
     <groupId>com.maciejwalkowiak.wiremock</groupId>
@@ -34,7 +34,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.maciejwalkowiak</groupId>
+            <groupId>com.maciejwalkowiak.spring</groupId>
             <artifactId>wiremock-spring-boot</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

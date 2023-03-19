@@ -4,14 +4,14 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.maciejwalkowiak</groupId>
+		<groupId>com.maciejwalkowiak.spring</groupId>
 		<artifactId>wiremock-spring-boot-parent</artifactId>
-		<version>0.2.0</version>
+		<version>1.0.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>wiremock-spring-boot</artifactId>
-	<version>0.2.0</version>
+	<version>1.0.0</version>
 
 	<name>WireMock Spring Boot</name>
 	<description>WireMock integration for Spring Boot</description>
