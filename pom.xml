@@ -20,6 +20,7 @@
 	<name>WireMock Spring Boot Parent</name>
 	<description>WireMock integration for Spring Boot</description>
 	<url>https://github.com/maciejwalkowiak/wiremock-spring-boot/</url>
+	<inceptionYear>2023</inceptionYear>
 
 	<modules>
 		<module>wiremock-spring-boot</module>
