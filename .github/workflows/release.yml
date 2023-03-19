@@ -3,8 +3,6 @@ on:
   push:
     tags:
       - v*
-  pull_request:
-    branches: [ main ]
 jobs:
   publish:
     runs-on: ubuntu-latest
