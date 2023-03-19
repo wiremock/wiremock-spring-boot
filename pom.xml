@@ -117,7 +117,6 @@
 						<groupId>org.jreleaser</groupId>
 						<artifactId>jreleaser-maven-plugin</artifactId>
 						<configuration>
-							<dryrun>true</dryrun>
 							<jreleaser>
 								<signing>
 									<active>ALWAYS</active>
