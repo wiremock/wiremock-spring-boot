@@ -6,12 +6,16 @@
 	<parent>
 		<groupId>com.maciejwalkowiak</groupId>
 		<artifactId>wiremock-spring-boot-parent</artifactId>
-		<version>0.1.0</version>
+		<version>0.2.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>wiremock-spring-boot</artifactId>
-	<version>0.1.0</version>
+	<version>0.2.0-SNAPSHOT</version>
+
+	<name>WireMock Spring Boot</name>
+	<description>WireMock integration for Spring Boot</description>
+	<url>https://github.com/maciejwalkowiak/wiremock-spring-boot/</url>
 
 	<properties>
 		<java.version>17</java.version>
@@ -51,66 +55,4 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.5.0</version>
-						<executions>
-							<execution>
-								<id>attach-javadoc</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<version>3.2.1</version>
-						<executions>
-							<execution>
-								<id>attach-source</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.jreleaser</groupId>
-						<artifactId>jreleaser-maven-plugin</artifactId>
-						<version>1.5.0</version>
-						<configuration>
-							<jreleaser>
-								<signing>
-									<active>ALWAYS</active>
-									<armored>true</armored>
-								</signing>
-								<deploy>
-									<maven>
-										<nexus2>
-											<maven-central>
-												<active>ALWAYS</active>
-												<url>https://s01.oss.sonatype.org/service/local</url>;
-												<closeRepository>false</closeRepository>
-												<releaseRepository>false</releaseRepository>
-												<stagingRepositories>target/staging-deploy</stagingRepositories>
-											</maven-central>
-										</nexus2>
-									</maven>
-								</deploy>
-							</jreleaser>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>
