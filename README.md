@@ -1,9 +1,6 @@
 # WireMock Spring Boot
 
-**WireMock Spring Boot** library drastically simplifies [WireMock](https://wiremock.org) configuration in a **Spring Boot** and **JUnit 5** application. 
-
-> **Note**
-> Project is in early stage, artifacts are not yet published to Maven Central.
+**WireMock Spring Boot** library drastically simplifies [WireMock](https://wiremock.org) configuration in a **Spring Boot** and **JUnit 5** application.
 
 ## 🤩 Highlights
 
@@ -14,27 +11,13 @@
 
 ## 🤔 How to install
 
-Temporarily, until the package is published to Maven Central, include the dependency using [jitpack.io](https://jitpack.io).
-
-
-1. Add Jitpack repository:
-
-```xml
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
-```
-
-2. Add the dependency to `wiremock-spring-boot`:
+Add the dependency to `wiremock-spring-boot`:
 
 ```xml
 <dependency>
-    <groupId>com.github.maciejwalkowiak.wiremock-spring-boot</groupId>
+    <groupId>com.maciejwalkowiak</groupId>
     <artifactId>wiremock-spring-boot</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <scope>test</scope>
 </dependency>
 ```
