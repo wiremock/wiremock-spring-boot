@@ -15,7 +15,7 @@ Add the dependency to `wiremock-spring-boot`:
 
 ```xml
 <dependency>
-    <groupId>com.maciejwalkowiak.soring</groupId>
+    <groupId>com.maciejwalkowiak.spring</groupId>
     <artifactId>wiremock-spring-boot</artifactId>
     <version>1.0.0</version>
     <scope>test</scope>
