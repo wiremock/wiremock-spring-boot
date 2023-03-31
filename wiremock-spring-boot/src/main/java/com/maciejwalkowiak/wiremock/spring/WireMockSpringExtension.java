@@ -24,6 +24,11 @@ public class WireMockSpringExtension implements BeforeEachCallback, ParameterRes
         Store.INSTANCE.findAllInstances(extensionContext).forEach(WireMockServer::resetAll);
 
         // inject properties into test class fields
+        injectWithLegacyWireMockAnnotation(extensionContext);
+        injectWireMockInstances(extensionContext);
+    }
+
+    private static void injectWithLegacyWireMockAnnotation(ExtensionContext extensionContext) throws IllegalAccessException {
         List<Field> annotatedFields = AnnotationSupport.findAnnotatedFields(extensionContext.getRequiredTestClass(), WireMock.class);
         for (Field annotatedField : annotatedFields) {
             WireMock annotation = annotatedField.getAnnotation(WireMock.class);
@@ -34,16 +39,29 @@ public class WireMockSpringExtension implements BeforeEachCallback, ParameterRes
         }
     }
 
+    private static void injectWireMockInstances(ExtensionContext extensionContext) throws IllegalAccessException {
+        List<Field> annotatedFields = AnnotationSupport.findAnnotatedFields(extensionContext.getRequiredTestClass(), InjectWireMock.class);
+        for (Field annotatedField : annotatedFields) {
+            InjectWireMock annotation = annotatedField.getAnnotation(InjectWireMock.class);
+            annotatedField.setAccessible(true);
+
+            WireMockServer wiremock = Store.INSTANCE.findRequiredWireMockInstance(extensionContext, annotation.value());
+            annotatedField.set(extensionContext.getRequiredTestInstance(), wiremock);
+        }
+    }
+
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        return parameterContext.getParameter().getType() == WireMockServer.class && parameterContext.isAnnotated(WireMock.class);
+        return parameterContext.getParameter().getType() == WireMockServer.class && (parameterContext.isAnnotated(WireMock.class) || parameterContext.isAnnotated(InjectWireMock.class));
     }
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        WireMock wiremock = parameterContext.findAnnotation(WireMock.class).get();
-        return Store.INSTANCE.findRequiredWireMockInstance(extensionContext, wiremock.value());
+        String wireMockServerName = parameterContext.findAnnotation(WireMock.class)
+                .map(WireMock::value)
+                .orElseGet(() -> parameterContext.findAnnotation(InjectWireMock.class).get().value());
+        return Store.INSTANCE.findRequiredWireMockInstance(extensionContext, wireMockServerName);
     }
 }
