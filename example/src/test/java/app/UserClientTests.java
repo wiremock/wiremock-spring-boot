@@ -3,7 +3,7 @@ package app;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
 import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
-import com.maciejwalkowiak.wiremock.spring.WireMock;
+import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ class UserClientTests {
     @Autowired
     private UserClient userClient;
 
-    @WireMock("user-client")
+    @InjectWireMock("user-client")
     private WireMockServer wiremock;
 
     @Test

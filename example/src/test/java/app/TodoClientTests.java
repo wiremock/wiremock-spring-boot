@@ -5,7 +5,7 @@ import java.util.List;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
 import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
-import com.maciejwalkowiak.wiremock.spring.WireMock;
+import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ class TodoClientTests {
     @Autowired
     private TodoClient todoClient;
 
-    @WireMock("todo-client")
+    @InjectWireMock("todo-client")
     private WireMockServer wiremock;
 
     @Test

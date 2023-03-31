@@ -9,12 +9,10 @@ import java.lang.annotation.Target;
  * Injects WireMock instance previously configured on the class or field level with {@link ConfigureWireMock}.
  *
  * @author Maciej Walkowiak
- * @deprecated to avoid naming collision with {@link com.github.tomakehurst.wiremock.client.WireMock}, use {@link InjectWireMock} instead.
  */
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@Deprecated
-public @interface WireMock {
+public @interface InjectWireMock {
 
     /**
      * The name of WireMock instance to inject.
