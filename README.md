@@ -17,7 +17,7 @@ Add the dependency to `wiremock-spring-boot`:
 <dependency>
     <groupId>com.maciejwalkowiak.spring</groupId>
     <artifactId>wiremock-spring-boot</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -33,7 +33,7 @@ Use `@EnableWireMock` with `@ConfigureWireMock` with tests annotated that use `S
 })
 class TodoControllerTests {
 
-    @WireMock("user-service")
+    @InjectWireMock("user-service")
     private WireMockServer wiremock;
     
     @Autowired
@@ -49,7 +49,7 @@ class TodoControllerTests {
 
 - `@EnableWireMock` adds test context customizer and enables `WireMockSpringExtension` 
 - `@ConfigureWireMock` creates a `WireMockServer` and passes the `WireMockServer#baseUrl` to a Spring environment property with a name given by `property`.
-- `@WireMock` injects `WireMockServer` instance to a test
+- `@InjectWireMock` injects `WireMockServer` instance to a test
 
 Note that `WireMockServer` instances are not added as beans to Spring application context to avoid polluting it with test-related infrastructure. Instead, instances are kept in a separate store associated with an application context.
 
