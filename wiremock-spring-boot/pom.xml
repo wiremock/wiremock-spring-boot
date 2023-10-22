@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>com.maciejwalkowiak.spring</groupId>
 		<artifactId>wiremock-spring-boot-parent</artifactId>
-		<version>1.0.2-SNAPSHOT</version>
+		<version>1.0.2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>wiremock-spring-boot</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.2</version>
 
 	<name>WireMock Spring Boot</name>
 	<description>WireMock integration for Spring Boot</description>
