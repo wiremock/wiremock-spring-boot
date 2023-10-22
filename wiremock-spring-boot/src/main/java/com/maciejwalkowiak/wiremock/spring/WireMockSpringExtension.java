@@ -1,7 +1,9 @@
 package com.maciejwalkowiak.wiremock.spring;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.Function;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -24,29 +26,21 @@ public class WireMockSpringExtension implements BeforeEachCallback, ParameterRes
         Store.INSTANCE.findAllInstances(extensionContext).forEach(WireMockServer::resetAll);
 
         // inject properties into test class fields
-        injectWithLegacyWireMockAnnotation(extensionContext);
-        injectWireMockInstances(extensionContext);
+        injectWireMockInstances(extensionContext, WireMock.class, WireMock::value);
+        injectWireMockInstances(extensionContext, InjectWireMock.class, InjectWireMock::value);
     }
 
-    private static void injectWithLegacyWireMockAnnotation(ExtensionContext extensionContext) throws IllegalAccessException {
-        List<Field> annotatedFields = AnnotationSupport.findAnnotatedFields(extensionContext.getRequiredTestClass(), WireMock.class);
-        for (Field annotatedField : annotatedFields) {
-            WireMock annotation = annotatedField.getAnnotation(WireMock.class);
-            annotatedField.setAccessible(true);
+    private static <T extends Annotation> void injectWireMockInstances(ExtensionContext extensionContext, Class<T> annotation, Function<T, String> fn) throws IllegalAccessException {
+        // getRequiredTestInstances() return multiple instances for nested tests
+        for (Object testInstance : extensionContext.getRequiredTestInstances().getAllInstances()) {
+            List<Field> annotatedFields = AnnotationSupport.findAnnotatedFields(testInstance.getClass(), annotation);
+            for (Field annotatedField : annotatedFields) {
+                T annotationValue = annotatedField.getAnnotation(annotation);
+                annotatedField.setAccessible(true);
 
-            WireMockServer wiremock = Store.INSTANCE.findRequiredWireMockInstance(extensionContext, annotation.value());
-            annotatedField.set(extensionContext.getRequiredTestInstance(), wiremock);
-        }
-    }
-
-    private static void injectWireMockInstances(ExtensionContext extensionContext) throws IllegalAccessException {
-        List<Field> annotatedFields = AnnotationSupport.findAnnotatedFields(extensionContext.getRequiredTestClass(), InjectWireMock.class);
-        for (Field annotatedField : annotatedFields) {
-            InjectWireMock annotation = annotatedField.getAnnotation(InjectWireMock.class);
-            annotatedField.setAccessible(true);
-
-            WireMockServer wiremock = Store.INSTANCE.findRequiredWireMockInstance(extensionContext, annotation.value());
-            annotatedField.set(extensionContext.getRequiredTestInstance(), wiremock);
+                WireMockServer wiremock = Store.INSTANCE.findRequiredWireMockInstance(extensionContext, fn.apply(annotationValue));
+                annotatedField.set(testInstance, wiremock);
+            }
         }
     }
 
