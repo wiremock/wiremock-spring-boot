@@ -35,13 +35,12 @@ class TodoControllerTests {
 
     @InjectWireMock("user-service")
     private WireMockServer wiremock;
-    
-    @Autowired
-    private Environment env;
+
+    @Value("${user-client.url}")
+    private String wiremockUrl; // injects the base URL of the WireMockServer instance
 
     @Test
     void aTest() {
-        env.getProperty("user-client.url"); // returns a URL to WireMockServer instance
         wiremock.stubFor(...);
     }
 }
