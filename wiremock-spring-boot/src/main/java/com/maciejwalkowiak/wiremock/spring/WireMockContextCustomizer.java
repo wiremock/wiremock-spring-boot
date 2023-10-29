@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.commons.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +57,6 @@ public class WireMockContextCustomizer implements ContextCustomizer {
     }
 
     private void resolveOrCreateWireMockServer(ConfigurableApplicationContext context, ConfigureWireMock options) {
-        LOGGER.info("Configuring WireMockServer with name '{}' on port: {}", options.name(), options.port());
-
         WireMockServer wireMockServer = Store.INSTANCE.findWireMockInstance(context, options.name());
 
         if (wireMockServer == null) {
@@ -69,6 +68,10 @@ public class WireMockContextCustomizer implements ContextCustomizer {
             if (options.extensions().length > 0) {
                 serverOptions.extensions(options.extensions());
             }
+
+            applyCustomizers(options, serverOptions);
+
+            LOGGER.info("Configuring WireMockServer with name '{}' on port: {}", options.name(), serverOptions.portNumber());
 
             WireMockServer newServer = new WireMockServer(serverOptions);
             newServer.start();
@@ -92,6 +95,19 @@ public class WireMockContextCustomizer implements ContextCustomizer {
             }
         } else {
             LOGGER.info("WireMockServer with name '{}' is already configured", options.name());
+        }
+    }
+
+    private static void applyCustomizers(ConfigureWireMock options, WireMockConfiguration serverOptions) {
+        for (Class<? extends WireMockConfigurationCustomizer> customizer : options.configurationCustomizers()) {
+            try {
+                ReflectionUtils.newInstance(customizer).customize(serverOptions, options);
+            } catch (Exception e) {
+                if (e instanceof NoSuchMethodException) {
+                    LOGGER.error("Customizer {} must have a no-arg constructor", customizer, e);
+                }
+                throw e;
+            }
         }
     }
 

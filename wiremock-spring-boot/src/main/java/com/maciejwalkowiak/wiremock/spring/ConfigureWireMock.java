@@ -4,6 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.extension.Extension;
 
 /**
@@ -50,4 +51,11 @@ public @interface ConfigureWireMock {
      * @return the extensions
      */
     Class<? extends Extension>[] extensions() default {};
+
+    /**
+     * Customizes {@link WireMockConfiguration} used by {@link WireMockServer} instance. Customizers are ordered by their natural order in this array. Each customizer must have no-arg constructor.
+     *
+     * @return the configuration customizers classes
+     */
+    Class<? extends WireMockConfigurationCustomizer>[] configurationCustomizers() default {};
 }
