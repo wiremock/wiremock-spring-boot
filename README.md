@@ -70,6 +70,33 @@ It can be changed with setting `stubLocation` on `@ConfigureWireMock`:
 @ConfigureWireMock(name = "...", property = "...", stubLocation = "my-stubs")
 ```
 
+### Advanced configuration
+
+More advanced configuration can be applied through configuration customizers:
+
+```java
+@ConfigureWireMock(
+        name = "todo-service",
+        property = "todo-service.url",
+        configurationCustomizers = SampleConfigurationCustomizer.class
+)
+```
+
+Where `SampleConfigurationCustomizer` is a class implementing `WireMockConfigurationCustomizer`:
+
+```java
+class SampleConfigurationCustomizer implements WireMockConfigurationCustomizer {
+
+    @Override
+    public void customize(WireMockConfiguration configuration, ConfigureWireMock options) {
+        // apply changes to configuration
+    }
+}
+```
+
+> [!IMPORTANT]  
+> `WireMockConfigurationCustomizer` must have a no-arg constructor.
+
 Sounds good? Consider [❤️ Sponsoring](https://github.com/sponsors/maciejwalkowiak) the project! Thank you!
 
 ## 🙏 Credits

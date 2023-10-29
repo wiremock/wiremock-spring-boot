@@ -10,27 +10,24 @@ import org.springframework.test.util.TestSocketUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = WireMockConfigurationCustomizerTests.AppConfiguration.class)
+@SpringBootTest(classes = WireMockConfigurationCustomizerTest.AppConfiguration.class)
 @EnableWireMock({
         @ConfigureWireMock(
                 name = "user-service",
                 property = "user-service.url",
-                configurationCustomizers = WireMockConfigurationCustomizerTests.SampleConfigurationCustomizer.class
+                configurationCustomizers = WireMockConfigurationCustomizerTest.SampleConfigurationCustomizer.class
         ),
         @ConfigureWireMock(
                 name = "todo-service",
                 property = "todo-service.url",
-                configurationCustomizers = WireMockConfigurationCustomizerTests.SampleConfigurationCustomizer.class
+                configurationCustomizers = WireMockConfigurationCustomizerTest.SampleConfigurationCustomizer.class
         ),
 })
-class WireMockConfigurationCustomizerTests {
+class WireMockConfigurationCustomizerTest {
     private static final int USER_SERVICE_PORT = TestSocketUtils.findAvailableTcpPort();
     private static final int TODO_SERVICE_PORT = TestSocketUtils.findAvailableTcpPort();
 
     static class SampleConfigurationCustomizer implements WireMockConfigurationCustomizer {
-
-        SampleConfigurationCustomizer(String foo) {
-        }
 
         @Override
         public void customize(WireMockConfiguration configuration, ConfigureWireMock options) {
