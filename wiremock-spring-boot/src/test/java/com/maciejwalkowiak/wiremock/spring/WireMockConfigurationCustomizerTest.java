@@ -51,7 +51,7 @@ class WireMockConfigurationCustomizerTest {
     private WireMockServer todoService;
 
     @Test
-    void foo() {
+    void appliesConfigurationCustomizer() {
         assertThat(userService.port()).isEqualTo(USER_SERVICE_PORT);
         assertThat(todoService.port()).isEqualTo(TODO_SERVICE_PORT);
     }
