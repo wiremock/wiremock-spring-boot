@@ -9,8 +9,8 @@
 	<packaging>pom</packaging>
 	<properties>
 		<java.version>17</java.version>
-		<spring-boot.version>3.1.5</spring-boot.version>
-		<wiremock.version>3.2.0</wiremock.version>
+		<spring-boot.version>3.2.1</spring-boot.version>
+		<wiremock.version>3.3.1</wiremock.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,7 +38,7 @@
 
 			<dependency>
 				<groupId>org.wiremock</groupId>
-				<artifactId>wiremock</artifactId>
+				<artifactId>wiremock-standalone</artifactId>
 				<version>${wiremock.version}</version>
 			</dependency>
 		</dependencies>
