@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.boot.test.util.TestPropertyValues;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.env.Environment;
@@ -82,9 +81,11 @@ public class WireMockContextCustomizer implements ContextCustomizer {
             Store.INSTANCE.store(context, options.name(), newServer);
 
             // add shutdown hook
-            context.addApplicationListener((ApplicationListener<ContextClosedEvent>) event -> {
-                LOGGER.info("Stopping WireMockServer with name '{}'", options.name());
-                newServer.stop();
+            context.addApplicationListener(event -> {
+                if (event instanceof ContextClosedEvent) {
+                    LOGGER.info("Stopping WireMockServer with name '{}'", options.name());
+                    newServer.stop();
+                }
             });
 
             // configure Spring environment property
