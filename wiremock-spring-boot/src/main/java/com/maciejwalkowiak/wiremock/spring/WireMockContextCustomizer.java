@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.common.Notifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.commons.util.StringUtils;
@@ -62,7 +63,8 @@ public class WireMockContextCustomizer implements ContextCustomizer {
             // create & start wiremock server
             WireMockConfiguration serverOptions = options()
                     .usingFilesUnderClasspath(resolveStubLocation(options))
-                    .port(options.port());
+                    .port(options.port())
+                    .notifier(new Slf4jNotifier(true));
 
             if (options.extensions().length > 0) {
                 serverOptions.extensions(options.extensions());
@@ -129,5 +131,35 @@ public class WireMockContextCustomizer implements ContextCustomizer {
     @Override
     public int hashCode() {
         return Objects.hash(configuration);
+    }
+
+    // ported from: https://github.com/spring-cloud/spring-cloud-contract/commit/44c634d0e9e82515d2fba66343530eb7d2ba8223
+    static class Slf4jNotifier implements Notifier {
+
+        private static final Logger log = LoggerFactory.getLogger("WireMock");
+
+        private final boolean verbose;
+
+        Slf4jNotifier(boolean verbose) {
+            this.verbose = verbose;
+        }
+
+        @Override
+        public void info(String message) {
+            if (verbose) {
+                log.info(message);
+            }
+        }
+
+        @Override
+        public void error(String message) {
+            log.error(message);
+        }
+
+        @Override
+        public void error(String message, Throwable t) {
+            log.error(message, t);
+        }
+
     }
 }
