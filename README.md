@@ -17,7 +17,7 @@ Add the dependency to `wiremock-spring-boot`:
 <dependency>
     <groupId>com.maciejwalkowiak.spring</groupId>
     <artifactId>wiremock-spring-boot</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.2</version>
     <scope>test</scope>
 </dependency>
 ```
