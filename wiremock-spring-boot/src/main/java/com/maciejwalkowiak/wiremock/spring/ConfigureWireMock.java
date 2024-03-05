@@ -30,9 +30,9 @@ public @interface ConfigureWireMock {
     String name();
 
     /**
-     * Names of Spring properties to bind the {@link WireMockServer#baseUrl()} to.
+     * Names of Spring properties to inject the {@link WireMockServer#baseUrl()}.
      *
-     * @return names of Spring properties to bind the {@link WireMockServer#baseUrl()} to.
+     * @return names of Spring properties to inject the {@link WireMockServer#baseUrl()}.
      */
     String[] property() default "";
 
