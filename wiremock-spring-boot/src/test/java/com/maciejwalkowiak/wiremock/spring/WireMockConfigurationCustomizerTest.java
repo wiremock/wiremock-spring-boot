@@ -67,7 +67,7 @@ class WireMockConfigurationCustomizerTest {
     private WireMockServer todoService;
 
     @Test
-    void appliesProperty(@Autowired Environment environment) {
+    void appliesPropertyInjection(@Autowired Environment environment) {
         // TODO: @Maciej is there a programmatic way for accessing the @ConfigureWireMock ?
         Stream.of("todo-service.url", "bar-service.url").forEach(property ->
             assertThat(environment.getProperty(property)).isEqualTo("http://localhost:" + TODO_SERVICE_PORT));
