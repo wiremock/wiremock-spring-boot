@@ -74,6 +74,7 @@ class WireMockConfigurationCustomizerTest {
         Stream.of("user-service.url").forEach(property ->
             assertThat(environment.getProperty(property)).isEqualTo("http://localhost:" + USER_SERVICE_PORT));
     }
+
     @Test
     void appliesConfigurationCustomizer() {
         assertThat(userService.port()).isEqualTo(USER_SERVICE_PORT);
