@@ -60,6 +60,58 @@ WireMock extensions can be registered independently with each `@ConfigureWireMoc
 @ConfigureWireMock(name = "...", property = "...", extensions = { ... })
 ```
 
+### Single vs Multiple Property Injection
+
+The concept of single property injection can be described as wiring _one_ `WireMockServer` to _one_ property.
+
+```java
+@SpringBootTest
+@EnableWireMock({
+    @ConfigureWireMock(name = "foo-service", property = "app.client-apis.foo.base-path"}),
+    @ConfigureWireMock(name = "bar-service", property = "app.client-apis.bar.base-path"}),
+    @ConfigureWireMock(name = "mojo-service", property = "app.client-apis.mojo.base-path"})
+})
+class AppIT { 
+    @InjectWireMock("foo-service")
+    private WireMockServer fooService;
+    @InjectWireMock("bar-service")
+    private WireMockServer barService;
+    @InjectWireMock("mojo-service")
+    private WireMockServer mojoService;
+    
+    @Test
+   void contextLoads() {
+     // your test code
+   }
+}
+```
+
+The concept of multiple property injection can be described as wiring _one_ `WireMockServer` to _multiple_ properties.
+
+```java
+@SpringBootTest
+@EnableWireMock({
+    @ConfigureWireMock(name = "services", property = {
+        "app.client-apis.foo.base-path",
+        "app.client-apis.bar.base-path",
+        "app.client-apis.mojo.base-path"})
+})
+class AppIT {
+
+    @InjectWireMock("services")
+    private WireMockServer services;
+
+   @Test
+   void contextLoads() {
+    // your test code
+   }
+}
+```
+
+The *single* property injection provides a high level of isolation when mocking and stubbing 3rd pary RESTful api, because every service 
+is associated to its own dedicated `WireMockServer` instance.
+The *multiple* property injections provides a less complex test setup at the cost of isolation.
+
 ### Customizing mappings directory
 
 By default, each `WireMockServer` is configured to load mapping files from a classpath directory `wiremock/{server-name}/mappings`.
