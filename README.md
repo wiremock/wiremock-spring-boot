@@ -80,9 +80,9 @@ class AppIT {
     private WireMockServer mojoService;
     
     @Test
-   void contextLoads() {
-     // your test code
-   }
+    void contextLoads() {
+        // your test code
+    }
 }
 ```
 
@@ -101,10 +101,10 @@ class AppIT {
     @InjectWireMock("services")
     private WireMockServer services;
 
-   @Test
-   void contextLoads() {
-    // your test code
-   }
+    @Test
+    void contextLoads() {
+        // your test code
+    }
 }
 ```
 
