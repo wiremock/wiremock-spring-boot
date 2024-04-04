@@ -1,17 +1,18 @@
 package app;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
 import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
 import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class WireMockSpringExtensionTest {
 
@@ -65,8 +66,8 @@ public class WireMockSpringExtensionTest {
 
     @SpringBootTest(classes = WireMockSpringExtensionTest.AppConfiguration.class)
     @EnableWireMock({
-        @ConfigureWireMock(name = "user-service", properties = {"user-service.url", "todo-service.url"}),
-        @ConfigureWireMock(name = "mojo-service", property = "mojo-service.url", properties = {"other-service.url"})
+            @ConfigureWireMock(name = "user-service", properties = {"user-service.url", "todo-service.url"}),
+            @ConfigureWireMock(name = "mojo-service", property = "mojo-service.url", properties = {"other-service.url"})
     })
     @Nested
     class MultiplePropertiesBindingTest {
