@@ -62,7 +62,7 @@ WireMock extensions can be registered independently with each `@ConfigureWireMoc
 
 ### Single vs Multiple Property Injection
 
-The concept of single property injection can be described as wiring _one_ `WireMockServer` to _one_ property.
+The concept of single property injection can be described as wiring _one_ `WireMockServer` instance to _one_ property.
 
 ```java
 @SpringBootTest
@@ -86,12 +86,12 @@ class AppIT {
 }
 ```
 
-The concept of multiple property injection can be described as wiring _one_ `WireMockServer` to _multiple_ properties.
+The concept of multiple property injection can be described as wiring _one_ `WireMockServer` instance to _multiple_ properties.
 
 ```java
 @SpringBootTest
 @EnableWireMock({
-    @ConfigureWireMock(name = "services", property = {
+    @ConfigureWireMock(name = "services", properties = {
         "app.client-apis.foo.base-path",
         "app.client-apis.bar.base-path",
         "app.client-apis.mojo.base-path"})
