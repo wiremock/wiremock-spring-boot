@@ -2,10 +2,9 @@ package app;
 
 import java.util.List;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
 import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
-import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +23,13 @@ class TodoClientTests {
     @Autowired
     private TodoClient todoClient;
 
-    @InjectWireMock("todo-client")
-    private WireMockServer wiremock;
-
     @Test
     void usesJavaStubbing() {
-        wiremock.stubFor(get("/").willReturn(aResponse()
+        /**
+         * If there is only one WireMock configured, you can access WireMock in this static way.
+         * If there are several WireMocks configured, you have to use InjectWireMock. 
+         */
+        WireMock.stubFor(get("/").willReturn(aResponse()
                 .withHeader("Content-Type", "application/json")
                 .withBody("""
                         [
