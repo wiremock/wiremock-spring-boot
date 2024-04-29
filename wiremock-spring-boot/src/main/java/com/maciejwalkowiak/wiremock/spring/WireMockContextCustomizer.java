@@ -96,6 +96,10 @@ public class WireMockContextCustomizer implements ContextCustomizer {
                 LOGGER.debug("Adding property '{}' to Spring application context", property);
                 TestPropertyValues.of(property).applyTo(context.getEnvironment());
             }
+
+            String portProperty = options.portProperty() + "=" + newServer.port();
+            LOGGER.debug("Adding property '{}' to Spring application context", portProperty);
+            TestPropertyValues.of(portProperty).applyTo(context.getEnvironment());
         } else {
             LOGGER.info("WireMockServer with name '{}' is already configured", options.name());
         }
