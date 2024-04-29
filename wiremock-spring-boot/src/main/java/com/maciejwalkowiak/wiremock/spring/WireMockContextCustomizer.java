@@ -62,9 +62,15 @@ public class WireMockContextCustomizer implements ContextCustomizer {
         if (wireMockServer == null) {
             // create & start wiremock server
             WireMockConfiguration serverOptions = options()
-                    .usingFilesUnderClasspath(resolveStubLocation(options))
                     .port(options.port())
                     .notifier(new Slf4jNotifier(true));
+            if (options.stubLocationOnClasspath()) {
+                serverOptions
+                    .usingFilesUnderClasspath(resolveStubLocation(options));
+            } else {
+                serverOptions
+                    .usingFilesUnderDirectory(options.stubLocation());
+            }
 
             if (options.extensions().length > 0) {
                 serverOptions.extensions(options.extensions());

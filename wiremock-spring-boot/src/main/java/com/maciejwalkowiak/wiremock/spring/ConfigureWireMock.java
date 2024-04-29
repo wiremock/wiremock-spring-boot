@@ -37,13 +37,22 @@ public @interface ConfigureWireMock {
     String property() default "";
 
     /**
-     * The location of WireMock stub files. By default, stubs are resolved from classpath location <code>wiremock-server-name/mappings/</code>.
+     * By default, stubs are resolved from classpath. But this can be changed with {@link #stubLocationOnClasspath()}.
+     * 
+     * The location of WireMock stub files. By default, stubs are resolved from location <code>wiremock-server-name/mappings/</code>.
      *
      * If provided, stubs are resolved from <code>stub-location/mappings/</code>.
      *
      * @return the stub location
      */
     String stubLocation() default "";
+
+    /**
+     * Allows user to specify if the mappings should be loaded from classpath or a directory. The location is specified with {@link #stubLocation()}.
+     *
+     * @return true if stubLocation points to classpath directory, else it is an ordinary directory
+     */
+    boolean stubLocationOnClasspath() default true;
 
     /**
      * WireMock extensions to register in {@link WireMockServer}.
