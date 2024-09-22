@@ -33,15 +33,20 @@ Use `@EnableWireMock` with `@ConfigureWireMock` with tests annotated that use `S
 ```java
 @SpringBootTest
 @EnableWireMock({
-        @ConfigureWireMock(name = "user-service", property = "user-client.url")
+        @ConfigureWireMock(name = "user-service",
+        baseUrlProperties = "user-service.url",
+        portProperties = "user-service.port")
 })
 class TodoControllerTests {
 
     @InjectWireMock("user-service")
     private WireMockServer wiremock;
 
-    @Value("${user-client.url}")
-    private String wiremockUrl; // injects the base URL of the WireMockServer instance
+    @Value("${user-service.url}")
+    private String wiremockUrl;
+
+    @Value("${user-service.port}")
+    private String wiremockPort;
 
     @Test
     void aTest() {
@@ -51,7 +56,7 @@ class TodoControllerTests {
 ```
 
 - `@EnableWireMock` adds test context customizer and enables `WireMockSpringExtension` 
-- `@ConfigureWireMock` creates a `WireMockServer` and passes the `WireMockServer#baseUrl` to a Spring environment property with a name given by `property`.
+- `@ConfigureWireMock` creates a `WireMockServer` and passes the `WireMockServer#baseUrl` to a Spring environment property with a name given by `baseUrlProperties`.
 - `@InjectWireMock` injects `WireMockServer` instance to a test
 
 Note that `WireMockServer` instances are not added as beans to Spring application context to avoid polluting it with test-related infrastructure. Instead, instances are kept in a separate store associated with an application context.
@@ -61,7 +66,7 @@ Note that `WireMockServer` instances are not added as beans to Spring applicatio
 WireMock extensions can be registered independently with each `@ConfigureWireMock`:
 
 ```java
-@ConfigureWireMock(name = "...", property = "...", extensions = { ... })
+@ConfigureWireMock(name = "...", baseUrlProperties = "...", extensions = { ... })
 ```
 
 ### Single vs Multiple Property Injection
@@ -71,9 +76,9 @@ The concept of single property injection can be described as wiring _one_ `WireM
 ```java
 @SpringBootTest
 @EnableWireMock({
-    @ConfigureWireMock(name = "foo-service", property = "app.client-apis.foo.base-path"}),
-    @ConfigureWireMock(name = "bar-service", property = "app.client-apis.bar.base-path"}),
-    @ConfigureWireMock(name = "mojo-service", property = "app.client-apis.mojo.base-path"})
+    @ConfigureWireMock(name = "foo-service", baseUrlProperties = "app.client-apis.foo.base-path"}),
+    @ConfigureWireMock(name = "bar-service", baseUrlProperties = "app.client-apis.bar.base-path"}),
+    @ConfigureWireMock(name = "mojo-service", baseUrlProperties = "app.client-apis.mojo.base-path"})
 })
 class AppIT { 
     @InjectWireMock("foo-service")
@@ -95,7 +100,7 @@ The concept of multiple property injection can be described as wiring _one_ `Wir
 ```java
 @SpringBootTest
 @EnableWireMock({
-    @ConfigureWireMock(name = "services", properties = {
+    @ConfigureWireMock(name = "services", baseUrlProperties = {
         "app.client-apis.foo.base-path",
         "app.client-apis.bar.base-path",
         "app.client-apis.mojo.base-path"})
@@ -123,7 +128,7 @@ By default, each `WireMockServer` is configured to load mapping files from a cla
 It can be changed with setting `stubLocation` on `@ConfigureWireMock`:
 
 ```java
-@ConfigureWireMock(name = "...", property = "...", stubLocation = "my-stubs")
+@ConfigureWireMock(name = "...", baseUrlProperties = "...", stubLocation = "my-stubs")
 ```
 
 ## 🙏 Credits
