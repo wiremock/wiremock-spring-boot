@@ -64,9 +64,9 @@ public class NestedClassWireMockSpringExtensionTest {
     }
 
     @Test
-    void doesNotSetPropertyWhenNotProvided(
+    void setsDefaultPropertiesWhenNotProvided(
         @InjectWireMock("noproperty-service") final WireMockServer wireMockServer) {
-      assertThat(wireMockServer).as("creates WireMock instance").isNotNull();
+      this.assertWireMockServer(wireMockServer, "wiremock.server.baseUrl", "wiremock.server.port");
     }
 
     private void assertWireMockServer(

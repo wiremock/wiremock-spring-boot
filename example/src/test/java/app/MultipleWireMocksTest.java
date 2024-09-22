@@ -21,7 +21,7 @@ import org.wiremock.spring.InjectWireMock;
   @ConfigureWireMock(name = "user-client", baseUrlProperties = "user-client.url"),
   @ConfigureWireMock(name = "todo-service", baseUrlProperties = "todo-client.url")
 })
-class TodoControllerTests {
+class MultipleWireMocksTest {
 
   @InjectWireMock("todo-service")
   private WireMockServer todoService;
