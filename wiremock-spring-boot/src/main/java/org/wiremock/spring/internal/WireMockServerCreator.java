@@ -1,4 +1,4 @@
-package org.wiremock.spring;
+package org.wiremock.spring.internal;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
+import org.wiremock.spring.ConfigureWireMock;
+import org.wiremock.spring.WireMockConfigurationCustomizer;
 
 public class WireMockServerCreator {
   private final Logger logger;

@@ -1,4 +1,4 @@
-package org.wiremock.spring;
+package org.wiremock.spring.internal;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import java.lang.annotation.Annotation;
@@ -10,10 +10,11 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
+import org.wiremock.spring.InjectWireMock;
 
 /**
- * JUnit 5 extension that sets {@link WireMockServer} instances previously registered with {@link
- * ConfigureWireMock} on test class fields.
+ * JUnit 5 extension that sets {@link com.github.tomakehurst.wiremock.WireMockServer} instances
+ * previously registered with {@link org.wiremock.spring.ConfigureWireMock} on test class fields.
  *
  * @author Maciej Walkowiak
  */

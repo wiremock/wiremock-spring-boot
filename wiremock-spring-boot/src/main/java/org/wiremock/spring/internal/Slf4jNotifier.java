@@ -1,4 +1,4 @@
-package org.wiremock.spring;
+package org.wiremock.spring.internal;
 
 import com.github.tomakehurst.wiremock.common.Notifier;
 import org.slf4j.Logger;

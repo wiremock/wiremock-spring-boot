@@ -1,4 +1,4 @@
-package org.wiremock.spring;
+package org.wiremock.spring.internal;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import java.util.Collection;

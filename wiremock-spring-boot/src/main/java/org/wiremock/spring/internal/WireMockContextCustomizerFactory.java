@@ -1,4 +1,4 @@
-package org.wiremock.spring;
+package org.wiremock.spring.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +8,8 @@ import org.springframework.test.context.ContextConfigurationAttributes;
 import org.springframework.test.context.ContextCustomizer;
 import org.springframework.test.context.ContextCustomizerFactory;
 import org.springframework.test.context.TestContextAnnotationUtils;
+import org.wiremock.spring.ConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
 
 /**
  * Creates {@link WireMockContextCustomizer} for test classes annotated with {@link EnableWireMock}.
