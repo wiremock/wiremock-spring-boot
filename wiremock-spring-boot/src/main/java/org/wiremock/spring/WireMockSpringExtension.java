@@ -25,7 +25,6 @@ public class WireMockSpringExtension implements BeforeEachCallback, ParameterRes
     Store.INSTANCE.findAllInstances(extensionContext).forEach(WireMockServer::resetAll);
 
     // inject properties into test class fields
-    injectWireMockInstances(extensionContext, WireMock.class, WireMock::value);
     injectWireMockInstances(extensionContext, InjectWireMock.class, InjectWireMock::value);
   }
 
@@ -55,18 +54,14 @@ public class WireMockSpringExtension implements BeforeEachCallback, ParameterRes
   public boolean supportsParameter(
       final ParameterContext parameterContext, final ExtensionContext extensionContext) {
     return parameterContext.getParameter().getType() == WireMockServer.class
-        && (parameterContext.isAnnotated(WireMock.class)
-            || parameterContext.isAnnotated(InjectWireMock.class));
+        && (parameterContext.isAnnotated(InjectWireMock.class));
   }
 
   @Override
   public Object resolveParameter(
       final ParameterContext parameterContext, final ExtensionContext extensionContext) {
     final String wireMockServerName =
-        parameterContext
-            .findAnnotation(WireMock.class)
-            .map(WireMock::value)
-            .orElseGet(() -> parameterContext.findAnnotation(InjectWireMock.class).get().value());
+        parameterContext.findAnnotation(InjectWireMock.class).get().value();
     return Store.INSTANCE.findRequiredWireMockInstance(extensionContext, wireMockServerName);
   }
 }

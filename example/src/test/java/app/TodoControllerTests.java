@@ -17,8 +17,8 @@ import org.wiremock.spring.InjectWireMock;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableWireMock({
-  @ConfigureWireMock(name = "user-client", property = "user-client.url"),
-  @ConfigureWireMock(name = "todo-service", property = "todo-client.url")
+  @ConfigureWireMock(name = "user-client", baseUrlProperties = "user-client.url"),
+  @ConfigureWireMock(name = "todo-service", baseUrlProperties = "todo-client.url")
 })
 class TodoControllerTests {
 
@@ -32,41 +32,39 @@ class TodoControllerTests {
 
   @Test
   void returnsTodos() {
-    todoService.stubFor(
+    this.todoService.stubFor(
         get("/")
             .willReturn(
                 aResponse()
                     .withHeader("Content-Type", "application/json")
                     .withBody(
                         """
-                        [
-                            { "id": 1, "userId": 1, "title": "my todo" },
-                            { "id": 2, "userId": 2, "title": "my todo2" }
-                        ]
-                        """)));
+						[
+						    { "id": 1, "userId": 1, "title": "my todo" },
+						    { "id": 2, "userId": 2, "title": "my todo2" }
+						]
+						""")));
 
-    userService.stubFor(
+    this.userService.stubFor(
         get("/1")
             .willReturn(
                 aResponse()
                     .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        """
-                        { "id": 1, "name": "Amy" }
-                        """)));
+                    .withBody("""
+						{ "id": 1, "name": "Amy" }
+						""")));
 
-    userService.stubFor(
+    this.userService.stubFor(
         get("/2")
             .willReturn(
                 aResponse()
                     .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        """
-                        { "id": 2, "name": "John" }
-                        """)));
+                    .withBody("""
+						{ "id": 2, "name": "John" }
+						""")));
 
-    ResponseEntity<TodoController.TodoDTO[]> response =
-        restTemplate.getForEntity("/", TodoController.TodoDTO[].class);
+    final ResponseEntity<TodoController.TodoDTO[]> response =
+        this.restTemplate.getForEntity("/", TodoController.TodoDTO[].class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).hasSize(2);

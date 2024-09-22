@@ -13,7 +13,7 @@ import org.wiremock.spring.EnableWireMock;
 import org.wiremock.spring.InjectWireMock;
 
 @SpringBootTest
-@EnableWireMock({@ConfigureWireMock(name = "user-client", property = "user-client.url")})
+@EnableWireMock({@ConfigureWireMock(name = "user-client", baseUrlProperties = "user-client.url")})
 class UserClientTests {
 
   @Autowired private UserClient userClient;
@@ -23,16 +23,15 @@ class UserClientTests {
 
   @Test
   void usesJavaStubbing() {
-    wiremock.stubFor(
+    this.wiremock.stubFor(
         get("/2")
             .willReturn(
                 aResponse()
                     .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        """
-                        { "id": 2, "name": "Amy" }
-                        """)));
-    User user = userClient.findOne(2L);
+                    .withBody("""
+						{ "id": 2, "name": "Amy" }
+						""")));
+    final User user = this.userClient.findOne(2L);
     assertThat(user).isNotNull();
     assertThat(user.id()).isEqualTo(2L);
     assertThat(user.name()).isEqualTo("Amy");
@@ -40,7 +39,7 @@ class UserClientTests {
 
   @Test
   void usesStubFiles() {
-    User user = userClient.findOne(1L);
+    final User user = this.userClient.findOne(1L);
     assertThat(user).isNotNull();
     assertThat(user.id()).isEqualTo(1L);
     assertThat(user.name()).isEqualTo("Jenna");

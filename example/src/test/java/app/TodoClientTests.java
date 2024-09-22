@@ -16,7 +16,7 @@ import org.wiremock.spring.EnableWireMock;
 @EnableWireMock({
   @ConfigureWireMock(
       name = "todo-client",
-      property = "todo-client.url",
+      baseUrlProperties = "todo-client.url",
       stubLocation = "custom-location")
 })
 class TodoClientTests {
@@ -36,17 +36,17 @@ class TodoClientTests {
                     .withHeader("Content-Type", "application/json")
                     .withBody(
                         """
-                        [
-                            { "id": 1, "userId": 1, "title": "my todo" },
-                            { "id": 2, "userId": 1, "title": "my todo2" }
-                        ]
-                        """)));
-    assertThat(todoClient.findAll()).isNotNull().hasSize(2);
+				[
+				    { "id": 1, "userId": 1, "title": "my todo" },
+				    { "id": 2, "userId": 1, "title": "my todo2" }
+				]
+				""")));
+    assertThat(this.todoClient.findAll()).isNotNull().hasSize(2);
   }
 
   @Test
   void usesStubFilesFromCustomLocation() {
-    List<Todo> todos = todoClient.findAll();
+    final List<Todo> todos = this.todoClient.findAll();
     assertThat(todos).isNotNull().hasSize(2);
     assertThat(todos.get(0))
         .satisfies(

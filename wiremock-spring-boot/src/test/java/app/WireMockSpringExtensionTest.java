@@ -17,20 +17,20 @@ import org.wiremock.spring.InjectWireMock;
 @EnableWireMock({
   @ConfigureWireMock(
       name = "user-service",
-      property = "user-service.url",
-      portProperty = "user-service.port"),
+      baseUrlProperties = "user-service.url",
+      portProperties = "user-service.port"),
   @ConfigureWireMock(
       name = "todo-service",
-      property = "todo-service.url",
-      portProperty = "todo-service.port"),
+      baseUrlProperties = "todo-service.url",
+      portProperties = "todo-service.port"),
   @ConfigureWireMock(name = "noproperty-service")
 })
 public class WireMockSpringExtensionTest {
 
   @SpringBootTest(classes = WireMockSpringExtensionTest.AppConfiguration.class)
   @EnableWireMock({
-    @ConfigureWireMock(name = "user-service", property = "user-service.url"),
-    @ConfigureWireMock(name = "todo-service", property = "todo-service.url"),
+    @ConfigureWireMock(name = "user-service", baseUrlProperties = "user-service.url"),
+    @ConfigureWireMock(name = "todo-service", baseUrlProperties = "todo-service.url"),
     @ConfigureWireMock(name = "noproperty-service")
   })
   @Nested
@@ -43,26 +43,26 @@ public class WireMockSpringExtensionTest {
 
     @Test
     void createsWiremockWithClassLevelConfigureWiremock(
-        @InjectWireMock("user-service") WireMockServer wireMockServer) {
-      assertWireMockServer(wireMockServer, "user-service.url");
+        @InjectWireMock("user-service") final WireMockServer wireMockServer) {
+      this.assertWireMockServer(wireMockServer, "user-service.url");
     }
 
     @Test
     void createsWiremockWithFieldLevelConfigureWiremock() {
-      assertWireMockServer(todoWireMockServer, "todo-service.url");
+      this.assertWireMockServer(this.todoWireMockServer, "todo-service.url");
     }
 
     @Test
     void doesNotSetPropertyWhenNotProvided(
-        @InjectWireMock("noproperty-service") WireMockServer wireMockServer) {
+        @InjectWireMock("noproperty-service") final WireMockServer wireMockServer) {
       assertThat(wireMockServer).as("inject wiremock sets null when not configured").isNotNull();
     }
 
-    private void assertWireMockServer(WireMockServer wireMockServer, String property) {
+    private void assertWireMockServer(final WireMockServer wireMockServer, final String property) {
       assertThat(wireMockServer).as("creates WireMock instance").isNotNull();
       assertThat(wireMockServer.baseUrl()).as("WireMock baseUrl is set").isNotNull();
       assertThat(wireMockServer.port()).as("sets random port").isNotZero();
-      assertThat(environment.getProperty(property))
+      assertThat(this.environment.getProperty(property))
           .as("sets Spring property")
           .isEqualTo(wireMockServer.baseUrl());
     }
@@ -72,11 +72,11 @@ public class WireMockSpringExtensionTest {
   @EnableWireMock({
     @ConfigureWireMock(
         name = "user-service",
-        properties = {"user-service.url", "todo-service.url"}),
+        baseUrlProperties = {"user-service.url", "todo-service.url"},
+        portProperties = {"user-service.port", "user-service.port"}),
     @ConfigureWireMock(
         name = "mojo-service",
-        property = "mojo-service.url",
-        properties = {"other-service.url"})
+        baseUrlProperties = {"mojo-service.url"})
   })
   @Nested
   class MultiplePropertiesBindingTest {
@@ -91,14 +91,15 @@ public class WireMockSpringExtensionTest {
 
     @Test
     void bindsUrlToMultipleProperties() {
-      assertThat(environment.getProperty("user-service.url"))
-          .isEqualTo(userServiceWireMockServer.baseUrl());
-      assertThat(environment.getProperty("todo-service.url"))
-          .isEqualTo(todoWireMockServer.baseUrl());
-      // single property binding takes precedence over multiple properties binding
-      assertThat(environment.getProperty("mojo-service.url"))
-          .isEqualTo(mojoServiceWireMockServer.baseUrl());
-      assertThat(environment.getProperty("other-service.url")).isNull();
+      assertThat(this.environment.getProperty("user-service.url"))
+          .isEqualTo(this.userServiceWireMockServer.baseUrl());
+      assertThat(Integer.parseInt(this.environment.getProperty("user-service.port")))
+          .isEqualTo(this.userServiceWireMockServer.port());
+
+      assertThat(this.environment.getProperty("todo-service.url"))
+          .isEqualTo(WireMockSpringExtensionTest.this.todoWireMockServer.baseUrl());
+      assertThat(Integer.parseInt(this.environment.getProperty("todo-service.port")))
+          .isEqualTo(WireMockSpringExtensionTest.this.todoWireMockServer.port());
     }
   }
 
@@ -112,30 +113,32 @@ public class WireMockSpringExtensionTest {
 
   @Test
   void createsWiremockWithClassLevelConfigureWiremock(
-      @InjectWireMock("user-service") WireMockServer wireMockServer) {
-    assertWireMockServer(wireMockServer, "user-service.url", "user-service.port");
+      @InjectWireMock("user-service") final WireMockServer wireMockServer) {
+    this.assertWireMockServer(wireMockServer, "user-service.url", "user-service.port");
   }
 
   @Test
   void createsWiremockWithFieldLevelConfigureWiremock() {
-    assertWireMockServer(todoWireMockServer, "todo-service.url", "todo-service.port");
+    this.assertWireMockServer(this.todoWireMockServer, "todo-service.url", "todo-service.port");
   }
 
   @Test
   void doesNotSetPropertyWhenNotProvided(
-      @InjectWireMock("noproperty-service") WireMockServer wireMockServer) {
+      @InjectWireMock("noproperty-service") final WireMockServer wireMockServer) {
     assertThat(wireMockServer).as("creates WireMock instance").isNotNull();
   }
 
   private void assertWireMockServer(
-      WireMockServer wireMockServer, String property, String portProperty) {
+      final WireMockServer wireMockServer, final String property, final String portProperty) {
     assertThat(wireMockServer).as("creates WireMock instance").isNotNull();
     assertThat(wireMockServer.baseUrl()).as("WireMock baseUrl is set").isNotNull();
     assertThat(wireMockServer.port()).as("sets random port").isNotZero();
-    assertThat(Integer.valueOf(environment.getProperty(portProperty)))
+    final String portPropertyValue = this.environment.getProperty(portProperty);
+    assertThat(portPropertyValue).isNotNull();
+    assertThat(Integer.valueOf(portPropertyValue))
         .as("sets Spring port property")
         .isEqualTo(wireMockServer.port());
-    assertThat(environment.getProperty(property))
+    assertThat(this.environment.getProperty(property))
         .as("sets Spring property")
         .isEqualTo(wireMockServer.baseUrl());
   }

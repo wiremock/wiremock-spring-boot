@@ -14,7 +14,7 @@ import org.wiremock.spring.InjectWireMock;
 @EnableWireMock({
   @ConfigureWireMock(
       name = "user-client",
-      property = "user-client.url",
+      baseUrlProperties = "user-client.url",
       stubLocation = "src/test/wiremock-mappings/user-client",
       stubLocationOnClasspath = false)
 })
@@ -27,7 +27,7 @@ class StubsInDirectoryTests {
 
   @Test
   void usesStubFiles() {
-    User user = userClient.findOne(1L);
+    final User user = this.userClient.findOne(1L);
     assertThat(user).isNotNull();
   }
 }

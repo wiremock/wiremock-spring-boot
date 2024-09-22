@@ -24,12 +24,12 @@ import org.springframework.test.util.TestSocketUtils;
 @EnableWireMock({
   @ConfigureWireMock(
       name = "user-service",
-      property = "user-service.url",
+      baseUrlProperties = "user-service.url",
       configurationCustomizers =
           WireMockConfigurationCustomizerTest.SampleConfigurationCustomizer.class),
   @ConfigureWireMock(
       name = "todo-service",
-      property = "todo-service.url",
+      baseUrlProperties = "todo-service.url",
       configurationCustomizers =
           WireMockConfigurationCustomizerTest.SampleConfigurationCustomizer.class),
 })
@@ -41,7 +41,8 @@ class WireMockConfigurationCustomizerTest {
   static class SampleConfigurationCustomizer implements WireMockConfigurationCustomizer {
 
     @Override
-    public void customize(WireMockConfiguration configuration, ConfigureWireMock options) {
+    public void customize(
+        final WireMockConfiguration configuration, final ConfigureWireMock options) {
       if (options.name().equals("user-service")) {
         configuration.port(USER_SERVICE_PORT);
       } else {
@@ -61,23 +62,24 @@ class WireMockConfigurationCustomizerTest {
 
   @Test
   void appliesConfigurationCustomizer() {
-    assertThat(userService.port()).isEqualTo(USER_SERVICE_PORT);
-    assertThat(todoService.port()).isEqualTo(TODO_SERVICE_PORT);
+    assertThat(this.userService.port()).isEqualTo(USER_SERVICE_PORT);
+    assertThat(this.todoService.port()).isEqualTo(TODO_SERVICE_PORT);
   }
 
   @Test
-  void outputsWireMockLogs(CapturedOutput capturedOutput) throws IOException, InterruptedException {
-    userService.stubFor(
+  void outputsWireMockLogs(final CapturedOutput capturedOutput)
+      throws IOException, InterruptedException {
+    this.userService.stubFor(
         get(urlEqualTo("/test"))
             .willReturn(
                 aResponse().withHeader("Content-Type", "text/plain").withBody("Hello World!")));
 
-    HttpClient httpClient = HttpClient.newHttpClient();
-    HttpResponse<String> response =
+    final HttpClient httpClient = HttpClient.newHttpClient();
+    final HttpResponse<String> response =
         httpClient.send(
             HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create("http://localhost:" + userService.port() + "/test"))
+                .uri(URI.create("http://localhost:" + this.userService.port() + "/test"))
                 .build(),
             HttpResponse.BodyHandlers.ofString());
     assertThat(response.body()).isEqualTo("Hello World!");
