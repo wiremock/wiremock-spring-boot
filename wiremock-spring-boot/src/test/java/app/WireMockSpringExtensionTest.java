@@ -90,7 +90,7 @@ public class WireMockSpringExtensionTest {
         @Test
         void bindsUrlToMultipleProperties() {
             assertThat(environment.getProperty("user-service.url")).isEqualTo(userServiceWireMockServer.baseUrl());
-            assertThat(environment.getProperty("todo-service.url")).isEqualTo(userServiceWireMockServer.baseUrl());
+            assertThat(environment.getProperty("todo-service.url")).isEqualTo(todoWireMockServer.baseUrl());
             // single property binding takes precedence over multiple properties binding
             assertThat(environment.getProperty("mojo-service.url")).isEqualTo(mojoServiceWireMockServer.baseUrl());
             assertThat(environment.getProperty("other-service.url")).isNull();
