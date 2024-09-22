@@ -17,10 +17,10 @@ import org.springframework.test.context.TestContextAnnotationUtils;
 public class WireMockContextCustomizerFactory implements ContextCustomizerFactory {
   @Override
   public ContextCustomizer createContextCustomizer(
-      Class<?> testClass, List<ContextConfigurationAttributes> configAttributes) {
+      final Class<?> testClass, final List<ContextConfigurationAttributes> configAttributes) {
     // scan class and all enclosing classes if the test class is @Nested
-    ConfigureWiremockHolder holder = new ConfigureWiremockHolder();
-    parseDefinitions(testClass, holder);
+    final ConfigureWiremockHolder holder = new ConfigureWiremockHolder();
+    this.parseDefinitions(testClass, holder);
 
     if (holder.isEmpty()) {
       return null;
@@ -29,33 +29,33 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
     }
   }
 
-  private void parseDefinitions(Class<?> testClass, ConfigureWiremockHolder parser) {
+  private void parseDefinitions(final Class<?> testClass, final ConfigureWiremockHolder parser) {
     parser.parse(testClass);
     if (TestContextAnnotationUtils.searchEnclosingClass(testClass)) {
-      parseDefinitions(testClass.getEnclosingClass(), parser);
+      this.parseDefinitions(testClass.getEnclosingClass(), parser);
     }
   }
 
   private static class ConfigureWiremockHolder {
     private final List<ConfigureWireMock> annotations = new ArrayList<>();
 
-    void add(ConfigureWireMock[] annotations) {
+    void add(final ConfigureWireMock... annotations) {
       this.annotations.addAll(Arrays.asList(annotations));
     }
 
-    void parse(Class<?> clazz) {
-      EnableWireMock annotation = AnnotationUtils.findAnnotation(clazz, EnableWireMock.class);
+    void parse(final Class<?> clazz) {
+      final EnableWireMock annotation = AnnotationUtils.findAnnotation(clazz, EnableWireMock.class);
       if (annotation != null) {
-        add(annotation.value());
+        this.add(annotation.value());
       }
     }
 
     boolean isEmpty() {
-      return annotations.isEmpty();
+      return this.annotations.isEmpty();
     }
 
     ConfigureWireMock[] asArray() {
-      return annotations.toArray(new ConfigureWireMock[] {});
+      return this.annotations.toArray(new ConfigureWireMock[] {});
     }
   }
 }

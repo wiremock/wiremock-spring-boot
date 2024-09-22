@@ -8,7 +8,6 @@ import java.util.function.Function;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 
@@ -42,7 +41,7 @@ public class WireMockSpringExtension implements BeforeEachCallback, ParameterRes
           AnnotationSupport.findAnnotatedFields(testInstance.getClass(), annotation);
       for (final Field annotatedField : annotatedFields) {
         final T annotationValue = annotatedField.getAnnotation(annotation);
-        annotatedField.setAccessible(true);
+        annotatedField.setAccessible(true); // NOPMD
 
         final WireMockServer wiremock =
             Store.INSTANCE.findRequiredWireMockInstance(
@@ -54,8 +53,7 @@ public class WireMockSpringExtension implements BeforeEachCallback, ParameterRes
 
   @Override
   public boolean supportsParameter(
-      final ParameterContext parameterContext, final ExtensionContext extensionContext)
-      throws ParameterResolutionException {
+      final ParameterContext parameterContext, final ExtensionContext extensionContext) {
     return parameterContext.getParameter().getType() == WireMockServer.class
         && (parameterContext.isAnnotated(WireMock.class)
             || parameterContext.isAnnotated(InjectWireMock.class));
@@ -63,10 +61,7 @@ public class WireMockSpringExtension implements BeforeEachCallback, ParameterRes
 
   @Override
   public Object resolveParameter(
-      final ParameterContext parameterContext, final ExtensionContext extensionContext)
-      throws ParameterResolutionException {
-    System.out.println(
-        "!!!!!!!!!!! Resolving parameter " + parameterContext.getParameter().getName());
+      final ParameterContext parameterContext, final ExtensionContext extensionContext) {
     final String wireMockServerName =
         parameterContext
             .findAnnotation(WireMock.class)

@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Notifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -17,13 +18,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
-import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextCustomizer;
 import org.springframework.test.context.MergedContextConfiguration;
 
 /**
  * Attaches properties with urls pointing to {@link WireMockServer} instances to the Spring {@link
- * Environment}.
+ * org.springframework.core.env.Environment}.
  *
  * @author Maciej Walkowiak
  */
@@ -37,7 +37,7 @@ public class WireMockContextCustomizer implements ContextCustomizer {
    *
    * @param configurations the configurations
    */
-  public WireMockContextCustomizer(List<ConfigureWireMock> configurations) {
+  public WireMockContextCustomizer(final List<ConfigureWireMock> configurations) {
     this.configuration = configurations;
   }
 
@@ -46,31 +46,33 @@ public class WireMockContextCustomizer implements ContextCustomizer {
    *
    * @param configurations the configurations
    */
-  public WireMockContextCustomizer(ConfigureWireMock[] configurations) {
+  public WireMockContextCustomizer(final ConfigureWireMock... configurations) {
     this(Arrays.asList(configurations));
   }
 
   @Override
   public void customizeContext(
-      ConfigurableApplicationContext context, MergedContextConfiguration mergedConfig) {
-    for (ConfigureWireMock configureWiremock : configuration) {
-      WireMockServer wireMockServer = resolveOrCreateWireMockServer(context, configureWiremock);
-      if (configuration.size() == 1) {
+      final ConfigurableApplicationContext context, final MergedContextConfiguration mergedConfig) {
+    for (final ConfigureWireMock configureWiremock : this.configuration) {
+      final WireMockServer wireMockServer =
+          this.resolveOrCreateWireMockServer(context, configureWiremock);
+      if (this.configuration.size() == 1) {
         WireMock.configureFor(wireMockServer.port());
       }
     }
   }
 
   private WireMockServer resolveOrCreateWireMockServer(
-      ConfigurableApplicationContext context, ConfigureWireMock options) {
-    WireMockServer wireMockServer = Store.INSTANCE.findWireMockInstance(context, options.name());
+      final ConfigurableApplicationContext context, final ConfigureWireMock options) {
+    final WireMockServer wireMockServer =
+        Store.INSTANCE.findWireMockInstance(context, options.name());
 
     if (wireMockServer == null) {
       // create & start wiremock server
-      WireMockConfiguration serverOptions =
+      final WireMockConfiguration serverOptions =
           options().port(options.port()).notifier(new Slf4jNotifier(true));
       if (options.stubLocationOnClasspath()) {
-        serverOptions.usingFilesUnderClasspath(resolveStubLocation(options));
+        serverOptions.usingFilesUnderClasspath(this.resolveStubLocation(options));
       } else {
         serverOptions.usingFilesUnderDirectory(options.stubLocation());
       }
@@ -86,7 +88,7 @@ public class WireMockContextCustomizer implements ContextCustomizer {
           options.name(),
           serverOptions.portNumber());
 
-      WireMockServer newServer = new WireMockServer(serverOptions);
+      final WireMockServer newServer = new WireMockServer(serverOptions);
       newServer.start();
 
       LOGGER.info("Started WireMockServer with name '{}':{}", options.name(), newServer.baseUrl());
@@ -115,12 +117,12 @@ public class WireMockContextCustomizer implements ContextCustomizer {
       }
       propertyNames.forEach(
           propertyName -> {
-            String property = propertyName + "=" + newServer.baseUrl();
+            final String property = propertyName + "=" + newServer.baseUrl();
             LOGGER.debug("Adding property '{}' to Spring application context", property);
             TestPropertyValues.of(property).applyTo(context.getEnvironment());
           });
 
-      String portProperty = options.portProperty() + "=" + newServer.port();
+      final String portProperty = options.portProperty() + "=" + newServer.port();
       LOGGER.debug("Adding property '{}' to Spring application context", portProperty);
       TestPropertyValues.of(portProperty).applyTo(context.getEnvironment());
       return newServer;
@@ -131,14 +133,15 @@ public class WireMockContextCustomizer implements ContextCustomizer {
     return wireMockServer;
   }
 
+  @SuppressFBWarnings
   private static void applyCustomizers(
-      ConfigureWireMock options, WireMockConfiguration serverOptions) {
-    for (Class<? extends WireMockConfigurationCustomizer> customizer :
+      final ConfigureWireMock options, final WireMockConfiguration serverOptions) {
+    for (final Class<? extends WireMockConfigurationCustomizer> customizer :
         options.configurationCustomizers()) {
       try {
         ReflectionUtils.newInstance(customizer).customize(serverOptions, options);
-      } catch (Exception e) {
-        if (e instanceof NoSuchMethodException) {
+      } catch (final Exception e) {
+        if (e instanceof NoSuchMethodException) { // NOPMD
           LOGGER.error("Customizer {} must have a no-arg constructor", customizer, e);
         }
         throw e;
@@ -146,23 +149,27 @@ public class WireMockContextCustomizer implements ContextCustomizer {
     }
   }
 
-  private String resolveStubLocation(ConfigureWireMock options) {
+  private String resolveStubLocation(final ConfigureWireMock options) {
     return StringUtils.isBlank(options.stubLocation())
         ? "wiremock/" + options.name()
         : options.stubLocation();
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    WireMockContextCustomizer that = (WireMockContextCustomizer) o;
-    return Objects.equals(configuration, that.configuration);
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    final WireMockContextCustomizer that = (WireMockContextCustomizer) o;
+    return Objects.equals(this.configuration, that.configuration);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(configuration);
+    return Objects.hash(this.configuration);
   }
 
   // ported from:
@@ -173,24 +180,24 @@ public class WireMockContextCustomizer implements ContextCustomizer {
 
     private final boolean verbose;
 
-    Slf4jNotifier(boolean verbose) {
+    Slf4jNotifier(final boolean verbose) {
       this.verbose = verbose;
     }
 
     @Override
-    public void info(String message) {
-      if (verbose) {
+    public void info(final String message) {
+      if (this.verbose) {
         log.info(message);
       }
     }
 
     @Override
-    public void error(String message) {
+    public void error(final String message) {
       log.error(message);
     }
 
     @Override
-    public void error(String message, Throwable t) {
+    public void error(final String message, final Throwable t) {
       log.error(message, t);
     }
   }
