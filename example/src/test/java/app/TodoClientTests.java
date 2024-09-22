@@ -1,57 +1,64 @@
 package app;
 
-import java.util.List;
-
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
-import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.wiremock.wiremock.spring.ConfigureWireMock;
+import org.wiremock.wiremock.spring.EnableWireMock;
+
 @SpringBootTest
 @EnableWireMock({
-        @ConfigureWireMock(name = "todo-client", property = "todo-client.url", stubLocation = "custom-location")
+  @ConfigureWireMock(
+      name = "todo-client",
+      property = "todo-client.url",
+      stubLocation = "custom-location")
 })
 class TodoClientTests {
 
-    @Autowired
-    private TodoClient todoClient;
+  @Autowired private TodoClient todoClient;
 
-    @Test
-    void usesJavaStubbing() {
-        /**
-         * If there is only one WireMock configured, you can access WireMock in this static way.
-         * If there are several WireMocks configured, you have to use InjectWireMock. 
-         */
-        WireMock.stubFor(get("/").willReturn(aResponse()
-                .withHeader("Content-Type", "application/json")
-                .withBody("""
+  @Test
+  void usesJavaStubbing() {
+    /**
+     * If there is only one WireMock configured, you can access WireMock in this static way. If
+     * there are several WireMocks configured, you have to use InjectWireMock.
+     */
+    WireMock.stubFor(
+        get("/")
+            .willReturn(
+                aResponse()
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
                         [
                             { "id": 1, "userId": 1, "title": "my todo" },
                             { "id": 2, "userId": 1, "title": "my todo2" }
                         ]
                         """)));
-        assertThat(todoClient.findAll()).isNotNull().hasSize(2);
-    }
+    assertThat(todoClient.findAll()).isNotNull().hasSize(2);
+  }
 
-    @Test
-    void usesStubFilesFromCustomLocation() {
-        List<Todo> todos = todoClient.findAll();
-        assertThat(todos).isNotNull().hasSize(2);
-        assertThat(todos.get(0)).satisfies(todo -> {
-            assertThat(todo.id()).isEqualTo(1);
-            assertThat(todo.title()).isEqualTo("custom location todo 1");
-        });
-        assertThat(todos.get(1)).satisfies(todo -> {
-            assertThat(todo.id()).isEqualTo(2);
-            assertThat(todo.title()).isEqualTo("custom location todo 2");
-        });
-    }
-
+  @Test
+  void usesStubFilesFromCustomLocation() {
+    List<Todo> todos = todoClient.findAll();
+    assertThat(todos).isNotNull().hasSize(2);
+    assertThat(todos.get(0))
+        .satisfies(
+            todo -> {
+              assertThat(todo.id()).isEqualTo(1);
+              assertThat(todo.title()).isEqualTo("custom location todo 1");
+            });
+    assertThat(todos.get(1))
+        .satisfies(
+            todo -> {
+              assertThat(todo.id()).isEqualTo(2);
+              assertThat(todo.title()).isEqualTo("custom location todo 2");
+            });
+  }
 }

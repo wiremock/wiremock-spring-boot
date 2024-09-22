@@ -1,0 +1,80 @@
+name: Gradle CI
+
+on: [workflow_dispatch, workflow_call, push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    strategy:
+      #max-parallel: 3
+      fail-fast: false
+      matrix:
+        java: [ '17', '21' ]
+        os: [ 'ubuntu-latest' ]
+    name: Java ${{ matrix.Java }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+      - name: "Setup Git"
+        shell: bash
+        run: |
+          git branch -a
+          for branch in $(
+            git branch -a \
+              | grep '^\s*remotes' \
+              | egrep --invert-match '(:?HEAD|remotes/pull/[0-9]+/merge)$' \
+              | sed -e "s/^.*remotes\/origin\///"
+          ); do
+              echo setting up $branch
+              git checkout $branch
+              git checkout -
+          done
+          git branch -a
+          git remote remove origin
+          git remote add origin git@github.com:${GITHUB_REPOSITORY}.git
+          git remote -v
+      - name: Setup java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: ${{ matrix.java }}
+      - name: prepare Gradle
+        shell: bash
+        run: |
+          mkdir -p ~/.gradle && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
+      - name: Check formatting
+        shell: bash
+        run: |
+          ./gradlew --no-daemon spotlessJavaCheck
+      - name: "Gradle build"
+        shell: bash
+        run: |
+          java -version
+          javac -version
+          ./gradlew --no-daemon build
+
+      - name: Transorm static code analysis to SARIF
+        if: ${{ (success() || failure()) }}
+        run: |
+          npx violations-command-line -sarif sarif-report.json \
+          -v "FINDBUGS" "." ".*build/reports/spotbugs/main\.xml$" "Spotbugs" \
+          -v "CHECKSTYLE" "." ".*build/reports/checkstyle/main\.xml$" "Checkstyle" \
+          -v "PMD" "." ".*build/reports/pmd/main\.xml$" "PMD" \
+          -v "JUNIT" "." ".*/build/test-results/test/TEST-.*\.xml$" "JUNIT"
+      - uses: github/codeql-action/upload-sarif@v3
+        if: ${{ (success() || failure()) }}
+        with:
+          sarif_file: sarif-report.json
+          category: violations-lib
+
+      - name: Publish Build
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: build-${{ github.run_number }}-${{ matrix.java }}
+          path: ${{ github.workspace }}

@@ -1,4 +1,3 @@
 package app;
 
-public record User(Long id, String name) {
-}
+public record User(Long id, String name) {}

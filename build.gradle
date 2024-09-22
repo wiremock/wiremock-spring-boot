@@ -1,0 +1,56 @@
+apply plugin: 'java-library'
+
+buildscript {
+  repositories {
+    mavenCentral()
+    mavenLocal()
+  }
+  dependencies {
+    classpath 'se.bjurr.gradle:gradle-scripts:2.+'
+  }
+}
+
+allprojects {
+  apply plugin: 'java-library'
+
+  project.ext.buildConfig = [
+    repoType: "DEFAULT",
+    sourceCompatibility: 17,
+    targetCompatibility: 17,
+    staticCodeAnalysis: [
+      maxViolations: 11
+    ]
+  ]
+  apply from: project.buildscript.classLoader.getResource('main.gradle').toURI()
+
+  test {
+    useJUnitPlatform()
+  }
+
+  dependencies {
+    testImplementation "org.springframework.boot:spring-boot-starter-test:3.3.4"
+    testImplementation 'org.assertj:assertj-core:3.25.3'
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.junit.platform:junit-platform-launcher'
+  }
+}
+
+project('wiremock-spring-boot', {
+  dependencies {
+    api 'org.wiremock:wiremock-standalone:3.9.1'
+    api "org.springframework.boot:spring-boot-test:3.3.4"
+    api "org.springframework:spring-test:6.1.13"
+    api "org.slf4j:slf4j-api:2.0.16"
+	api "org.junit.jupiter:junit-jupiter-api:5.11.0"
+  }
+})
+
+project('example', {
+  dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-web:3.3.4"
+    implementation "org.springframework.boot:spring-boot-starter-webflux:3.3.4"
+
+    testImplementation project(':wiremock-spring-boot')
+  }
+})

@@ -15,11 +15,15 @@ Add the dependency to `wiremock-spring-boot`:
 
 ```xml
 <dependency>
-    <groupId>com.maciejwalkowiak.spring</groupId>
+    <groupId>org.wiremock.spring</groupId>
     <artifactId>wiremock-spring-boot</artifactId>
-    <version>2.1.2</version>
+    <version>X</version>
     <scope>test</scope>
 </dependency>
+```
+
+```groovy
+testImplementation "org.wiremock.spring:wiremock-spring-boot:X"
 ```
 
 ## ✨ How to use
@@ -122,12 +126,9 @@ It can be changed with setting `stubLocation` on `@ConfigureWireMock`:
 @ConfigureWireMock(name = "...", property = "...", stubLocation = "my-stubs")
 ```
 
-Sounds good? Consider [❤️ Sponsoring](https://github.com/sponsors/maciejwalkowiak) the project! Thank you!
-
 ## 🙏 Credits
 
-I looked into and learned few concepts from following projects and resources during the development of this project: 
-
+- [Wiremock Spring Boot](https://github.com/maciejwalkowiak/wiremock-spring-boot) (this is based on that project!)
 - [Spring Cloud Contract WireMock](https://github.com/spring-cloud/spring-cloud-contract/blob/main/spring-cloud-contract-wiremock)
 - [Spring Boot WireMock](https://github.com/skuzzle/spring-boot-wiremock)
 - [Spring Boot Integration Tests With WireMock and JUnit 5](https://rieckpil.de/spring-boot-integration-tests-with-wiremock-and-junit-5/) by [Philip Riecks](https://twitter.com/rieckpil)

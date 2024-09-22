@@ -1,4 +1,4 @@
-package com.maciejwalkowiak.wiremock.spring;
+package org.wiremock.wiremock.spring;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,7 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Injects WireMock instance previously configured on the class or field level with {@link ConfigureWireMock}.
+ * Injects WireMock instance previously configured on the class or field level with {@link
+ * ConfigureWireMock}.
  *
  * @author Maciej Walkowiak
  */
@@ -14,10 +15,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface InjectWireMock {
 
-    /**
-     * The name of WireMock instance to inject.
-     *
-     * @return the name of WireMock instance to inject.
-     */
-    String value();
+  /**
+   * The name of WireMock instance to inject.
+   *
+   * @return the name of WireMock instance to inject.
+   */
+  String value();
 }

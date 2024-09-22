@@ -1,2 +1,7 @@
+bin
 target/
 .idea
+.vscode
+.settings
+/.gradle/
+build

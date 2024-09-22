@@ -1,11 +1,10 @@
-package com.maciejwalkowiak.wiremock.spring;
+package org.wiremock.wiremock.spring;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
@@ -17,10 +16,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(WireMockSpringExtension.class)
 public @interface EnableWireMock {
-    /**
-     * A list of {@link WireMockServer} configurations. For each configuration a separate instance of {@link WireMockServer} is created.
-     *
-     * @return an array of configurations
-     */
-    ConfigureWireMock[] value() default {};
+  /**
+   * A list of {@link WireMockServer} configurations. For each configuration a separate instance of
+   * {@link WireMockServer} is created.
+   *
+   * @return an array of configurations
+   */
+  ConfigureWireMock[] value() default {};
 }
