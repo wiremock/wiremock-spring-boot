@@ -52,5 +52,6 @@ project('example', {
     implementation "org.springframework.boot:spring-boot-starter-webflux:3.3.4"
 
     testImplementation project(':wiremock-spring-boot')
+    testImplementation 'io.rest-assured:rest-assured:5.5.0'
   }
 })

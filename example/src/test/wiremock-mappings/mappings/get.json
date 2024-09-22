@@ -1,0 +1,10 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/wiremockmappingsmock"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": { "wiremockmappingsmock": "yes" }
+  }
+}

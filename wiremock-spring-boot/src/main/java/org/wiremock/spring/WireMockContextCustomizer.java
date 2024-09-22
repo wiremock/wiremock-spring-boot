@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Notifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -75,17 +76,25 @@ public class WireMockContextCustomizer implements ContextCustomizer {
           options().port(options.port()).notifier(new Slf4jNotifier(true));
       this.configureFilesUnderClasspath(options.filesUnderClasspath(), "/" + options.name())
           .ifPresentOrElse(
-              present -> serverOptions.usingFilesUnderClasspath(present),
+              present -> this.usingFilesUnderClasspath(serverOptions, present),
               () -> {
                 this.configureFilesUnderClasspath(options.filesUnderClasspath(), "")
-                    .ifPresent(present -> serverOptions.usingFilesUnderClasspath(present));
-              });
-      this.configureFilesUnderDirectory(options.filesUnderDirectory(), "/" + options.name())
-          .ifPresentOrElse(
-              present -> serverOptions.usingFilesUnderDirectory(present),
-              () -> {
-                this.configureFilesUnderDirectory(options.filesUnderDirectory(), "")
-                    .ifPresent(present -> serverOptions.usingFilesUnderDirectory(present));
+                    .ifPresentOrElse(
+                        present -> this.usingFilesUnderClasspath(serverOptions, present),
+                        () -> {
+                          this.configureFilesUnderDirectory(
+                                  options.filesUnderDirectory(), "/" + options.name())
+                              .ifPresentOrElse(
+                                  present -> this.usingFilesUnderDirectory(serverOptions, present),
+                                  () -> {
+                                    this.configureFilesUnderDirectory(
+                                            options.filesUnderDirectory(), "")
+                                        .ifPresent(
+                                            present ->
+                                                this.usingFilesUnderDirectory(
+                                                    serverOptions, present));
+                                  });
+                        });
               });
 
       if (options.extensions().length > 0) {
@@ -122,7 +131,7 @@ public class WireMockContextCustomizer implements ContextCustomizer {
           .forEach(
               propertyName -> {
                 final String property = propertyName + "=" + newServer.baseUrl();
-                LOGGER.debug("Adding property '{}' to Spring application context", property);
+                LOGGER.info("Adding property '{}' to Spring application context", property);
                 TestPropertyValues.of(property).applyTo(context.getEnvironment());
               });
 
@@ -132,7 +141,7 @@ public class WireMockContextCustomizer implements ContextCustomizer {
           .forEach(
               propertyName -> {
                 final String property = propertyName + "=" + newServer.port();
-                LOGGER.debug("Adding property '{}' to Spring application context", property);
+                LOGGER.info("Adding property '{}' to Spring application context", property);
                 TestPropertyValues.of(property).applyTo(context.getEnvironment());
               });
 
@@ -144,12 +153,31 @@ public class WireMockContextCustomizer implements ContextCustomizer {
     return wireMockServer;
   }
 
+  private WireMockConfiguration usingFilesUnderClasspath(
+      final WireMockConfiguration serverOptions, final String resource) {
+    LOGGER.info("Serving WireMock mappings from classpath resource: " + resource);
+    return serverOptions.usingFilesUnderClasspath(resource);
+  }
+
+  private WireMockConfiguration usingFilesUnderDirectory(
+      final WireMockConfiguration serverOptions, final String dir) {
+    LOGGER.info("Serving WireMock mappings from directory: " + dir);
+    return serverOptions.usingFilesUnderDirectory(dir);
+  }
+
   private Optional<String> configureFilesUnderClasspath(
       final String[] filesUnderClasspath, final String suffix) {
     final List<String> alternatives =
         List.of(filesUnderClasspath).stream()
             .map(it -> it + suffix)
-            .filter(it -> WireMockContextCustomizer.class.getResource("/" + it) != null)
+            .filter(
+                it -> {
+                  final String name = "/" + it;
+                  final boolean exists = WireMockContextCustomizer.class.getResource(name) != null;
+                  LOGGER.info(
+                      "Looking for mocks in classpath " + name + "... " + (exists ? "found" : ""));
+                  return exists;
+                })
             .toList();
     if (alternatives.size() > 1) {
       throw new IllegalStateException(
@@ -164,7 +192,14 @@ public class WireMockContextCustomizer implements ContextCustomizer {
     final List<String> alternatives =
         List.of(filesUnderDirectory).stream()
             .map(it -> it + suffix)
-            .filter(it -> Path.of(it).toFile().exists())
+            .filter(
+                it -> {
+                  final File name = Path.of(it).toFile();
+                  final boolean exists = name.exists();
+                  LOGGER.info(
+                      "Looking for mocks in directory " + name + "... " + (exists ? "found" : ""));
+                  return exists;
+                })
             .toList();
     final String alternativesString = alternatives.stream().collect(Collectors.joining(", "));
     if (alternatives.size() > 1) {
