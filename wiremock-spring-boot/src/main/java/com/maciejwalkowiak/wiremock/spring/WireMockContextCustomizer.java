@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Notifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.junit.platform.commons.util.ReflectionUtils;
@@ -52,11 +53,14 @@ public class WireMockContextCustomizer implements ContextCustomizer {
     @Override
     public void customizeContext(ConfigurableApplicationContext context, MergedContextConfiguration mergedConfig) {
         for (ConfigureWireMock configureWiremock : configuration) {
-            resolveOrCreateWireMockServer(context, configureWiremock);
+            WireMockServer wireMockServer = resolveOrCreateWireMockServer(context, configureWiremock);
+            if (configuration.size() == 1) {
+                WireMock.configureFor(wireMockServer.port());
+            }
         }
     }
 
-    private void resolveOrCreateWireMockServer(ConfigurableApplicationContext context, ConfigureWireMock options) {
+    private WireMockServer resolveOrCreateWireMockServer(ConfigurableApplicationContext context, ConfigureWireMock options) {
         WireMockServer wireMockServer = Store.INSTANCE.findWireMockInstance(context, options.name());
 
         if (wireMockServer == null) {
@@ -106,9 +110,12 @@ public class WireMockContextCustomizer implements ContextCustomizer {
             String portProperty = options.portProperty() + "=" + newServer.port();
             LOGGER.debug("Adding property '{}' to Spring application context", portProperty);
             TestPropertyValues.of(portProperty).applyTo(context.getEnvironment());
+            return newServer;
         } else {
             LOGGER.info("WireMockServer with name '{}' is already configured", options.name());
         }
+
+        return wireMockServer;
     }
 
     private static void applyCustomizers(ConfigureWireMock options, WireMockConfiguration serverOptions) {
