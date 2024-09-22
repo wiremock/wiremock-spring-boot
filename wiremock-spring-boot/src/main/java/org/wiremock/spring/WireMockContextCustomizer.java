@@ -7,9 +7,11 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Notifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.commons.util.StringUtils;
@@ -71,11 +73,20 @@ public class WireMockContextCustomizer implements ContextCustomizer {
       // create & start wiremock server
       final WireMockConfiguration serverOptions =
           options().port(options.port()).notifier(new Slf4jNotifier(true));
-      if (options.stubLocationOnClasspath()) {
-        serverOptions.usingFilesUnderClasspath(this.resolveStubLocation(options));
-      } else {
-        serverOptions.usingFilesUnderDirectory(options.stubLocation());
-      }
+      this.configureFilesUnderClasspath(options.filesUnderClasspath(), "/" + options.name())
+          .ifPresentOrElse(
+              present -> serverOptions.usingFilesUnderClasspath(present),
+              () -> {
+                this.configureFilesUnderClasspath(options.filesUnderClasspath(), "")
+                    .ifPresent(present -> serverOptions.usingFilesUnderClasspath(present));
+              });
+      this.configureFilesUnderDirectory(options.filesUnderDirectory(), "/" + options.name())
+          .ifPresentOrElse(
+              present -> serverOptions.usingFilesUnderDirectory(present),
+              () -> {
+                this.configureFilesUnderDirectory(options.filesUnderDirectory(), "")
+                    .ifPresent(present -> serverOptions.usingFilesUnderDirectory(present));
+              });
 
       if (options.extensions().length > 0) {
         serverOptions.extensions(options.extensions());
@@ -133,6 +144,36 @@ public class WireMockContextCustomizer implements ContextCustomizer {
     return wireMockServer;
   }
 
+  private Optional<String> configureFilesUnderClasspath(
+      final String[] filesUnderClasspath, final String suffix) {
+    final List<String> alternatives =
+        List.of(filesUnderClasspath).stream()
+            .map(it -> it + suffix)
+            .filter(it -> WireMockContextCustomizer.class.getResource("/" + it) != null)
+            .toList();
+    if (alternatives.size() > 1) {
+      throw new IllegalStateException(
+          "Found several filesUnderClasspath: "
+              + alternatives.stream().collect(Collectors.joining(", ")));
+    }
+    return alternatives.stream().findFirst();
+  }
+
+  private Optional<String> configureFilesUnderDirectory(
+      final String[] filesUnderDirectory, final String suffix) {
+    final List<String> alternatives =
+        List.of(filesUnderDirectory).stream()
+            .map(it -> it + suffix)
+            .filter(it -> Path.of(it).toFile().exists())
+            .toList();
+    final String alternativesString = alternatives.stream().collect(Collectors.joining(", "));
+    if (alternatives.size() > 1) {
+      throw new IllegalStateException("Found several filesUnderDirectory: " + alternativesString);
+    }
+    LOGGER.debug("Found " + alternativesString + " in " + Path.of("").toFile().getAbsolutePath());
+    return alternatives.stream().findFirst();
+  }
+
   @SuppressFBWarnings
   private static void applyCustomizers(
       final ConfigureWireMock options, final WireMockConfiguration serverOptions) {
@@ -147,12 +188,6 @@ public class WireMockContextCustomizer implements ContextCustomizer {
         throw e;
       }
     }
-  }
-
-  private String resolveStubLocation(final ConfigureWireMock options) {
-    return StringUtils.isBlank(options.stubLocation())
-        ? "wiremock/" + options.name()
-        : options.stubLocation();
   }
 
   @Override

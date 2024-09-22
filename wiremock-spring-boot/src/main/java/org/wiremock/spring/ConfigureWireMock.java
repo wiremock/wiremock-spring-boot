@@ -44,22 +44,20 @@ public @interface ConfigureWireMock {
   String[] baseUrlProperties() default {"wiremock.server.baseUrl"};
 
   /**
-   * The location of WireMock stub files. By default, stubs are resolved from classpath location
-   * <code>wiremock-server-name/mappings/</code>.
-   *
-   * <p>If provided, stubs are resolved from <code>stub-location/mappings/</code>.
-   *
-   * @return the stub location
+   * Classpaths to pass to {@link WireMockConfiguration#usingFilesUnderClasspath(String)}. First one
+   * that is found will be used. If a {@link #name()} is supplied, it will first look for {@link
+   * #filesUnderClasspath()}/{@link #name()} enabling different mappings for differently named
+   * WireMocks.
    */
-  String stubLocation() default "";
+  String[] filesUnderClasspath() default {"wiremock", "stubs", "mappings"};
 
   /**
-   * Allows user to specify if the mappings should be loaded from classpath or a directory. The
-   * location is specified with {@link #stubLocation()}.
-   *
-   * @return true if stubLocation points to classpath directory, else it is an ordinary directory
+   * Directory paths to pass to {@link WireMockConfiguration#usingFilesUnderDirectory(String)}.
+   * First one that is found will be used. If a {@link #name()} is supplied, it will first look for
+   * {@link #filesUnderClasspath()}/{@link #name()} enabling different mappings for differently
+   * named WireMocks.
    */
-  boolean stubLocationOnClasspath() default true;
+  String[] filesUnderDirectory() default {"wiremock", "stubs", "mappings"};
 
   /**
    * WireMock extensions to register in {@link WireMockServer}.

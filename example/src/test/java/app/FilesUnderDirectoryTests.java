@@ -17,10 +17,9 @@ import org.wiremock.spring.InjectWireMock;
   @ConfigureWireMock(
       name = "user-client",
       baseUrlProperties = "user-client.url",
-      stubLocation = "src/test/wiremock-mappings/user-client",
-      stubLocationOnClasspath = false)
+      filesUnderDirectory = "src/test/wiremock-mappings/user-client")
 })
-class StubsInDirectoryTests {
+class FilesUnderDirectoryTests {
 
   @Autowired private UserClient userClient;
 

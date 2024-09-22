@@ -19,7 +19,7 @@ import org.wiremock.spring.EnableWireMock;
   @ConfigureWireMock(
       name = "todo-client",
       baseUrlProperties = "todo-client.url",
-      stubLocation = "custom-location")
+      filesUnderClasspath = "custom-location")
 })
 class TodoClientTests {
 
