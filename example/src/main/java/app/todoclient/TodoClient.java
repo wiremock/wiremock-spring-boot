@@ -1,4 +1,4 @@
-package app;
+package app.todoclient;
 
 import java.util.List;
 import org.springframework.web.service.annotation.GetExchange;

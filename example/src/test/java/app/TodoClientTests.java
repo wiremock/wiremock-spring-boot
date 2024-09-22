@@ -4,6 +4,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import app.todoclient.Todo;
+import app.todoclient.TodoClient;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import java.util.List;
 import org.junit.jupiter.api.Test;

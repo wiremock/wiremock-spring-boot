@@ -4,6 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import app.controller.TodoDTO;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,8 +64,7 @@ class TodoControllerTests {
 						{ "id": 2, "name": "John" }
 						""")));
 
-    final ResponseEntity<TodoController.TodoDTO[]> response =
-        this.restTemplate.getForEntity("/", TodoController.TodoDTO[].class);
+    final ResponseEntity<TodoDTO[]> response = this.restTemplate.getForEntity("/", TodoDTO[].class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).hasSize(2);
