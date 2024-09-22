@@ -1,4 +1,4 @@
-package org.wiremock.wiremock.spring;
+package org.wiremock.spring;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package org.wiremock.wiremock.spring;
+package org.wiremock.spring;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;

@@ -1,4 +1,4 @@
-package org.wiremock.wiremock.spring;
+package org.wiremock.spring;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 

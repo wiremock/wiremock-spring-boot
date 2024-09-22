@@ -8,9 +8,9 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.wiremock.wiremock.spring.ConfigureWireMock;
-import org.wiremock.wiremock.spring.EnableWireMock;
-import org.wiremock.wiremock.spring.InjectWireMock;
+import org.wiremock.spring.ConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
+import org.wiremock.spring.InjectWireMock;
 
 @SpringBootTest
 @EnableWireMock({@ConfigureWireMock(name = "user-client", property = "user-client.url")})
