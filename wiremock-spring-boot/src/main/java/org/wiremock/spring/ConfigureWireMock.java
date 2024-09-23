@@ -27,7 +27,7 @@ public @interface ConfigureWireMock {
    *
    * @return the name of WireMock server.
    */
-  String name();
+  String name() default "wiremock";
 
   /**
    * Names of Spring properties to inject the {@link WireMockServer#port()}

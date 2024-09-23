@@ -17,6 +17,13 @@ import org.wiremock.spring.EnableWireMock;
  * @author Maciej Walkowiak
  */
 public class WireMockContextCustomizerFactory implements ContextCustomizerFactory {
+
+  private static final ConfigureWireMock DEFAULT_CONFIGURE_WIREMOCK =
+      DefaultConfigureWireMock.class.getAnnotation(ConfigureWireMock.class);
+
+  @ConfigureWireMock(name = "wiremock")
+  private static class DefaultConfigureWireMock {}
+
   @Override
   public ContextCustomizer createContextCustomizer(
       final Class<?> testClass, final List<ContextConfigurationAttributes> configAttributes) {
@@ -25,7 +32,8 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
     this.parseDefinitions(testClass, holder);
 
     if (holder.isEmpty()) {
-      return null;
+      return new WireMockContextCustomizer(
+          WireMockContextCustomizerFactory.DEFAULT_CONFIGURE_WIREMOCK);
     } else {
       return new WireMockContextCustomizer(holder.asArray());
     }
