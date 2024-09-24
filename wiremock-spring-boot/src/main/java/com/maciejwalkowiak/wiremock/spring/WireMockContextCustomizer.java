@@ -7,6 +7,7 @@ import java.util.Objects;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.common.Notifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import java.util.stream.Collectors;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.commons.util.StringUtils;
 import org.slf4j.Logger;
@@ -91,11 +92,19 @@ public class WireMockContextCustomizer implements ContextCustomizer {
             });
 
             // configure Spring environment property
+            List<String> propertyNames;
             if (StringUtils.isNotBlank(options.property())) {
-                String property = options.property() + "=" + newServer.baseUrl();
+                propertyNames = List.of(options.property());
+            } else {
+                propertyNames = Arrays.stream(options.properties())
+                    .filter(StringUtils::isNotBlank)
+                    .collect(Collectors.toList());
+            }
+            propertyNames.forEach(propertyName -> {
+                String property = propertyName + "=" + newServer.baseUrl();
                 LOGGER.debug("Adding property '{}' to Spring application context", property);
                 TestPropertyValues.of(property).applyTo(context.getEnvironment());
-            }
+            });
         } else {
             LOGGER.info("WireMockServer with name '{}' is already configured", options.name());
         }
