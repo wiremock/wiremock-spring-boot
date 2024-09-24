@@ -17,7 +17,7 @@ Add the dependency to `wiremock-spring-boot`:
 <dependency>
     <groupId>com.maciejwalkowiak.spring</groupId>
     <artifactId>wiremock-spring-boot</artifactId>
-    <version>2.1.2</version>
+    <version>2.1.3</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -29,7 +29,7 @@ Use `@EnableWireMock` with `@ConfigureWireMock` with tests annotated that use `S
 ```java
 @SpringBootTest
 @EnableWireMock({
-        @ConfigureWireMock(name = "user-service", property = "user-client.url")
+        @ConfigureWireMock(name = "user-service", properties = "user-client.url")
 })
 class TodoControllerTests {
 
@@ -57,7 +57,7 @@ Note that `WireMockServer` instances are not added as beans to Spring applicatio
 WireMock extensions can be registered independently with each `@ConfigureWireMock`:
 
 ```java
-@ConfigureWireMock(name = "...", property = "...", extensions = { ... })
+@ConfigureWireMock(name = "...", properties = "...", extensions = { ... })
 ```
 
 ### Single vs Multiple Property Injection
@@ -67,9 +67,9 @@ The concept of single property injection can be described as wiring _one_ `WireM
 ```java
 @SpringBootTest
 @EnableWireMock({
-    @ConfigureWireMock(name = "foo-service", property = "app.client-apis.foo.base-path"}),
-    @ConfigureWireMock(name = "bar-service", property = "app.client-apis.bar.base-path"}),
-    @ConfigureWireMock(name = "mojo-service", property = "app.client-apis.mojo.base-path"})
+    @ConfigureWireMock(name = "foo-service", properties = "app.client-apis.foo.base-path"}),
+    @ConfigureWireMock(name = "bar-service", properties = "app.client-apis.bar.base-path"}),
+    @ConfigureWireMock(name = "mojo-service", properties = "app.client-apis.mojo.base-path"})
 })
 class AppIT { 
     @InjectWireMock("foo-service")
@@ -119,7 +119,7 @@ By default, each `WireMockServer` is configured to load mapping files from a cla
 It can be changed with setting `stubLocation` on `@ConfigureWireMock`:
 
 ```java
-@ConfigureWireMock(name = "...", property = "...", stubLocation = "my-stubs")
+@ConfigureWireMock(name = "...", properties = "...", stubLocation = "my-stubs")
 ```
 
 Sounds good? Consider [❤️ Sponsoring](https://github.com/sponsors/maciejwalkowiak) the project! Thank you!
