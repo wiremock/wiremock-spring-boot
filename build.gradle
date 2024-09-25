@@ -22,8 +22,14 @@ def bumpVersionTo(version) {
   def propertyFile = new File("$projectDir/gradle.properties")
   def gradleProps = new Properties()
   propertyFile.withReader { gradleProps.load(it) }
-  gradleProps.setProperty('version', version)
-  propertyFile.withWriter { gradleProps.store(it, null) }
+  def currentVersion = gradleProps.getProperty("version")
+  if (currentVersion == version) {
+    logger.lifecycle("Version not changed (${currentVersion})")
+  } else {
+    logger.lifecycle("Version changed (${currentVersion} -> ${version})")
+    gradleProps.setProperty('version', version)
+    propertyFile.withWriter { gradleProps.store(it, null) }
+  }
 }
 
 task setConventionalVersion() {
@@ -35,10 +41,10 @@ task setConventionalVersion() {
         .getNextSemanticVersion()
         .getVersion();
     def nextSnapshot = "${nextVersion}-SNAPSHOT"
-    logger.lifecycle("Setting version ${nextSnapshot}...")
     bumpVersionTo(nextSnapshot)
   }
 }
+build.dependsOn setConventionalVersion
 
 allprojects {
   repositories {
@@ -98,6 +104,7 @@ project('wiremock-spring-boot', {
     api "org.springframework:spring-test:6.1.13"
     api "org.slf4j:slf4j-api:2.0.16"
     api "org.junit.jupiter:junit-jupiter-api:5.11.0"
+    compileOnly "com.github.spotbugs:spotbugs-annotations:4.8.6"
   }
 })
 

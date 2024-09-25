@@ -132,7 +132,7 @@ WireMock extensions can be registered independently with each `@ConfigureWireMoc
 
 ## Credits
 
-* [Wiremock Spring Boot](https://github.com/maciejwalkowiak/wiremock-spring-boot) (this is based on that project!)
+* [Maciej Walkowiak](https://github.com/maciejwalkowiak) - This was originally his project and later moved to WireMock organization
 * [Spring Cloud Contract WireMock](https://github.com/spring-cloud/spring-cloud-contract/blob/main/spring-cloud-contract-wiremock)
 * [Spring Boot WireMock](https://github.com/skuzzle/spring-boot-wiremock)
 * [Spring Boot Integration Tests With WireMock and JUnit 5](https://rieckpil.de/spring-boot-integration-tests-with-wiremock-and-junit-5/) by [Philip Riecks](https://twitter.com/rieckpil)
