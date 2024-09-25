@@ -4,13 +4,19 @@
     "url": "/"
   },
   "response": {
-    "status": 200,
+    "headers": {"Content-Type": "application/json"},
     "jsonBody": [
-      { "id": 1, "userId": 1, "title": "custom location todo 1" },
-      { "id": 2, "userId": 1, "title": "custom location todo 2" }
+      {
+        "id": 1,
+        "title": "custom location todo 1",
+        "userId": 1
+      },
+      {
+        "id": 2,
+        "title": "custom location todo 2",
+        "userId": 1
+      }
     ],
-    "headers": {
-      "Content-Type": "application/json"
-    }
+    "status": 200
   }
 }

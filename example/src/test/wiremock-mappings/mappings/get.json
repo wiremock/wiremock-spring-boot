@@ -4,7 +4,7 @@
     "url": "/wiremockmappingsmock"
   },
   "response": {
-    "status": 200,
-    "jsonBody": { "wiremockmappingsmock": "yes" }
+    "jsonBody": {"wiremockmappingsmock": "yes"},
+    "status": 200
   }
 }

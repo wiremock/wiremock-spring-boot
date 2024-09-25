@@ -1,30 +1,85 @@
-apply plugin: 'java-library'
-
 buildscript {
   repositories {
+    maven { url "https://oss.sonatype.org" }
+    maven { url "https://plugins.gradle.org/m2/" }
     mavenCentral()
-    mavenLocal()
   }
   dependencies {
-    classpath 'se.bjurr.gradle:gradle-scripts:2.+'
+    classpath "org.wiremock.tools.gradle:extension-convention-plugin:0.3.0"
+    classpath 'se.bjurr.gitchangelog:git-changelog-lib:1.175.2'
+  }
+}
+
+plugins {
+  id 'idea'
+  id 'eclipse'
+  id 'project-report'
+  id 'com.diffplug.spotless' version '6.25.0'
+  id 'org.wiremock.tools.gradle.wiremock-extension-convention' version '0.3.0'
+}
+
+def bumpVersionTo(version) {
+  def propertyFile = new File("$projectDir/gradle.properties")
+  def gradleProps = new Properties()
+  propertyFile.withReader { gradleProps.load(it) }
+  gradleProps.setProperty('version', version)
+  propertyFile.withWriter { gradleProps.store(it, null) }
+}
+
+task setConventionalVersion() {
+  doFirst {
+    def nextVersion = se.bjurr.gitchangelog.api.GitChangelogApi.gitChangelogApiBuilder()
+      .withFromRepo(file('.'))
+      .withSemanticMajorVersionPattern("^[Bb]reak")
+      .withSemanticMinorVersionPattern("^[Ff]eat")
+      .getNextSemanticVersion()
+      .getVersion();
+    def nextSnapshot = "${nextVersion}-SNAPSHOT"
+    logger.lifecycle("Setting version ${nextSnapshot}...")
+    bumpVersionTo(nextSnapshot)
   }
 }
 
 allprojects {
-  apply plugin: 'java-library'
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
 
-  project.ext.buildConfig = [
-    repoType: "DEFAULT",
-    sourceCompatibility: 17,
-    targetCompatibility: 17,
-    staticCodeAnalysis: [
-      maxViolations: 0
-    ]
-  ]
-  apply from: project.buildscript.classLoader.getResource('main.gradle').toURI()
+  apply plugin: 'java-library'
+  sourceCompatibility = 17
+  targetCompatibility = 17
+
+  apply plugin: 'com.diffplug.spotless'
+  spotless {
+    java {
+      target 'src/**/*.java'
+      googleJavaFormat('1.17.0')
+      ratchetFrom 'origin/main'
+      trimTrailingWhitespace()
+      endWithNewline()
+      targetExclude '**/Tmp*.java'
+    }
+    groovyGradle {
+      target '**/*.gradle'
+      greclipse()
+      indentWithSpaces(2)
+      trimTrailingWhitespace()
+      endWithNewline()
+    }
+    json {
+      target 'src/**/*.json'
+      targetExclude '**/tmp*.json', 'src/test/resources/sample.json', 'src/main/resources/swagger/*.json', 'src/test/resources/filesource/subdir/deepfile.json', 'src/test/resources/schema-validation/*.json'
+      simple().indentWithSpaces(2)
+    }
+  }
 
   test {
     useJUnitPlatform()
+    testLogging {
+      events "PASSED", "FAILED", "SKIPPED"
+      exceptionFormat "full"
+    }
   }
 
   dependencies {
@@ -42,7 +97,7 @@ project('wiremock-spring-boot', {
     api "org.springframework.boot:spring-boot-test:3.3.4"
     api "org.springframework:spring-test:6.1.13"
     api "org.slf4j:slf4j-api:2.0.16"
-	api "org.junit.jupiter:junit-jupiter-api:5.11.0"
+    api "org.junit.jupiter:junit-jupiter-api:5.11.0"
   }
 })
 

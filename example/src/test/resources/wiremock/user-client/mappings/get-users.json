@@ -4,10 +4,11 @@
     "url": "/1"
   },
   "response": {
-    "status": 200,
-    "jsonBody": { "id": 1, "name": "Jenna" },
-    "headers": {
-      "Content-Type": "application/json"
-    }
+    "headers": {"Content-Type": "application/json"},
+    "jsonBody": {
+      "name": "Jenna",
+      "id": 1
+    },
+    "status": 200
   }
 }
