@@ -29,11 +29,11 @@ def bumpVersionTo(version) {
 task setConventionalVersion() {
   doFirst {
     def nextVersion = se.bjurr.gitchangelog.api.GitChangelogApi.gitChangelogApiBuilder()
-      .withFromRepo(file('.'))
-      .withSemanticMajorVersionPattern("^[Bb]reak")
-      .withSemanticMinorVersionPattern("^[Ff]eat")
-      .getNextSemanticVersion()
-      .getVersion();
+        .withFromRepo(file('.'))
+        .withSemanticMajorVersionPattern("^[Bb]reak")
+        .withSemanticMinorVersionPattern("^[Ff]eat")
+        .getNextSemanticVersion()
+        .getVersion();
     def nextSnapshot = "${nextVersion}-SNAPSHOT"
     logger.lifecycle("Setting version ${nextSnapshot}...")
     bumpVersionTo(nextSnapshot)
