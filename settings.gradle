@@ -1,2 +1,2 @@
-rootProject.name = 'wiremock-spring-boot-parent'
-include 'wiremock-spring-boot', 'example'
+rootProject.name = 'wiremock-spring-boot'
+include 'wiremock-spring-boot-example'

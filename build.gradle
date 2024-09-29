@@ -1,119 +1,76 @@
 buildscript {
-  repositories {
-    maven { url "https://oss.sonatype.org" }
-    maven { url "https://plugins.gradle.org/m2/" }
-    mavenCentral()
-  }
-  dependencies {
-    classpath "org.wiremock.tools.gradle:extension-convention-plugin:0.3.0"
-    classpath 'se.bjurr.gitchangelog:git-changelog-lib:1.175.2'
-  }
+	repositories {
+		maven { url "https://oss.sonatype.org" }
+		maven { url "https://plugins.gradle.org/m2/" }
+		mavenCentral()
+		mavenLocal()
+	}
+	dependencies {
+		classpath 'se.bjurr.gitchangelog:git-changelog-lib:1.175.2'
+		classpath "org.wiremock.tools.gradle:gradle-wiremock-extension-plugins:latest-SNAPSHOT"
+		classpath "se.bjurr.gradle:java-convention-gradle-plugin:latest-SNAPSHOT"
+		classpath "se.bjurr.gradle:update-versions-gradle-plugin:latest-SNAPSHOT"
+	}
 }
 
-plugins {
-  id 'idea'
-  id 'eclipse'
-  id 'project-report'
-  id 'com.diffplug.spotless' version '6.25.0'
-  id 'org.wiremock.tools.gradle.wiremock-extension-convention' version '0.3.0'
+apply plugin: 'project-report'
+apply plugin: 'org.wiremock.tools.gradle.wiremock-extension-convention'
+
+allprojects {
+	apply plugin: 'se.bjurr.gradle.java-convention'
+	apply plugin: 'se.bjurr.gradle.update-versions'
+
+	dependencies {
+		testImplementation "org.springframework.boot:spring-boot-starter-test:3.3.4"
+		testImplementation 'org.assertj:assertj-core:3.26.3'
+		testImplementation platform('org.junit:junit-bom:5.10.2')
+		testImplementation 'org.junit.jupiter:junit-jupiter'
+		testImplementation 'org.junit.platform:junit-platform-launcher'
+	}
 }
+
+dependencies {
+	api 'org.wiremock:wiremock-standalone:3.9.1'
+	api "org.springframework.boot:spring-boot-test:3.3.4"
+	api "org.springframework:spring-test:6.1.13"
+	api "org.slf4j:slf4j-api:2.0.16"
+	api "org.junit.jupiter:junit-jupiter-api:5.11.0"
+}
+
+project('wiremock-spring-boot-example', {
+	dependencies {
+		implementation "org.springframework.boot:spring-boot-starter-web:3.3.4"
+		implementation "org.springframework.boot:spring-boot-starter-webflux:3.3.4"
+
+		testImplementation rootProject
+		testImplementation 'io.rest-assured:rest-assured:5.5.0'
+	}
+})
 
 def bumpVersionTo(version) {
-  def propertyFile = new File("$projectDir/gradle.properties")
-  def gradleProps = new Properties()
-  propertyFile.withReader { gradleProps.load(it) }
-  def currentVersion = gradleProps.getProperty("version")
-  if (currentVersion == version) {
-    logger.lifecycle("Version not changed (${currentVersion})")
-  } else {
-    logger.lifecycle("Version changed (${currentVersion} -> ${version})")
-    gradleProps.setProperty('version', version)
-    propertyFile.withWriter { gradleProps.store(it, null) }
-  }
+	def propertyFile = new File("$projectDir/gradle.properties")
+	def gradleProps = new Properties()
+	propertyFile.withReader { gradleProps.load(it) }
+	def currentVersion = gradleProps.getProperty("version")
+	if (currentVersion == version) {
+		logger.lifecycle("Version not changed (${currentVersion})")
+	} else {
+		logger.lifecycle("Version changed (${currentVersion} -> ${version})")
+		gradleProps.setProperty('version', version)
+		propertyFile.withWriter { gradleProps.store(it, null) }
+	}
 }
 
 task setConventionalVersion() {
-  doFirst {
-    def nextVersion = se.bjurr.gitchangelog.api.GitChangelogApi.gitChangelogApiBuilder()
-        .withFromRepo(file('.'))
-        .withSemanticMajorVersionPattern("^[Bb]reak")
-        .withSemanticMinorVersionPattern("^[Ff]eat")
-        .getNextSemanticVersion()
-        .getVersion();
-    def nextSnapshot = "${nextVersion}-SNAPSHOT"
-    bumpVersionTo(nextSnapshot)
-  }
+	doFirst {
+		def nextVersion = se.bjurr.gitchangelog.api.GitChangelogApi.gitChangelogApiBuilder()
+				.withFromRepo(file('.'))
+				.withSemanticMajorVersionPattern("^[Bb]reak")
+				.withSemanticMinorVersionPattern("^[Ff]eat")
+				.getNextSemanticVersion()
+				.getVersion();
+		def nextSnapshot = "${nextVersion}-SNAPSHOT"
+		bumpVersionTo(nextSnapshot)
+	}
 }
 build.dependsOn setConventionalVersion
-
-allprojects {
-  repositories {
-    mavenLocal()
-    mavenCentral()
-  }
-
-  apply plugin: 'java-library'
-  sourceCompatibility = 17
-  targetCompatibility = 17
-
-  apply plugin: 'com.diffplug.spotless'
-  spotless {
-    java {
-      target 'src/**/*.java'
-      googleJavaFormat('1.17.0')
-      ratchetFrom 'origin/main'
-      trimTrailingWhitespace()
-      endWithNewline()
-      targetExclude '**/Tmp*.java'
-    }
-    groovyGradle {
-      target '**/*.gradle'
-      greclipse()
-      indentWithSpaces(2)
-      trimTrailingWhitespace()
-      endWithNewline()
-    }
-    json {
-      target 'src/**/*.json'
-      targetExclude '**/tmp*.json', 'src/test/resources/sample.json', 'src/main/resources/swagger/*.json', 'src/test/resources/filesource/subdir/deepfile.json', 'src/test/resources/schema-validation/*.json'
-      simple().indentWithSpaces(2)
-    }
-  }
-
-  test {
-    useJUnitPlatform()
-    testLogging {
-      events "PASSED", "FAILED", "SKIPPED"
-      exceptionFormat "full"
-    }
-  }
-
-  dependencies {
-    testImplementation "org.springframework.boot:spring-boot-starter-test:3.3.4"
-    testImplementation 'org.assertj:assertj-core:3.26.3'
-    testImplementation platform('org.junit:junit-bom:5.10.2')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.junit.platform:junit-platform-launcher'
-  }
-}
-
-project('wiremock-spring-boot', {
-  dependencies {
-    api 'org.wiremock:wiremock-standalone:3.9.1'
-    api "org.springframework.boot:spring-boot-test:3.3.4"
-    api "org.springframework:spring-test:6.1.13"
-    api "org.slf4j:slf4j-api:2.0.16"
-    api "org.junit.jupiter:junit-jupiter-api:5.11.0"
-    compileOnly "com.github.spotbugs:spotbugs-annotations:4.8.6"
-  }
-})
-
-project('example', {
-  dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-web:3.3.4"
-    implementation "org.springframework.boot:spring-boot-starter-webflux:3.3.4"
-
-    testImplementation project(':wiremock-spring-boot')
-    testImplementation 'io.rest-assured:rest-assured:5.5.0'
-  }
-})

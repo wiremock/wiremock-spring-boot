@@ -4,7 +4,9 @@
     "url": "/"
   },
   "response": {
-    "headers": {"Content-Type": "application/json"},
+    "headers": {
+      "Content-Type": "application/json"
+    },
     "jsonBody": [
       {
         "id": 1,
