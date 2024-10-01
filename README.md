@@ -1,5 +1,7 @@
 # WireMock Spring Boot
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.wiremock.spring/wiremock-spring-boot/badge.svg)](https://search.maven.org/artifact/org.wiremock.spring/wiremock-spring-boot)
+
 **WireMock Spring Boot** library drastically simplifies [WireMock](https://wiremock.org) configuration in a **Spring Boot** and **JUnit 5** application.
 
 ## Highlights
