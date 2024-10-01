@@ -1,24 +1,22 @@
 buildscript {
 	repositories {
-		maven { url "https://oss.sonatype.org" }
-		maven { url "https://plugins.gradle.org/m2/" }
+		gradlePluginPortal()
 		mavenCentral()
 		mavenLocal()
 	}
 	dependencies {
-		classpath 'se.bjurr.gitchangelog:git-changelog-lib:1.175.2'
-		classpath "org.wiremock.tools.gradle:gradle-wiremock-extension-plugins:latest-SNAPSHOT"
-		classpath "se.bjurr.gradle:java-convention-gradle-plugin:latest-SNAPSHOT"
-		classpath "se.bjurr.gradle:update-versions-gradle-plugin:latest-SNAPSHOT"
+		classpath "se.bjurr.gradle.conventional-release:se.bjurr.gradle.conventional-release.gradle.plugin:0.1.15"
+		classpath "se.bjurr.gradle.java-convention:se.bjurr.gradle.java-convention.gradle.plugin:0.1.2"
+		classpath "se.bjurr.gradle.update-versions:se.bjurr.gradle.update-versions.gradle.plugin:0.1.6"
 	}
 }
-
-apply plugin: 'project-report'
-apply plugin: 'org.wiremock.tools.gradle.wiremock-extension-convention'
+apply plugin: "se.bjurr.gradle.conventional-release"
+apply plugin: "project-report"
 
 allprojects {
-	apply plugin: 'se.bjurr.gradle.java-convention'
-	apply plugin: 'se.bjurr.gradle.update-versions'
+	apply plugin: "se.bjurr.gradle.java-convention"
+	apply plugin: "se.bjurr.gradle.update-versions"
+	apply plugin: "java-library"
 
 	dependencies {
 		testImplementation "org.springframework.boot:spring-boot-starter-test:3.3.4"
@@ -46,31 +44,3 @@ project('wiremock-spring-boot-example', {
 		testImplementation 'io.rest-assured:rest-assured:5.5.0'
 	}
 })
-
-def bumpVersionTo(version) {
-	def propertyFile = new File("$projectDir/gradle.properties")
-	def gradleProps = new Properties()
-	propertyFile.withReader { gradleProps.load(it) }
-	def currentVersion = gradleProps.getProperty("version")
-	if (currentVersion == version) {
-		logger.lifecycle("Version not changed (${currentVersion})")
-	} else {
-		logger.lifecycle("Version changed (${currentVersion} -> ${version})")
-		gradleProps.setProperty('version', version)
-		propertyFile.withWriter { gradleProps.store(it, null) }
-	}
-}
-
-task setConventionalVersion() {
-	doFirst {
-		def nextVersion = se.bjurr.gitchangelog.api.GitChangelogApi.gitChangelogApiBuilder()
-				.withFromRepo(file('.'))
-				.withSemanticMajorVersionPattern("^[Bb]reak")
-				.withSemanticMinorVersionPattern("^[Ff]eat")
-				.getNextSemanticVersion()
-				.getVersion();
-		def nextSnapshot = "${nextVersion}-SNAPSHOT"
-		bumpVersionTo(nextSnapshot)
-	}
-}
-build.dependsOn setConventionalVersion
