@@ -5,9 +5,9 @@ buildscript {
 		mavenLocal()
 	}
 	dependencies {
-		classpath "se.bjurr.gradle.conventional-release:se.bjurr.gradle.conventional-release.gradle.plugin:0.1.16"
-		classpath "se.bjurr.gradle.java-convention:se.bjurr.gradle.java-convention.gradle.plugin:0.1.4"
-		classpath "se.bjurr.gradle.update-versions:se.bjurr.gradle.update-versions.gradle.plugin:0.1.6"
+		classpath "se.bjurr.gradle.conventional-release:se.bjurr.gradle.conventional-release.gradle.plugin:0.+"
+		classpath "se.bjurr.gradle.java-convention:se.bjurr.gradle.java-convention.gradle.plugin:0.+"
+		classpath "se.bjurr.gradle.update-versions:se.bjurr.gradle.update-versions.gradle.plugin:0.+"
 	}
 }
 apply plugin: "se.bjurr.gradle.conventional-release"
