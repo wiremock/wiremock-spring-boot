@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.WireMockConfigurationCustomizer;
 
@@ -30,8 +31,10 @@ public class WireMockServerCreator {
 
   public WireMockServer createWireMockServer(
       final ConfigurableApplicationContext context, final ConfigureWireMock options) {
+    final int serverPort = this.getServerProperty(context.getEnvironment(), options);
+
     final WireMockConfiguration serverOptions =
-        options().port(options.port()).notifier(new Slf4jNotifier(options.name()));
+        options().port(serverPort).notifier(new Slf4jNotifier(options.name()));
     this.configureFilesUnderClasspath(options.filesUnderClasspath(), "/" + options.name())
         .ifPresentOrElse(
             present -> this.usingFilesUnderClasspath(serverOptions, present),
@@ -105,6 +108,28 @@ public class WireMockServerCreator {
             });
 
     return newServer;
+  }
+
+  private int getServerProperty(
+      final ConfigurableEnvironment environment, final ConfigureWireMock options) {
+    if (!options.usePortFromPredefinedPropertyIfFound()) {
+      return options.port();
+    }
+    return Arrays.stream(options.portProperties())
+        .filter(StringUtils::isNotBlank)
+        .filter(propertyName -> environment.containsProperty(propertyName))
+        .map(
+            propertyName -> {
+              final int predefinedPropertyValue =
+                  Integer.parseInt(environment.getProperty(propertyName));
+              this.logger.info(
+                  "Found predefined port in property with name '{}' on port: {}",
+                  propertyName,
+                  predefinedPropertyValue);
+              return predefinedPropertyValue;
+            })
+        .findFirst()
+        .orElse(options.port());
   }
 
   private WireMockConfiguration usingFilesUnderClasspath(

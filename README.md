@@ -11,7 +11,7 @@
 * Automatically sets Spring environment properties
 * Does not pollute Spring application context with extra beans
 
-It is originally forked from [Wiremock Spring Boot](https://github.com/maciejwalkowiak/wiremock-spring-boot).
+It is originally forked from [WireMock Spring Boot](https://github.com/maciejwalkowiak/wiremock-spring-boot).
 
 ## How to install
 

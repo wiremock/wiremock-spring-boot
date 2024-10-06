@@ -1,8 +1,4 @@
-# wiremock-spring-boot changelog
-
-Changelog of wiremock-spring-boot.
-
-## 3.0.0 (2024-10-01)
+## 3.0.0
 
 ### Breaking changes
 
@@ -11,6 +7,7 @@ Changelog of wiremock-spring-boot.
 
 ### Features
 
+-  enable predefining port with property ([2672b](https://github.com/wiremock/wiremock-spring-boot/commit/2672b2120888a7c) Tomas Bjerre)  [#33](https://github.com/wiremock/wiremock-spring-boot/issues/33)  
 -  simplifies configuration of most simple test case ([215aa](https://github.com/wiremock/wiremock-spring-boot/commit/215aaff1c87a83f) Tomas Bjerre)  
 -  prefixing logs from each mock with their names ([66da1](https://github.com/wiremock/wiremock-spring-boot/commit/66da1e556acbb79) Tomas Bjerre)  
 -  logging properties and where mappings were found ([7a425](https://github.com/wiremock/wiremock-spring-boot/commit/7a4255030c3b4e5) Tomas Bjerre)  
@@ -92,7 +89,6 @@ Changelog of wiremock-spring-boot.
 
 
 [a0ddd](https://github.com/wiremock/wiremock-spring-boot/commit/a0ddd4b200af13c) felgentraeger *2024-03-05 07:22:08*
-
 
 ## v2.1.3 (2024-09-24)
 

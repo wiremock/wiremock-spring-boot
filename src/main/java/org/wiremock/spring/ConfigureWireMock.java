@@ -30,6 +30,14 @@ public @interface ConfigureWireMock {
   String name() default "wiremock";
 
   /**
+   * If the port property is found in Spring {@link org.springframework.context.ApplicationContext}
+   * it will be used. Enables a user to predefine a static port with a property.
+   *
+   * @return true if enabled, else false.
+   */
+  boolean usePortFromPredefinedPropertyIfFound() default false;
+
+  /**
    * Names of Spring properties to inject the {@link WireMockServer#port()}
    *
    * @return names of Spring properties to inject the {@link WireMockServer#port()}
