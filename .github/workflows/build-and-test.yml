@@ -1,4 +1,4 @@
-name: Gradle CI
+name: Build and test with Gradle
 
 on: [workflow_dispatch, workflow_call, push, pull_request]
 
@@ -24,12 +24,12 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: ${{ matrix.java }}
-      - name: "Gradle build"
+      - name: "Build and test"
         shell: bash
         run: |
           java -version
           javac -version
-          ./gradlew --no-daemon build
+          ./gradlew --no-daemon check
 
       - name: Publish Build
         uses: actions/upload-artifact@v4
@@ -37,3 +37,18 @@ jobs:
         with:
           name: build-${{ github.run_number }}-${{ matrix.java }}
           path: ${{ github.workspace }}
+
+  gradle-scan:
+    name: Snyk gradle scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Snyk to check build.gradle for vulnerabilities
+        uses: snyk/actions/gradle-jdk17@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: test
+          args: --severity-threshold=high --org=f310ee2f-5552-444d-84ee-ec8c44c33adb
