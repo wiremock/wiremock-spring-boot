@@ -1,6 +1,6 @@
 # WireMock Spring Boot
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.wiremock.spring/wiremock-spring-boot/badge.svg)](https://search.maven.org/artifact/org.wiremock.spring/wiremock-spring-boot)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.wiremock.integrations/wiremock-spring-boot/badge.svg)](https://search.maven.org/artifact/org.wiremock.integrations/wiremock-spring-boot)
 
 **WireMock Spring Boot** library drastically simplifies [WireMock](https://wiremock.org) configuration in a **Spring Boot** and **JUnit 5** application.
 
@@ -19,7 +19,7 @@ Add the dependency to `wiremock-spring-boot`:
 
 ```xml
 <dependency>
-    <groupId>org.wiremock.spring</groupId>
+    <groupId>org.wiremock.integrations</groupId>
     <artifactId>wiremock-spring-boot</artifactId>
     <version>X</version>
     <scope>test</scope>
@@ -27,7 +27,7 @@ Add the dependency to `wiremock-spring-boot`:
 ```
 
 ```groovy
-testImplementation "org.wiremock.spring:wiremock-spring-boot:X"
+testImplementation "org.wiremock.integrations:wiremock-spring-boot:X"
 ```
 
 ## Example

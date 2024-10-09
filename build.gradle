@@ -5,9 +5,7 @@ buildscript {
 		mavenLocal()
 	}
 	dependencies {
-		//		classpath "se.bjurr.gradle.conventional-release:se.bjurr.gradle.conventional-release.gradle.plugin:0.+"
 		classpath "se.bjurr.gradle.java-convention:se.bjurr.gradle.java-convention.gradle.plugin:0.+"
-		//		classpath "se.bjurr.gradle.update-versions:se.bjurr.gradle.update-versions.gradle.plugin:0.+"
 	}
 }
 
@@ -15,15 +13,12 @@ plugins {
 	id 'org.wiremock.tools.gradle.wiremock-extension-convention' version '0.3.0'
 }
 
-//apply plugin: "se.bjurr.gradle.conventional-release"
 apply plugin: "project-report"
 
 group 'org.wiremock.integrations'
 
 allprojects {
 	apply plugin: "se.bjurr.gradle.java-convention"
-	//	apply plugin: "se.bjurr.gradle.update-versions"
-	apply plugin: "java-library"
 
 	dependencies {
 		testImplementation "org.springframework.boot:spring-boot-starter-test:3.3.4"
