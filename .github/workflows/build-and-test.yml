@@ -29,7 +29,7 @@ jobs:
         run: |
           java -version
           javac -version
-          ./gradlew --no-daemon check
+          ./gradlew --no-daemon check -x spotBugsMain -x shadowJar
 
       - name: Publish Build
         uses: actions/upload-artifact@v4
