@@ -15,7 +15,12 @@ import org.wiremock.spring.EnableWireMock;
 import org.wiremock.spring.InjectWireMock;
 
 @SpringBootTest
-@EnableWireMock({@ConfigureWireMock(name = "user-client", baseUrlProperties = "user-client.url")})
+@EnableWireMock({
+  @ConfigureWireMock(
+      name = "user-client",
+      filesUnderClasspath = {"wiremock"},
+      baseUrlProperties = "user-client.url")
+})
 class SingleWireMockTest {
 
   @Autowired private UserClient userClient;
