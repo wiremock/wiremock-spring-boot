@@ -57,7 +57,7 @@ public @interface ConfigureWireMock {
    * #filesUnderClasspath()}/{@link #name()} enabling different mappings for differently named
    * WireMocks.
    */
-  String[] filesUnderClasspath() default {"wiremock", "stubs", "mappings"};
+  String[] filesUnderClasspath() default {};
 
   /**
    * Directory paths to pass to {@link WireMockConfiguration#usingFilesUnderDirectory(String)}.
