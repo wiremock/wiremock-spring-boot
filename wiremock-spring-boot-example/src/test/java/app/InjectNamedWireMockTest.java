@@ -12,9 +12,9 @@ import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
 import org.wiremock.spring.InjectWireMock;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 @EnableWireMock(@ConfigureWireMock(name = "mywiremock"))
-class InjectDefaultWireMockTest {
+class InjectNamedWireMockTest {
 
   @InjectWireMock("mywiremock")
   private WireMockServer wireMockServer;

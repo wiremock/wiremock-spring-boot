@@ -4,11 +4,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import app.userclient.User;
-import app.userclient.UserClient;
 import com.github.tomakehurst.wiremock.WireMockServer;
+import io.restassured.RestAssured;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
@@ -18,12 +16,10 @@ import org.wiremock.spring.InjectWireMock;
 @EnableWireMock({
   @ConfigureWireMock(
       name = "user-client",
-      filesUnderClasspath = {"wiremock"},
+      filesUnderClasspath = {"wiremock/user-client"},
       baseUrlProperties = "user-client.url")
 })
-class SingleWireMockTest {
-
-  @Autowired private UserClient userClient;
+class SingleNamedWireMockTest {
 
   @InjectWireMock("user-client")
   private WireMockServer wiremock;
@@ -38,17 +34,32 @@ class SingleWireMockTest {
                     .withBody("""
 						{ "id": 2, "name": "Amy" }
 						""")));
-    final User user = this.userClient.findOne(2L);
-    assertThat(user).isNotNull();
-    assertThat(user.id()).isEqualTo(2L);
-    assertThat(user.name()).isEqualTo("Amy");
+
+    RestAssured.baseURI = "http://localhost:" + this.wiremock.port();
+    final String actual =
+        RestAssured.when().get("/2").then().statusCode(200).extract().asPrettyString();
+    assertThat(actual)
+        .isEqualToIgnoringWhitespace(
+            """
+				{
+				    "id": 2,
+				    "name": "Amy"
+				}
+				""");
   }
 
   @Test
   void usesStubFiles() {
-    final User user = this.userClient.findOne(1L);
-    assertThat(user).isNotNull();
-    assertThat(user.id()).isEqualTo(1L);
-    assertThat(user.name()).isEqualTo("Jenna");
+    RestAssured.baseURI = "http://localhost:" + this.wiremock.port();
+    final String actual =
+        RestAssured.when().get("/1").then().statusCode(200).extract().asPrettyString();
+    assertThat(actual)
+        .isEqualToIgnoringWhitespace(
+            """
+				{
+				    "name": "Jenna",
+				    "id": 1
+				}
+				""");
   }
 }
