@@ -35,25 +35,29 @@ public class WireMockServerCreator {
 
     final WireMockConfiguration serverOptions =
         options().port(serverPort).notifier(new Slf4jNotifier(options.name()));
-    this.configureFilesUnderClasspath(options.filesUnderClasspath(), "/" + options.name())
+
+    this.configureFilesUnderDirectory(options.filesUnderDirectory(), "/" + options.name())
         .ifPresentOrElse(
-            present -> this.usingFilesUnderClasspath(serverOptions, present),
+            present -> this.usingFilesUnderDirectory(serverOptions, present),
             () -> {
-              this.configureFilesUnderClasspath(options.filesUnderClasspath(), "")
+              this.configureFilesUnderDirectory(options.filesUnderDirectory(), "")
                   .ifPresentOrElse(
-                      present -> this.usingFilesUnderClasspath(serverOptions, present),
+                      present -> this.usingFilesUnderDirectory(serverOptions, present),
                       () -> {
-                        this.configureFilesUnderDirectory(
-                                options.filesUnderDirectory(), "/" + options.name())
+                        this.logger.info("No mocks found under directory");
+                        this.configureFilesUnderClasspath(
+                                options.filesUnderClasspath(), "/" + options.name())
                             .ifPresentOrElse(
-                                present -> this.usingFilesUnderDirectory(serverOptions, present),
+                                present -> this.usingFilesUnderClasspath(serverOptions, present),
                                 () -> {
-                                  this.configureFilesUnderDirectory(
-                                          options.filesUnderDirectory(), "")
-                                      .ifPresent(
+                                  this.configureFilesUnderClasspath(
+                                          options.filesUnderClasspath(), "")
+                                      .ifPresentOrElse(
                                           present ->
-                                              this.usingFilesUnderDirectory(
-                                                  serverOptions, present));
+                                              this.usingFilesUnderClasspath(serverOptions, present),
+                                          () -> {
+                                            this.logger.info("No mocks found under classpath");
+                                          });
                                 });
                       });
             });
