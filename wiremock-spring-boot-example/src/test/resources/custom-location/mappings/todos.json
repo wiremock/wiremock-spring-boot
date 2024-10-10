@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "/"
+    "url": "/classpathmappings"
   },
   "response": {
     "headers": {

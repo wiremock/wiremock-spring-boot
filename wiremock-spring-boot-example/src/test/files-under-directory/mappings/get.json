@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "/wiremockmappingsmock"
+    "url": "/files-under-directory"
   },
   "response": {
     "jsonBody": {
