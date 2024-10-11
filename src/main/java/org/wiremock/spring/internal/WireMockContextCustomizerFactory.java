@@ -33,7 +33,7 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
     if (holder.isEmpty()) {
       return null;
     } else {
-      return new WireMockContextCustomizer(holder.asArray());
+      return new WireMockContextCustomizer(testClass, holder.asArray());
     }
   }
 

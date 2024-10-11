@@ -22,23 +22,28 @@ public class WireMockContextCustomizer implements ContextCustomizer {
   private static final Logger LOGGER = LoggerFactory.getLogger(WireMockContextCustomizer.class);
 
   private final List<ConfigureWireMock> configuration;
+  private final Class<?> testClass;
 
   /**
    * Creates an instance of {@link WireMockContextCustomizer}.
    *
    * @param configurations the configurations
    */
-  public WireMockContextCustomizer(final List<ConfigureWireMock> configurations) {
+  public WireMockContextCustomizer(
+      final Class<?> testClass, final List<ConfigureWireMock> configurations) {
     this.configuration = configurations;
+    this.testClass = testClass;
   }
 
   /**
    * Creates an instance of {@link WireMockContextCustomizer}.
    *
+   * @param testClass
    * @param configurations the configurations
    */
-  public WireMockContextCustomizer(final ConfigureWireMock... configurations) {
-    this(Arrays.asList(configurations));
+  public WireMockContextCustomizer(
+      final Class<?> testClass, final ConfigureWireMock... configurations) {
+    this(testClass, Arrays.asList(configurations));
   }
 
   @Override
@@ -67,20 +72,32 @@ public class WireMockContextCustomizer implements ContextCustomizer {
     return wireMockServer;
   }
 
+  /**
+   * The docs in {@link ContextCustomizer} states that equals and hashcode is being used for caching
+   * and needs implementation. If test class is not included it will not be unique and
+   * customizeContext will not be invoked for all tests.
+   */
   @Override
-  public boolean equals(final Object o) {
-    if (this == o) {
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || this.getClass() != o.getClass()) {
+    if (obj == null) {
       return false;
     }
-    final WireMockContextCustomizer that = (WireMockContextCustomizer) o;
-    return Objects.equals(this.configuration, that.configuration);
+    if (this.getClass() != obj.getClass()) {
+      return false;
+    }
+    final WireMockContextCustomizer other = (WireMockContextCustomizer) obj;
+    return Objects.equals(this.configuration, other.configuration)
+        && Objects.equals(this.testClass, other.testClass);
   }
 
+  /**
+   * @see #equals
+   */
   @Override
   public int hashCode() {
-    return Objects.hash(this.configuration);
+    return Objects.hash(this.configuration, this.testClass);
   }
 }
