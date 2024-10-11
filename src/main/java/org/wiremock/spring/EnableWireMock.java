@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@ExtendWith(org.wiremock.spring.internal.WireMockSpringExtension.class)
+@ExtendWith(org.wiremock.spring.internal.WireMockSpringJunitExtension.class)
 public @interface EnableWireMock {
   /**
    * A list of {@link com.github.tomakehurst.wiremock.WireMockServer} configurations. For each

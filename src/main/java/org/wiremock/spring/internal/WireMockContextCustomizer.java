@@ -1,7 +1,6 @@
 package org.wiremock.spring.internal;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -45,11 +44,7 @@ public class WireMockContextCustomizer implements ContextCustomizer {
   public void customizeContext(
       final ConfigurableApplicationContext context, final MergedContextConfiguration mergedConfig) {
     for (final ConfigureWireMock configureWiremock : this.configuration) {
-      final WireMockServer wireMockServer =
-          this.resolveOrCreateWireMockServer(context, configureWiremock);
-      if (this.configuration.size() == 1) {
-        WireMock.configureFor(wireMockServer.port());
-      }
+      this.resolveOrCreateWireMockServer(context, configureWiremock);
     }
   }
 
@@ -67,6 +62,11 @@ public class WireMockContextCustomizer implements ContextCustomizer {
     return wireMockServer;
   }
 
+  /**
+   * The docs in {@link ContextCustomizer} states that equals and hashcode is being used for caching
+   * and needs implementation. The customizeContext method will not be invoked for all tests,
+   * because of caching.
+   */
   @Override
   public boolean equals(final Object o) {
     if (this == o) {
