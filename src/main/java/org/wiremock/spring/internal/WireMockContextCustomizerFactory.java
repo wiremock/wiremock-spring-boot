@@ -17,7 +17,6 @@ import org.wiremock.spring.EnableWireMock;
  * @author Maciej Walkowiak
  */
 public class WireMockContextCustomizerFactory implements ContextCustomizerFactory {
-
   private static final ConfigureWireMock DEFAULT_CONFIGURE_WIREMOCK =
       DefaultConfigureWireMock.class.getAnnotation(ConfigureWireMock.class);
 
@@ -32,8 +31,7 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
     this.parseDefinitions(testClass, holder);
 
     if (holder.isEmpty()) {
-      return new WireMockContextCustomizer(
-          WireMockContextCustomizerFactory.DEFAULT_CONFIGURE_WIREMOCK);
+      return null;
     } else {
       return new WireMockContextCustomizer(holder.asArray());
     }
@@ -56,7 +54,12 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
     void parse(final Class<?> clazz) {
       final EnableWireMock annotation = AnnotationUtils.findAnnotation(clazz, EnableWireMock.class);
       if (annotation != null) {
-        this.add(annotation.value());
+        final ConfigureWireMock[] value = annotation.value();
+        if (value.length == 0) {
+          this.add(WireMockContextCustomizerFactory.DEFAULT_CONFIGURE_WIREMOCK);
+        } else {
+          this.add(value);
+        }
       }
     }
 
