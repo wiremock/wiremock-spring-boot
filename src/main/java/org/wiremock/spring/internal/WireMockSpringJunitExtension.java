@@ -12,6 +12,11 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.wiremock.spring.ConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
 import org.wiremock.spring.InjectWireMock;
 
 /**
@@ -20,8 +25,9 @@ import org.wiremock.spring.InjectWireMock;
  *
  * @author Maciej Walkowiak
  */
-public class WireMockSpringExtension
+public class WireMockSpringJunitExtension
     implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
+  private static final Logger LOGGER = LoggerFactory.getLogger(WireMockSpringJunitExtension.class);
 
   @Override
   public void beforeEach(final ExtensionContext extensionContext) throws Exception {
@@ -30,6 +36,45 @@ public class WireMockSpringExtension
 
     // inject properties into test class fields
     injectWireMockInstances(extensionContext, InjectWireMock.class, InjectWireMock::value);
+
+    this.configureWireMockForDefaultInstance(extensionContext);
+  }
+
+  private void configureWireMockForDefaultInstance(final ExtensionContext extensionContext) {
+    final List<Object> instances = extensionContext.getRequiredTestInstances().getAllInstances();
+    WireMockServer wiremock = null;
+    String wireMockName = null;
+    for (final Object instance : instances) {
+      final EnableWireMock enableWireMockAnnotation =
+          AnnotationUtils.findAnnotation(instance.getClass(), EnableWireMock.class);
+      if (enableWireMockAnnotation == null) {
+        continue;
+      }
+      final ConfigureWireMock[] wireMockServers =
+          WireMockContextCustomizerFactory.getConfigureWireMocksOrDefault(
+              enableWireMockAnnotation.value());
+      if (wireMockServers.length > 1) {
+        LOGGER.info(
+            "Not configuring WireMock for default instance when several ConfigureWireMock ("
+                + wireMockServers.length
+                + ")");
+      }
+      if (wiremock != null) {
+        LOGGER.info("Not configuring WireMock for default instance when several candidates found");
+        return;
+      }
+      wireMockName = wireMockServers[0].name();
+      wiremock = Store.INSTANCE.findRequiredWireMockInstance(extensionContext, wireMockName);
+    }
+    if (wiremock != null) {
+      LOGGER.info(
+          "Configuring WireMock for default instance, '"
+              + wireMockName
+              + "' on '"
+              + wiremock.port()
+              + "'.");
+      WireMock.configureFor(wiremock.port());
+    }
   }
 
   @Override

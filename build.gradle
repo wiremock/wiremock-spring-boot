@@ -26,6 +26,7 @@ allprojects {
 		testImplementation platform('org.junit:junit-bom:5.11.2')
 		testImplementation 'org.junit.jupiter:junit-jupiter'
 		testImplementation 'org.junit.platform:junit-platform-launcher'
+		testImplementation 'io.rest-assured:rest-assured:5.5.0'
 
 		constraints {
 			implementation('org.apache.commons:commons-compress:1.26.0') {
@@ -58,6 +59,5 @@ project('wiremock-spring-boot-example', {
 		implementation "org.springframework.boot:spring-boot-starter-webflux:3.3.4"
 
 		testImplementation rootProject
-		testImplementation 'io.rest-assured:rest-assured:5.5.0'
 	}
 })
