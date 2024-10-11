@@ -1,10 +1,12 @@
 package org.wiremock.spring.internal;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.Function;
+import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -18,7 +20,8 @@ import org.wiremock.spring.InjectWireMock;
  *
  * @author Maciej Walkowiak
  */
-public class WireMockSpringExtension implements BeforeEachCallback, ParameterResolver {
+public class WireMockSpringExtension
+    implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
   @Override
   public void beforeEach(final ExtensionContext extensionContext) throws Exception {
@@ -27,6 +30,11 @@ public class WireMockSpringExtension implements BeforeEachCallback, ParameterRes
 
     // inject properties into test class fields
     injectWireMockInstances(extensionContext, InjectWireMock.class, InjectWireMock::value);
+  }
+
+  @Override
+  public void afterEach(final ExtensionContext context) throws Exception {
+    WireMock.configureFor(8080);
   }
 
   private static <T extends Annotation> void injectWireMockInstances(
