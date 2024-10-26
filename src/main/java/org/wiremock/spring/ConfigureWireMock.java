@@ -23,6 +23,11 @@ public @interface ConfigureWireMock {
   int port() default 0;
 
   /**
+   * @return true for HTTPS, else false.
+   */
+  boolean useHttps() default false;
+
+  /**
    * The name of WireMock server.
    *
    * @return the name of WireMock server.
