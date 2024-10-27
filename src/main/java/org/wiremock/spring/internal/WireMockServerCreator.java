@@ -33,8 +33,13 @@ public class WireMockServerCreator {
       final ConfigurableApplicationContext context, final ConfigureWireMock options) {
     final int serverPort = this.getServerProperty(context.getEnvironment(), options);
 
-    final WireMockConfiguration serverOptions =
-        options().port(serverPort).notifier(new Slf4jNotifier(options.name()));
+    final WireMockConfiguration serverOptions = options();
+    if (options.useHttps()) {
+      serverOptions.httpsPort(serverPort);
+    } else {
+      serverOptions.port(serverPort);
+    }
+    serverOptions.notifier(new Slf4jNotifier(options.name()));
 
     this.configureFilesUnderDirectory(options.filesUnderDirectory(), "/" + options.name())
         .ifPresentOrElse(
@@ -106,7 +111,8 @@ public class WireMockServerCreator {
         .collect(Collectors.toList())
         .forEach(
             propertyName -> {
-              final String property = propertyName + "=" + newServer.port();
+              final int port = options.useHttps() ? newServer.httpsPort() : newServer.port();
+              final String property = propertyName + "=" + port;
               this.logger.info("Adding property '{}' to Spring application context", property);
               TestPropertyValues.of(property).applyTo(context.getEnvironment());
             });
