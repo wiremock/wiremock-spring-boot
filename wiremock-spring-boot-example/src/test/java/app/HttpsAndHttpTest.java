@@ -18,16 +18,22 @@ import org.wiremock.spring.EnableWireMock;
 import org.wiremock.spring.InjectWireMock;
 
 @SpringBootTest
-@EnableWireMock({@ConfigureWireMock(useHttps = true)})
-class HttpsTest {
+@EnableWireMock({@ConfigureWireMock(httpsPort = 0)})
+class HttpsAndHttpTest {
 
   @InjectWireMock private WireMockServer wiremock;
 
+  @Value("${wiremock.server.httpsPort}")
+  private int wiremockHttpsPort;
+
   @Value("${wiremock.server.port}")
-  private int wiremockPort;
+  private int wiremockHttpPort;
+
+  @Value("${wiremock.server.httpsBaseUrl}")
+  private String wiremockHttpsUrl;
 
   @Value("${wiremock.server.baseUrl}")
-  private String wiremockUrl;
+  private String wiremockHttpUrl;
 
   @BeforeEach
   public void before() {
@@ -36,25 +42,36 @@ class HttpsTest {
 
   @Test
   void testProperties() {
-    assertThat(this.wiremockPort).isNotNull();
-    assertThat(this.wiremockUrl).startsWith("https://").contains(String.valueOf(this.wiremockPort));
+    assertThat(this.wiremockHttpsPort).isNotNull();
+    assertThat(this.wiremockHttpsUrl)
+        .startsWith("https://")
+        .contains(String.valueOf(this.wiremockHttpsPort));
+
+    assertThat(this.wiremockHttpPort).isNotNull();
+    assertThat(this.wiremockHttpUrl)
+        .startsWith("http://")
+        .contains(String.valueOf(this.wiremockHttpPort));
   }
 
   @Test
   void testInjectedClient() {
     this.wiremock.stubFor(get("/injected-client").willReturn(aResponse().withStatus(202)));
 
-    RestAssured.when().get(this.wiremockUrl + "/injected-client").then().statusCode(202);
-
+    RestAssured.when().get(this.wiremockHttpsUrl + "/injected-client").then().statusCode(202);
     assertThat(this.wiremock.findAll(anyRequestedFor(anyUrl()))).hasSize(1);
+
+    RestAssured.when().get(this.wiremockHttpUrl + "/injected-client").then().statusCode(202);
+    assertThat(this.wiremock.findAll(anyRequestedFor(anyUrl()))).hasSize(2);
   }
 
   @Test
   void testDefaultClient() {
     WireMock.stubFor(WireMock.get("/with-default-client").willReturn(aResponse().withStatus(202)));
 
-    RestAssured.when().get(this.wiremockUrl + "/with-default-client").then().statusCode(202);
-
+    RestAssured.when().get(this.wiremockHttpsUrl + "/with-default-client").then().statusCode(202);
     assertThat(WireMock.findAll(anyRequestedFor(anyUrl()))).hasSize(1);
+
+    RestAssured.when().get(this.wiremockHttpUrl + "/with-default-client").then().statusCode(202);
+    assertThat(WireMock.findAll(anyRequestedFor(anyUrl()))).hasSize(2);
   }
 }
