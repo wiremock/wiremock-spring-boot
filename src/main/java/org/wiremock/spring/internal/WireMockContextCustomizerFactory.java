@@ -2,7 +2,10 @@ package org.wiremock.spring.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.test.context.ContextConfigurationAttributes;
 import org.springframework.test.context.ContextCustomizer;
@@ -23,11 +26,12 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
   @ConfigureWireMock(name = "wiremock")
   private static class DefaultConfigureWireMock {}
 
-  static ConfigureWireMock[] getConfigureWireMocksOrDefault(final ConfigureWireMock... value) {
-    if (value == null || value.length == 0) {
+  static ConfigureWireMock[] getConfigureWireMocksOrDefault(
+      final ConfigureWireMock... configureWireMock) {
+    if (configureWireMock == null || configureWireMock.length == 0) {
       return new ConfigureWireMock[] {WireMockContextCustomizerFactory.DEFAULT_CONFIGURE_WIREMOCK};
     }
-    return value;
+    return configureWireMock;
   }
 
   @Override
@@ -56,12 +60,26 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
 
     void add(final ConfigureWireMock... annotations) {
       this.annotations.addAll(Arrays.asList(annotations));
+      this.sanityCheckDuplicateNames(this.annotations);
     }
 
     void parse(final Class<?> clazz) {
       final EnableWireMock annotation = AnnotationUtils.findAnnotation(clazz, EnableWireMock.class);
       if (annotation != null) {
         this.add(getConfigureWireMocksOrDefault(annotation.value()));
+      }
+    }
+
+    private void sanityCheckDuplicateNames(final List<ConfigureWireMock> check) {
+      final List<String> names = check.stream().map(it -> it.name()).toList();
+      final Set<String> dublicateNames =
+          names.stream()
+              .filter(it -> Collections.frequency(names, it) > 1)
+              .collect(Collectors.toSet());
+      if (!dublicateNames.isEmpty()) {
+        throw new IllegalStateException(
+            "Names of mocks must be unique, found duplicates of: "
+                + dublicateNames.stream().sorted().collect(Collectors.joining(",")));
       }
     }
 
