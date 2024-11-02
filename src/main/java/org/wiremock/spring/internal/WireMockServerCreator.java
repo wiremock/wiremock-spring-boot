@@ -23,6 +23,7 @@ import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.WireMockConfigurationCustomizer;
 
 public class WireMockServerCreator {
+  private static final int PORT_DISABLED = -1;
   private final Logger logger;
 
   public WireMockServerCreator(final String name) {
@@ -31,13 +32,19 @@ public class WireMockServerCreator {
 
   public WireMockServer createWireMockServer(
       final ConfigurableApplicationContext context, final ConfigureWireMock options) {
-    final int serverPort = this.getServerProperty(context.getEnvironment(), options);
 
     final WireMockConfiguration serverOptions = options();
-    if (options.useHttps()) {
-      serverOptions.httpsPort(serverPort);
-    } else {
-      serverOptions.port(serverPort);
+
+    final int serverHttpsPort = this.getServerHttpsPortProperty(context.getEnvironment(), options);
+    final boolean httpsEnabled = serverHttpsPort != PORT_DISABLED;
+    if (httpsEnabled) {
+      serverOptions.httpsPort(serverHttpsPort);
+    }
+
+    final int serverHttpPort = this.getServerHttpPortProperty(context.getEnvironment(), options);
+    final boolean httpEnabled = serverHttpPort != PORT_DISABLED;
+    if (httpEnabled) {
+      serverOptions.port(serverHttpPort);
     }
     serverOptions.notifier(new Slf4jNotifier(options.name()));
 
@@ -74,9 +81,10 @@ public class WireMockServerCreator {
     this.applyCustomizers(options, serverOptions);
 
     this.logger.info(
-        "Configuring WireMockServer with name '{}' on port: {}",
+        "Configuring WireMockServer with name '{}' on HTTP port: {} and HTTPS port: {}",
         options.name(),
-        serverOptions.portNumber());
+        serverOptions.portNumber(),
+        serverOptions.httpsSettings().port());
 
     final WireMockServer newServer = new WireMockServer(serverOptions);
     newServer.start();
@@ -96,31 +104,64 @@ public class WireMockServerCreator {
           }
         });
 
-    Arrays.stream(options.baseUrlProperties())
-        .filter(StringUtils::isNotBlank)
-        .collect(Collectors.toList())
-        .forEach(
-            propertyName -> {
-              final String property = propertyName + "=" + newServer.baseUrl();
-              this.logger.info("Adding property '{}' to Spring application context", property);
-              TestPropertyValues.of(property).applyTo(context.getEnvironment());
-            });
+    if (httpEnabled) {
+      Arrays.stream(options.baseUrlProperties())
+          .filter(StringUtils::isNotBlank)
+          .collect(Collectors.toList())
+          .forEach(
+              propertyName -> {
+                final String property =
+                    propertyName + "=" + String.format("http://localhost:%d", newServer.port());
+                this.logger.info(
+                    "Adding property '{}' with HTTP base URL to Spring application context",
+                    property);
+                TestPropertyValues.of(property).applyTo(context.getEnvironment());
+              });
 
-    Arrays.stream(options.portProperties())
-        .filter(StringUtils::isNotBlank)
-        .collect(Collectors.toList())
-        .forEach(
-            propertyName -> {
-              final int port = options.useHttps() ? newServer.httpsPort() : newServer.port();
-              final String property = propertyName + "=" + port;
-              this.logger.info("Adding property '{}' to Spring application context", property);
-              TestPropertyValues.of(property).applyTo(context.getEnvironment());
-            });
+      Arrays.stream(options.portProperties())
+          .filter(StringUtils::isNotBlank)
+          .collect(Collectors.toList())
+          .forEach(
+              propertyName -> {
+                final String property = propertyName + "=" + newServer.port();
+                this.logger.info(
+                    "Adding property '{}' with HTTP port to Spring application context", property);
+                TestPropertyValues.of(property).applyTo(context.getEnvironment());
+              });
+    }
+
+    if (httpsEnabled) {
+      Arrays.stream(options.httpsBaseUrlProperties())
+          .filter(StringUtils::isNotBlank)
+          .collect(Collectors.toList())
+          .forEach(
+              propertyName -> {
+                final String property =
+                    propertyName
+                        + "="
+                        + String.format("https://localhost:%d", newServer.httpsPort());
+                this.logger.info(
+                    "Adding property '{}' with HTTPS base URL to Spring application context",
+                    property);
+                TestPropertyValues.of(property).applyTo(context.getEnvironment());
+              });
+
+      Arrays.stream(options.httpsPortProperties())
+          .filter(StringUtils::isNotBlank)
+          .collect(Collectors.toList())
+          .forEach(
+              propertyName -> {
+                final String property = propertyName + "=" + newServer.httpsPort();
+                this.logger.info(
+                    "Adding property '{}' with HTTPS port to Spring application context", property);
+                TestPropertyValues.of(property).applyTo(context.getEnvironment());
+              });
+    }
 
     return newServer;
   }
 
-  private int getServerProperty(
+  private int getServerHttpPortProperty(
       final ConfigurableEnvironment environment, final ConfigureWireMock options) {
     if (!options.usePortFromPredefinedPropertyIfFound()) {
       return options.port();
@@ -140,6 +181,28 @@ public class WireMockServerCreator {
             })
         .findFirst()
         .orElse(options.port());
+  }
+
+  private int getServerHttpsPortProperty(
+      final ConfigurableEnvironment environment, final ConfigureWireMock options) {
+    if (!options.usePortFromPredefinedPropertyIfFound()) {
+      return options.httpsPort();
+    }
+    return Arrays.stream(options.httpsPortProperties())
+        .filter(StringUtils::isNotBlank)
+        .filter(propertyName -> environment.containsProperty(propertyName))
+        .map(
+            propertyName -> {
+              final int predefinedPropertyValue =
+                  Integer.parseInt(environment.getProperty(propertyName));
+              this.logger.info(
+                  "Found predefined https port in property with name '{}' on port: {}",
+                  propertyName,
+                  predefinedPropertyValue);
+              return predefinedPropertyValue;
+            })
+        .findFirst()
+        .orElse(options.httpsPort());
   }
 
   private WireMockConfiguration usingFilesUnderClasspath(

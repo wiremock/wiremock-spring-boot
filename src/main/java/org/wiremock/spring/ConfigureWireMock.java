@@ -15,17 +15,24 @@ import java.lang.annotation.RetentionPolicy;
 public @interface ConfigureWireMock {
 
   /**
-   * Port on which WireMock server is going to listen. {@code 0} means WireMock will pick random
-   * port.
+   * Port on which WireMock server is going to listen.
+   *
+   * <p>{@code -1} means disabled.
+   *
+   * <p>{@code 0} means WireMock will pick random available port.
+   *
+   * <p>{@code >0} means that static port will be used.
    *
    * @return WireMock server port
    */
   int port() default 0;
 
   /**
-   * @return true for HTTPS, else false.
+   * Same as {@link #port()} but for HTTPS.
+   *
+   * @return HTTPS port to use.
    */
-  boolean useHttps() default false;
+  int httpsPort() default -1;
 
   /**
    * The name of WireMock server.
@@ -50,11 +57,25 @@ public @interface ConfigureWireMock {
   String[] portProperties() default {"wiremock.server.port"};
 
   /**
+   * Names of Spring properties to inject the {@link WireMockServer#httpsPort()}
+   *
+   * @return names of Spring properties to inject the {@link WireMockServer#httpsPort()}
+   */
+  String[] httpsPortProperties() default {"wiremock.server.httpsPort"};
+
+  /**
    * Names of Spring properties to inject the {@link WireMockServer#baseUrl()}.
    *
    * @return names of Spring properties to inject the {@link WireMockServer#baseUrl()}.
    */
   String[] baseUrlProperties() default {"wiremock.server.baseUrl"};
+
+  /**
+   * Names of Spring properties to inject the {@link WireMockServer#baseUrl()}.
+   *
+   * @return names of Spring properties to inject the {@link WireMockServer#baseUrl()}.
+   */
+  String[] httpsBaseUrlProperties() default {"wiremock.server.httpsBaseUrl"};
 
   /**
    * Classpaths to pass to {@link WireMockConfiguration#usingFilesUnderClasspath(String)}. First one
