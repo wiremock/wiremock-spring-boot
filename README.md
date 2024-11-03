@@ -58,7 +58,7 @@ class DefaultPropertiesTest {
 }
 ```
 
-There are more running examples in [the repo](/wiremock-spring-boot-example/src/test/java/app).
+There are more running examples in [the repo](/src/test/java/usecases).
 
 ## Annotations
 

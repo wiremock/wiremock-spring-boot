@@ -85,7 +85,7 @@ public class WireMockSpringJunitExtension
 
   @Override
   public void afterEach(final ExtensionContext context) throws Exception {
-    WireMock.configureFor(8080);
+    WireMock.configureFor(-1);
   }
 
   private static <T extends Annotation> void injectWireMockInstances(

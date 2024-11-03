@@ -1,2 +1,1 @@
 rootProject.name = 'wiremock-spring-boot'
-include 'wiremock-spring-boot-example'

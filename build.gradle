@@ -6,58 +6,50 @@ buildscript {
 	}
 	dependencies {
 		classpath "se.bjurr.gradle.java-convention:se.bjurr.gradle.java-convention.gradle.plugin:0.+"
+		classpath "org.wiremock.tools.gradle:extension-convention-plugin:0.3.0"
 	}
-}
-
-plugins {
-	id 'org.wiremock.tools.gradle.wiremock-extension-convention' version '0.3.0'
 }
 
 apply plugin: "project-report"
+apply plugin: "se.bjurr.gradle.java-convention"
+
+// Or else it will be 11 in wiremock-extension-convention
+sourceCompatibility = 17
+targetCompatibility = 17
+apply plugin: "org.wiremock.tools.gradle.wiremock-extension-convention"
+
 
 group 'org.wiremock.integrations'
 
-allprojects {
-	apply plugin: "se.bjurr.gradle.java-convention"
-
-	dependencies {
-		testImplementation "org.springframework.boot:spring-boot-starter-test:3.3.4"
-		testImplementation 'org.assertj:assertj-core:3.26.3'
-		testImplementation platform('org.junit:junit-bom:5.11.2')
-		testImplementation 'org.junit.jupiter:junit-jupiter'
-		testImplementation 'org.junit.platform:junit-platform-launcher'
-		testImplementation 'io.rest-assured:rest-assured:5.5.0'
-
-		constraints {
-			implementation('org.apache.commons:commons-compress:1.26.0') {
-				because 'version 1.24.0 has a vulnerability'
-			}
-		}
-	}
-}
+// Because older version is set in wiremock-extension-convention
+def wiremockVersion = "3.9.2"
 
 dependencies {
-	api 'org.wiremock:wiremock-standalone:3.9.2'
+	api "org.wiremock:wiremock-standalone:${wiremockVersion}"
+	compileOnly "org.wiremock:wiremock:${wiremockVersion}"
+	shadow "org.wiremock:wiremock:${wiremockVersion}"
 	api "org.springframework.boot:spring-boot-test:3.3.4"
 	api "org.springframework:spring-test:6.1.13"
 	api "org.slf4j:slf4j-api:2.0.16"
 	api 'org.junit.jupiter:junit-jupiter-api:5.11.2'
+
+	testImplementation "org.springframework.boot:spring-boot-starter-test:3.3.4"
+	testImplementation 'org.assertj:assertj-core:3.26.3'
+	testImplementation platform('org.junit:junit-bom:5.11.2')
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+	testImplementation 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'io.rest-assured:rest-assured:5.5.0'
+
+	constraints {
+		implementation('org.apache.commons:commons-compress:1.26.0') {
+			because 'version 1.24.0 has a vulnerability'
+		}
+	}
 }
 
+// Not using shadowJar, but currently not possible to disable in wiremock-extension-convention
 shadowJar {
 	mergeServiceFiles()
 
-	exclude 'META-INF/maven/**'
-	exclude 'META-INF/versions/17/**'
-	exclude 'META-INF/versions/21/**'
-	exclude 'module-info.class'
+	exclude '**/*'
 }
-
-project('wiremock-spring-boot-example', {
-	dependencies {
-		implementation "org.springframework.boot:spring-boot-starter-web:3.3.4"
-		implementation "org.springframework.boot:spring-boot-starter-webflux:3.3.4"
-
-		testImplementation rootProject
-	}
-})
