@@ -33,6 +33,7 @@ dependencies {
 	api "org.slf4j:slf4j-api:2.0.16"
 	api 'org.junit.jupiter:junit-jupiter-api:5.11.2'
 
+	testImplementation "org.wiremock:wiremock:${wiremockVersion}"
 	testImplementation "org.springframework.boot:spring-boot-starter-test:3.3.4"
 	testImplementation 'org.assertj:assertj-core:3.26.3'
 	testImplementation platform('org.junit:junit-bom:5.11.2')
