@@ -3,6 +3,7 @@ package org.wiremock.spring;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.extension.Extension;
+import com.github.tomakehurst.wiremock.extension.ExtensionFactory;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -99,6 +100,13 @@ public @interface ConfigureWireMock {
    * @return the extensions
    */
   Class<? extends Extension>[] extensions() default {};
+
+  /**
+   * WireMock extensions to register in {@link WireMockServer}.
+   *
+   * @return the extensions
+   */
+  Class<? extends ExtensionFactory>[] extensionFactories() default {};
 
   /**
    * Customizes {@link WireMockConfiguration} used by {@link WireMockServer} instance. Customizers
