@@ -6,7 +6,7 @@ buildscript {
 	}
 	dependencies {
 		classpath "se.bjurr.gradle.java-convention:se.bjurr.gradle.java-convention.gradle.plugin:0.+"
-		classpath "org.wiremock.tools.gradle:extension-convention-plugin:0.3.0"
+		classpath "org.wiremock.tools.gradle:gradle-wiremock-extension-plugins:0.4.0"
 	}
 }
 
