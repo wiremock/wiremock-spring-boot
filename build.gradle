@@ -22,18 +22,25 @@ apply plugin: "org.wiremock.tools.gradle.wiremock-extension-convention"
 group 'org.wiremock.integrations'
 
 // Because older version is set in wiremock-extension-convention
-def wiremockVersion = "3.9.2"
+def wiremockVersion = "3.10.0"
+
+configurations {
+	all*.exclude group: 'org.eclipse.jetty', module: 'jetty-servlet'
+	all*.exclude group: 'org.eclipse.jetty', module: 'jetty-servlets'
+	all*.exclude group: 'org.eclipse.jetty', module: 'jetty-webapp'
+	all*.exclude group: 'org.eclipse.jetty.http2', module: 'http2-server'
+}
 
 dependencies {
-	api "org.wiremock:wiremock-standalone:${wiremockVersion}"
-	compileOnly "org.wiremock:wiremock:${wiremockVersion}"
-	shadow "org.wiremock:wiremock:${wiremockVersion}"
+	implementation platform("org.eclipse.jetty:jetty-bom:12.0.15")
+	api "org.wiremock:wiremock-jetty12:${wiremockVersion}"
+
 	api "org.springframework.boot:spring-boot-test:3.3.4"
 	api "org.springframework:spring-test:6.1.13"
 	api "org.slf4j:slf4j-api:2.0.16"
 	api 'org.junit.jupiter:junit-jupiter-api:5.11.2'
 
-	testImplementation "org.wiremock:wiremock:${wiremockVersion}"
+	testImplementation "org.wiremock:wiremock-jetty12:${wiremockVersion}"
 	testImplementation "org.springframework.boot:spring-boot-starter-test:3.3.4"
 	testImplementation 'org.assertj:assertj-core:3.26.3'
 	testImplementation platform('org.junit:junit-bom:5.11.2')
