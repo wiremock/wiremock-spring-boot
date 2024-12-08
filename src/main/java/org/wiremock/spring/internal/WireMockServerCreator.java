@@ -3,9 +3,7 @@ package org.wiremock.spring.internal;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.common.Exceptions;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.extension.ExtensionFactory;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.nio.file.Path;
@@ -282,11 +280,5 @@ public class WireMockServerCreator {
         throw e;
       }
     }
-  }
-
-  private static ExtensionFactory instantiateExtensionFactory(
-      Class<? extends ExtensionFactory> factoryClass) {
-    return Exceptions.uncheck(
-        () -> factoryClass.getDeclaredConstructor().newInstance(), ExtensionFactory.class);
   }
 }
