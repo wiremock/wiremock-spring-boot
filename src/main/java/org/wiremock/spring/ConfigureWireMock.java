@@ -115,4 +115,14 @@ public @interface ConfigureWireMock {
    * @return the configuration customizers classes
    */
   Class<? extends WireMockConfigurationCustomizer>[] configurationCustomizers() default {};
+
+  /**
+   * When tests are running concurrently they will break each other if servers are being reset
+   * between tests. Automatic reset is turned on by default, this option allows a user to turn it
+   * off.
+   *
+   * @return true if {@link WireMockServer} should be invoked with {@link WireMockServer#resetAll()}
+   *     between test runs.
+   */
+  boolean resetWireMockServer() default true;
 }

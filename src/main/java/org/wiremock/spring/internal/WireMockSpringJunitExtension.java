@@ -31,13 +31,30 @@ public class WireMockSpringJunitExtension
 
   @Override
   public void beforeEach(final ExtensionContext extensionContext) throws Exception {
-    // reset all wiremock servers associated with application context
-    Store.INSTANCE.findAllInstances(extensionContext).forEach(WireMockServer::resetAll);
+    this.resetWireMockServersIfConfigured(extensionContext);
 
     // inject properties into test class fields
     injectWireMockInstances(extensionContext, InjectWireMock.class, InjectWireMock::value);
 
     this.configureWireMockForDefaultInstance(extensionContext);
+  }
+
+  private void resetWireMockServersIfConfigured(final ExtensionContext extensionContext) {
+    final List<Object> instances = extensionContext.getRequiredTestInstances().getAllInstances();
+    for (final Object instance : instances) {
+      final EnableWireMock enableWireMockAnnotation =
+          AnnotationUtils.findAnnotation(instance.getClass(), EnableWireMock.class);
+      if (enableWireMockAnnotation == null) {
+        continue;
+      }
+      final ConfigureWireMock[] wireMockServers =
+          WireMockContextCustomizerFactory.getConfigureWireMocksOrDefault(
+              enableWireMockAnnotation.value());
+      List.of(wireMockServers).stream()
+          .filter(it -> it.resetWireMockServer())
+          .map(it -> Store.INSTANCE.findRequiredWireMockInstance(extensionContext, it.name()))
+          .forEach(WireMockServer::resetAll);
+    }
   }
 
   private void configureWireMockForDefaultInstance(final ExtensionContext extensionContext) {
