@@ -53,6 +53,9 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
     if (TestContextAnnotationUtils.searchEnclosingClass(testClass)) {
       this.parseDefinitions(testClass.getEnclosingClass(), parser);
     }
+    if (testClass.getSuperclass() != null) {
+      parseDefinitions(testClass.getSuperclass(), parser);
+    }
   }
 
   private static class ConfigureWiremockHolder {
