@@ -41,12 +41,7 @@ public class WireMockSpringJunitExtension
 
   private void resetWireMockServersIfConfigured(final ExtensionContext extensionContext) {
     final List<Object> instances = extensionContext.getRequiredTestInstances().getAllInstances();
-    for (final Object instance : instances) {
-      final EnableWireMock enableWireMockAnnotation =
-          AnnotationUtils.findAnnotation(instance.getClass(), EnableWireMock.class);
-      if (enableWireMockAnnotation == null) {
-        continue;
-      }
+    for (EnableWireMock enableWireMockAnnotation : getEnableWireMockAnnotations(instances)) {
       final ConfigureWireMock[] wireMockServers =
           WireMockContextCustomizerFactory.getConfigureWireMocksOrDefault(
               enableWireMockAnnotation.value());
@@ -61,12 +56,7 @@ public class WireMockSpringJunitExtension
     final List<Object> instances = extensionContext.getRequiredTestInstances().getAllInstances();
     WireMockServer wiremock = null;
     String wireMockName = null;
-    for (final Object instance : instances) {
-      final EnableWireMock enableWireMockAnnotation =
-          AnnotationUtils.findAnnotation(instance.getClass(), EnableWireMock.class);
-      if (enableWireMockAnnotation == null) {
-        continue;
-      }
+    for (EnableWireMock enableWireMockAnnotation : getEnableWireMockAnnotations(instances)) {
       final ConfigureWireMock[] wireMockServers =
           WireMockContextCustomizerFactory.getConfigureWireMocksOrDefault(
               enableWireMockAnnotation.value());
@@ -100,6 +90,13 @@ public class WireMockSpringJunitExtension
     }
   }
 
+  private List<EnableWireMock> getEnableWireMockAnnotations(List<Object> instances) {
+    return instances.stream()
+        .map(it -> AnnotationUtils.findAnnotation(it.getClass(), EnableWireMock.class))
+        .filter(it -> it != null)
+        .toList();
+  }
+
   @Override
   public void afterEach(final ExtensionContext context) throws Exception {
     WireMock.configureFor(-1);
@@ -110,7 +107,6 @@ public class WireMockSpringJunitExtension
       final Class<T> annotation,
       final Function<T, String> fn)
       throws IllegalAccessException {
-    // getRequiredTestInstances() return multiple instances for nested tests
     for (final Object testInstance :
         extensionContext.getRequiredTestInstances().getAllInstances()) {
       final List<Field> annotatedFields =
