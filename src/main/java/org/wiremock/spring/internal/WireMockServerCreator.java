@@ -162,6 +162,11 @@ public class WireMockServerCreator {
               });
     }
 
+    if (options.registerSpringBean()) {
+      this.logger.info("Registering WireMockServer '" + options.name() + "' as a Spring Bean.");
+      context.getBeanFactory().registerSingleton(options.name(), newServer);
+    }
+
     return newServer;
   }
 

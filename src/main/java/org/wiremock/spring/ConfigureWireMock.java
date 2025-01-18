@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.extension.Extension;
 import com.github.tomakehurst.wiremock.extension.ExtensionFactory;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Configures WireMock instance.
@@ -125,4 +126,10 @@ public @interface ConfigureWireMock {
    *     between test runs.
    */
   boolean resetWireMockServer() default true;
+
+  /**
+   * If <code>true</code>, it will register {@link WireMockServer} as a Spring Bean so that it can
+   * be {@link Autowired} by name.
+   */
+  boolean registerSpringBean() default false;
 }
