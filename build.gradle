@@ -7,6 +7,7 @@ buildscript {
 	dependencies {
 		classpath "se.bjurr.gradle.java-convention:se.bjurr.gradle.java-convention.gradle.plugin:0.+"
 		classpath "org.wiremock.tools.gradle:gradle-wiremock-extension-plugins:0.4.0"
+		classpath "se.thinkcode.cucumber-runner:se.thinkcode.cucumber-runner.gradle.plugin:0.0.11"
 	}
 }
 
@@ -17,6 +18,7 @@ apply plugin: "se.bjurr.gradle.java-convention"
 sourceCompatibility = 17
 targetCompatibility = 17
 apply plugin: "org.wiremock.tools.gradle.wiremock-extension-convention"
+apply plugin: "se.thinkcode.cucumber-runner"
 
 
 group 'org.wiremock.integrations'
@@ -35,18 +37,23 @@ dependencies {
 	implementation platform("org.eclipse.jetty:jetty-bom:12.0.15")
 	api "org.wiremock:wiremock-jetty12:${wiremockVersion}"
 
-	api "org.springframework.boot:spring-boot-test:3.3.4"
+	api "org.springframework.boot:spring-boot-test:3.4.1"
 	api "org.springframework:spring-test:6.1.13"
 	api "org.slf4j:slf4j-api:2.0.16"
 	api 'org.junit.jupiter:junit-jupiter-api:5.11.2'
 
 	testImplementation "org.wiremock:wiremock-jetty12:${wiremockVersion}"
-	testImplementation "org.springframework.boot:spring-boot-starter-test:3.3.4"
+	testImplementation "org.springframework.boot:spring-boot-starter-test:3.4.1"
 	testImplementation 'org.assertj:assertj-core:3.26.3'
 	testImplementation platform('org.junit:junit-bom:5.11.2')
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 	testImplementation 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'io.rest-assured:rest-assured:5.5.0'
+	testImplementation 'io.rest-assured:rest-assured:5.5.0'
+	testImplementation "org.springframework.boot:spring-boot-starter-web:3.4.1"
+	testImplementation 'io.cucumber:cucumber-java:7.20.1'
+	testImplementation 'io.cucumber:cucumber-spring:7.20.1'
+	testImplementation 'org.assertj:assertj-core:3.26.3'
 
 	constraints {
 		implementation('org.apache.commons:commons-compress:1.26.0') {
@@ -54,6 +61,12 @@ dependencies {
 		}
 	}
 }
+
+cucumber {
+	glue = 'classpath:usecases.cucumber'
+	featurePath = 'src/test/java/usecases/cucumber'
+}
+build.dependsOn tasks.cucumber
 
 // Not using shadowJar, but currently not possible to disable in wiremock-extension-convention
 shadowJar {
