@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.test.context.ContextConfigurationAttributes;
 import org.springframework.test.context.ContextCustomizer;
 import org.springframework.test.context.ContextCustomizerFactory;
-import org.springframework.test.context.TestContextAnnotationUtils;
 import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
 
@@ -49,13 +49,26 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
   }
 
   private void parseDefinitions(final Class<?> testClass, final ConfigureWiremockHolder parser) {
-    parser.parse(testClass);
-    if (TestContextAnnotationUtils.searchEnclosingClass(testClass)) {
-      this.parseDefinitions(testClass.getEnclosingClass(), parser);
+    for (EnableWireMock enableWireMockAnnotation : getEnableWireMockAnnotations(testClass)) {
+      parser.add(getConfigureWireMocksOrDefault(enableWireMockAnnotation.value()));
     }
-    if (testClass.getSuperclass() != null) {
-      parseDefinitions(testClass.getSuperclass(), parser);
-    }
+  }
+
+  private List<EnableWireMock> getEnableWireMockAnnotations(final Class<?> testClass) {
+    final List<EnableWireMock> annotations = new ArrayList<>();
+    Optional.ofNullable(AnnotationUtils.findAnnotation(testClass, EnableWireMock.class))
+        .ifPresent(it -> annotations.add(it));
+
+    Arrays.asList(testClass.getEnclosingClass(), testClass.getSuperclass()).stream()
+        .filter(clazz -> clazz != null)
+        .forEach(
+            clazz ->
+                annotations.addAll(
+                    getEnableWireMockAnnotations(clazz).stream()
+                        .filter(it -> !annotations.contains(it))
+                        .toList()));
+
+    return annotations;
   }
 
   private static class ConfigureWiremockHolder {
@@ -67,13 +80,6 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
       this.sanityCheckHttpOrHttpsMustBeEnabled(this.annotations);
       this.sanityCheckHttpAndHttpsMustUseDifferentPorts(this.annotations);
       this.sanityCheckUniquePorts(this.annotations);
-    }
-
-    void parse(final Class<?> clazz) {
-      final EnableWireMock annotation = AnnotationUtils.findAnnotation(clazz, EnableWireMock.class);
-      if (annotation != null) {
-        this.add(getConfigureWireMocksOrDefault(annotation.value()));
-      }
     }
 
     private void sanityCheckDuplicateNames(final List<ConfigureWireMock> check) {

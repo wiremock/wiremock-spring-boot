@@ -15,7 +15,7 @@ import org.wiremock.spring.InjectWireMock;
   @ConfigureWireMock(name = "base-service-1", baseUrlProperties = "base-service-1.url"),
   @ConfigureWireMock(name = "base-service-2", baseUrlProperties = "base-service-2.url")
 })
-class EnableWireMockOnSuperClassTest extends EnableWireMockOnSuperClassTestSuperClass {
+class EnableWireMockOnSuperClassAndSubClassTest extends EnableWireMockOnSuperClassTestSuperClass {
 
   @InjectWireMock("super-service-1")
   private WireMockServer superService1;
