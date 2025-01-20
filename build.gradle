@@ -7,7 +7,6 @@ buildscript {
 	dependencies {
 		classpath "se.bjurr.gradle.java-convention:se.bjurr.gradle.java-convention.gradle.plugin:0.+"
 		classpath "org.wiremock.tools.gradle:gradle-wiremock-extension-plugins:0.4.0"
-		classpath "se.thinkcode.cucumber-runner:se.thinkcode.cucumber-runner.gradle.plugin:0.0.11"
 	}
 }
 
@@ -18,7 +17,6 @@ apply plugin: "se.bjurr.gradle.java-convention"
 sourceCompatibility = 17
 targetCompatibility = 17
 apply plugin: "org.wiremock.tools.gradle.wiremock-extension-convention"
-apply plugin: "se.thinkcode.cucumber-runner"
 
 
 group 'org.wiremock.integrations'
@@ -53,6 +51,8 @@ dependencies {
 	testImplementation "org.springframework.boot:spring-boot-starter-web:3.4.1"
 	testImplementation 'io.cucumber:cucumber-java:7.20.1'
 	testImplementation 'io.cucumber:cucumber-spring:7.20.1'
+	testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.20.1'
+	testImplementation 'org.junit.platform:junit-platform-suite:1.11.4'
 	testImplementation 'org.assertj:assertj-core:3.26.3'
 
 	constraints {
@@ -61,12 +61,6 @@ dependencies {
 		}
 	}
 }
-
-cucumber {
-	glue = 'classpath:usecases.cucumber'
-	featurePath = 'src/test/java/usecases/cucumber'
-}
-build.dependsOn tasks.cucumber
 
 // Not using shadowJar, but currently not possible to disable in wiremock-extension-convention
 shadowJar {
