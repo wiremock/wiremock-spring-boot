@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/global-templating"
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "name": "Resolved: {{request.path.[0]}}"
+    },
+    "status": 200
+  }
+}
