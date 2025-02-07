@@ -132,4 +132,9 @@ public @interface ConfigureWireMock {
    * be {@link Autowired} by name.
    */
   boolean registerSpringBean() default false;
+
+  /**
+   * @see WireMockConfiguration#globalTemplating(boolean)
+   */
+  boolean globalTemplating() default false;
 }

@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.commons.util.StringUtils;
 import org.slf4j.Logger;
@@ -81,6 +82,8 @@ public class WireMockServerCreator {
     if (options.extensions().length > 0) {
       serverOptions.extensions(options.extensions());
     }
+
+    serverOptions.globalTemplating(options.globalTemplating());
 
     this.applyCustomizers(options, serverOptions);
 
@@ -251,7 +254,7 @@ public class WireMockServerCreator {
   private Optional<String> configureFilesUnderDirectory(
       final String[] filesUnderDirectory, final String suffix) {
     final List<String> alternatives =
-        List.of(filesUnderDirectory).stream()
+        Stream.of(filesUnderDirectory)
             .map(it -> it + suffix)
             .filter(
                 it -> {

@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/local-templating"
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "name": "Resolved: {{request.path.[0]}}"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "status": 200
+  }
+}
