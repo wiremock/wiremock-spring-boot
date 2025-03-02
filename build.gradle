@@ -21,6 +21,13 @@ apply plugin: "org.wiremock.tools.gradle.wiremock-extension-convention"
 
 group 'org.wiremock.integrations'
 
+jar {
+	manifest {
+		attributes 'name': project.name
+		attributes 'Automatic-Module-Name': project.group + "." + project.name
+	}
+}
+
 // Because older version is set in wiremock-extension-convention
 def wiremockVersion = "3.12.0"
 
