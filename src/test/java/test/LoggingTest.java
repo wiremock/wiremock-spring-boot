@@ -86,6 +86,9 @@ class LoggingTest {
             HttpResponse.BodyHandlers.ofString());
     assertThat(response.body()).isEqualTo("Hello World!");
     assertThat(capturedOutput.getAll())
+        .as("Must contain correct logger name")
+        .contains("WireMock.todo-service", "WireMock.user-service");
+    assertThat(capturedOutput.getAll())
         .as("Must contain debug logging for WireMock")
         .contains("Matched response definition:");
   }
