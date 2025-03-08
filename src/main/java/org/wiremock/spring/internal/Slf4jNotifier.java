@@ -11,7 +11,7 @@ class Slf4jNotifier implements Notifier {
   private final Logger log;
 
   Slf4jNotifier(final String name) {
-    this.log = LoggerFactory.getLogger("WireMock " + name);
+    this.log = LoggerFactory.getLogger("WireMock." + name);
   }
 
   @Override
