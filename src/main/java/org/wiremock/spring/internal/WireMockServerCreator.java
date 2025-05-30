@@ -48,32 +48,7 @@ public class WireMockServerCreator {
       serverOptions.port(serverHttpPort);
     }
     serverOptions.notifier(new Slf4jNotifier(options.name()));
-
-    this.configureFilesUnderDirectory(options.filesUnderDirectory(), "/" + options.name())
-        .ifPresentOrElse(
-            present -> this.usingFilesUnderDirectory(serverOptions, present),
-            () -> {
-              this.configureFilesUnderDirectory(options.filesUnderDirectory(), "")
-                  .ifPresentOrElse(
-                      present -> this.usingFilesUnderDirectory(serverOptions, present),
-                      () -> {
-                        this.logger.info("No mocks found under directory");
-                        this.configureFilesUnderClasspath(
-                                options.filesUnderClasspath(), "/" + options.name())
-                            .ifPresentOrElse(
-                                present -> this.usingFilesUnderClasspath(serverOptions, present),
-                                () -> {
-                                  this.configureFilesUnderClasspath(
-                                          options.filesUnderClasspath(), "")
-                                      .ifPresentOrElse(
-                                          present ->
-                                              this.usingFilesUnderClasspath(serverOptions, present),
-                                          () -> {
-                                            this.logger.info("No mocks found under classpath");
-                                          });
-                                });
-                      });
-            });
+    configureMappings(options, serverOptions);
 
     if (options.extensionFactories().length > 0) {
       serverOptions.extensionFactories(options.extensionFactories());
@@ -173,6 +148,30 @@ public class WireMockServerCreator {
     return newServer;
   }
 
+  private void configureMappings(ConfigureWireMock options, WireMockConfiguration serverOptions) {
+    boolean isFilesUnderDirectorySupplied = options.filesUnderDirectory().length != 0;
+    boolean isFilesUnderClasspathSupplied = !options.filesUnderClasspath().isEmpty();
+    if (isFilesUnderDirectorySupplied) {
+      Optional<String> foundFilesUnderDirectoryOpt =
+          this.findFirstExistingDirectory(options.filesUnderDirectory());
+      if (foundFilesUnderDirectoryOpt.isEmpty()) {
+        throw new IllegalStateException(
+            "Cannot find configured mappings directory " + options.filesUnderDirectory());
+      }
+      this.usingFilesUnderDirectory(serverOptions, foundFilesUnderDirectoryOpt.get());
+    } else if (isFilesUnderClasspathSupplied) {
+      this.usingFilesUnderClasspath(serverOptions, options.filesUnderClasspath());
+    } else {
+      Optional<String> fondFilesUnderDirOpt =
+          this.findFirstExistingDirectory(
+              ConfigureWireMock.DEFAULT_FILES_UNDER_DIRECTORY.toArray(new String[0]));
+      fondFilesUnderDirOpt.ifPresent(s -> this.usingFilesUnderDirectory(serverOptions, s));
+      if (fondFilesUnderDirOpt.isEmpty()) {
+        this.logger.info("No mocks found under directory");
+      }
+    }
+  }
+
   private int getServerHttpPortProperty(
       final ConfigurableEnvironment environment, final ConfigureWireMock options) {
     if (!options.usePortFromPredefinedPropertyIfFound()) {
@@ -217,61 +216,40 @@ public class WireMockServerCreator {
         .orElse(options.httpsPort());
   }
 
-  private WireMockConfiguration usingFilesUnderClasspath(
+  private void usingFilesUnderClasspath(
       final WireMockConfiguration serverOptions, final String resource) {
     this.logger.info("Serving WireMock mappings from classpath resource: " + resource);
-    return serverOptions.usingFilesUnderClasspath(resource);
+    serverOptions.usingFilesUnderClasspath(resource);
   }
 
-  private WireMockConfiguration usingFilesUnderDirectory(
+  private void usingFilesUnderDirectory(
       final WireMockConfiguration serverOptions, final String dir) {
     this.logger.info("Serving WireMock mappings from directory: " + dir);
-    return serverOptions.usingFilesUnderDirectory(dir);
+    serverOptions.usingFilesUnderDirectory(dir);
   }
 
-  private Optional<String> configureFilesUnderClasspath(
-      final String[] filesUnderClasspath, final String suffix) {
-    final List<String> alternatives =
-        List.of(filesUnderClasspath).stream()
-            .map(it -> it + suffix)
-            .filter(
-                it -> {
-                  final String name = "/" + it;
-                  final boolean exists = WireMockContextCustomizer.class.getResource(name) != null;
-                  this.logger.info(
-                      "Looking for mocks in classpath " + name + "... " + (exists ? "found" : ""));
-                  return exists;
-                })
-            .toList();
-    if (alternatives.size() > 1) {
-      throw new IllegalStateException(
-          "Found several filesUnderClasspath: "
-              + alternatives.stream().collect(Collectors.joining(", ")));
-    }
-    return alternatives.stream().findFirst();
-  }
-
-  private Optional<String> configureFilesUnderDirectory(
-      final String[] filesUnderDirectory, final String suffix) {
+  private Optional<String> findFirstExistingDirectory(final String... filesUnderDirectory) {
     final List<String> alternatives =
         Stream.of(filesUnderDirectory)
-            .map(it -> it + suffix)
             .filter(
                 it -> {
                   final File name = Path.of(it).toFile();
-                  final boolean exists = name.exists();
+                  final boolean exists =
+                      Path.of(it, "mappings").toFile().exists()
+                          || Path.of(it, "__files").toFile().exists();
                   this.logger.info(
                       "Looking for mocks in directory " + name + "... " + (exists ? "found" : ""));
                   return exists;
                 })
             .toList();
     final String alternativesString = alternatives.stream().collect(Collectors.joining(", "));
-    if (alternatives.size() > 1) {
-      throw new IllegalStateException("Found several filesUnderDirectory: " + alternativesString);
-    }
     this.logger.debug(
         "Found " + alternativesString + " in " + Path.of("").toFile().getAbsolutePath());
-    return alternatives.stream().findFirst();
+    Optional<String> firstMatch = alternatives.stream().findFirst();
+    if (firstMatch.isPresent()) {
+      this.logger.info("Using mocks from " + firstMatch.get());
+    }
+    return firstMatch;
   }
 
   @SuppressFBWarnings

@@ -24,11 +24,13 @@ import org.wiremock.spring.InjectWireMock;
       name = "wm1",
       portProperties = "wm1.server.port",
       baseUrlProperties = "wm1.server.url",
-      resetWireMockServer = false),
+      resetWireMockServer = false,
+      filesUnderClasspath = "nomocks"),
   @ConfigureWireMock(
       name = "wm2",
       portProperties = "wm2.server.port",
-      baseUrlProperties = "wm2.server.url")
+      baseUrlProperties = "wm2.server.url",
+      filesUnderClasspath = "nomocks")
 })
 class ResetWireMockDisabledBetweenTest {
 
