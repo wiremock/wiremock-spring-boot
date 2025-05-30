@@ -1,23 +1,12 @@
-buildscript {
-	repositories {
-		gradlePluginPortal()
-		mavenCentral()
-		mavenLocal()
-	}
-	dependencies {
-		classpath "se.bjurr.gradle.java-convention:se.bjurr.gradle.java-convention.gradle.plugin:0.+"
-		classpath "org.wiremock.tools.gradle:gradle-wiremock-extension-plugins:0.4.0"
-	}
+plugins {
+	id "se.bjurr.gradle.java-convention"
+	id "org.wiremock.tools.gradle.publishing"
+	id "org.wiremock.tools.gradle.java"
+	id "project-report"
 }
 
-apply plugin: "project-report"
-apply plugin: "se.bjurr.gradle.java-convention"
-
-// Or else it will be 11 in wiremock-extension-convention
 sourceCompatibility = 17
 targetCompatibility = 17
-apply plugin: "org.wiremock.tools.gradle.wiremock-extension-convention"
-
 
 group 'org.wiremock.integrations'
 
@@ -28,9 +17,6 @@ jar {
 	}
 }
 
-// Because older version is set in wiremock-extension-convention
-def wiremockVersion = "3.13.0"
-
 configurations {
 	all*.exclude group: 'org.eclipse.jetty', module: 'jetty-servlet'
 	all*.exclude group: 'org.eclipse.jetty', module: 'jetty-servlets'
@@ -40,14 +26,13 @@ configurations {
 
 dependencies {
 	implementation platform("org.eclipse.jetty:jetty-bom:12.0.15")
-	api "org.wiremock:wiremock-jetty12:${wiremockVersion}"
-
+	api "org.wiremock:wiremock-jetty12:3.13.0"
 	api "org.springframework.boot:spring-boot-test:3.4.1"
 	api "org.springframework:spring-test:6.1.13"
 	api "org.slf4j:slf4j-api:2.0.16"
 	api 'org.junit.jupiter:junit-jupiter-api:5.11.2'
 
-	testImplementation "org.wiremock:wiremock-jetty12:${wiremockVersion}"
+	testImplementation "org.wiremock:wiremock-jetty12:3.13.0"
 	testImplementation "org.springframework.boot:spring-boot-starter-test:3.4.1"
 	testImplementation 'org.assertj:assertj-core:3.26.3'
 	testImplementation platform('org.junit:junit-bom:5.11.2')
@@ -67,11 +52,4 @@ dependencies {
 			because 'version 1.24.0 has a vulnerability'
 		}
 	}
-}
-
-// Not using shadowJar, but currently not possible to disable in wiremock-extension-convention
-shadowJar {
-	mergeServiceFiles()
-
-	exclude '**/*'
 }
