@@ -8,6 +8,7 @@ pluginManagement {
 
 plugins {
 	id "se.bjurr.gradle.java-convention" version "0.+" apply false
+	id "se.bjurr.gradle.update-versions" version "0.+" apply false
 	id "org.wiremock.tools.gradle.publishing" version "latest-SNAPSHOT" apply false
 	id "org.wiremock.tools.gradle.java" version "latest-SNAPSHOT" apply false
 }
