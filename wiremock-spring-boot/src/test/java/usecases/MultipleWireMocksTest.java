@@ -45,7 +45,8 @@ class MultipleWireMocksTest {
             .willReturn(
                 aResponse()
                     .withHeader("Content-Type", "application/json")
-                    .withBody("""
+                    .withBody(
+                        """
 						{ "id": 1, "name": "Amy" }
 						""")));
 
@@ -54,7 +55,8 @@ class MultipleWireMocksTest {
             .willReturn(
                 aResponse()
                     .withHeader("Content-Type", "application/json")
-                    .withBody("""
+                    .withBody(
+                        """
 						{ "id": 2, "name": "John" }
 						""")));
 

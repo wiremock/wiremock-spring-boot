@@ -14,9 +14,9 @@ import org.wiremock.spring.InjectWireMock;
 @EnableWireMock({
   @ConfigureWireMock(
       name = DefaultDirectoryTest.DEFAULT_DIRECTORY_WM_NAME,
-      filesUnderDirectory = "src/test/resources/custom-location")
+      filesUnderClasspath = "custom-location")
 })
-class FilesUnderDirectoryOverDefaultDirectoryTest {
+class FilesUnderClasspathOverDefaultDirectoryTest {
 
   @InjectWireMock(DefaultDirectoryTest.DEFAULT_DIRECTORY_WM_NAME)
   private WireMockServer wiremock;
@@ -24,7 +24,6 @@ class FilesUnderDirectoryOverDefaultDirectoryTest {
   @Test
   void usesStubFiles() {
     RestAssured.baseURI = "http://localhost:" + this.wiremock.port();
-    RestAssured.when().get("/1").then().statusCode(404).extract().asPrettyString();
     final String actual =
         RestAssured.when()
             .get("/classpathmappings")
@@ -34,7 +33,7 @@ class FilesUnderDirectoryOverDefaultDirectoryTest {
             .asPrettyString();
     assertThat(actual)
         .isEqualToIgnoringWhitespace(
-            """
+"""
 [
     {
         "id": 1,
@@ -47,6 +46,6 @@ class FilesUnderDirectoryOverDefaultDirectoryTest {
         "userId": 1
     }
 ]
-""");
+				""");
   }
 }

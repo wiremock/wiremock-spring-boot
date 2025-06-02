@@ -24,7 +24,8 @@ class ResponseTemplatingLocalTest {
     final String actual =
         RestAssured.when().get("/local-templating").then().extract().asPrettyString();
     assertThat(actual)
-        .isEqualToIgnoringWhitespace("""
+        .isEqualToIgnoringWhitespace(
+"""
 {
     "name": "Resolved: local-templating"
 }
@@ -37,7 +38,8 @@ class ResponseTemplatingLocalTest {
     final String actual =
         RestAssured.when().get("/global-templating").then().extract().asPrettyString();
     assertThat(actual)
-        .isEqualToIgnoringWhitespace("""
+        .isEqualToIgnoringWhitespace(
+"""
 {
     "name": "Resolved: {{request.path.[0]}}"
 }

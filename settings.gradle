@@ -6,4 +6,10 @@ pluginManagement {
 	}
 }
 
-rootProject.name = 'wiremock-spring-boot'
+plugins {
+	id "se.bjurr.gradle.include-virtual" version "1.0.0"
+}
+
+rootProject.name = 'wiremock-spring-boot-base'
+
+includeVirtual "wiremock-spring-boot", "wiremock-spring-boot-standalone"

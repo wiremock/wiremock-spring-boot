@@ -27,7 +27,9 @@ class FilesUnderDirectoryTests {
             .extract()
             .asPrettyString();
 
-    assertThat(actual).isEqualToIgnoringWhitespace("""
+    assertThat(actual)
+        .isEqualToIgnoringWhitespace(
+            """
 				{"wiremockmappingsmock":"yes"}
 				""");
   }

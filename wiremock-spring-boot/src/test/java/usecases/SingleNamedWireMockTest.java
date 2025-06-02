@@ -31,7 +31,8 @@ class SingleNamedWireMockTest {
             .willReturn(
                 aResponse()
                     .withHeader("Content-Type", "application/json")
-                    .withBody("""
+                    .withBody(
+                        """
 						{ "id": 2, "name": "Amy" }
 						""")));
 
