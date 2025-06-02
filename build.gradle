@@ -18,7 +18,6 @@ sourceCompatibility = 17
 targetCompatibility = 17
 apply plugin: "org.wiremock.tools.gradle.wiremock-extension-convention"
 
-
 group 'org.wiremock.integrations'
 
 jar {
@@ -27,9 +26,6 @@ jar {
 		attributes 'Automatic-Module-Name': project.group + "." + project.name
 	}
 }
-
-// Because older version is set in wiremock-extension-convention
-def wiremockVersion = "3.13.0"
 
 configurations {
 	all*.exclude group: 'org.eclipse.jetty', module: 'jetty-servlet'
@@ -40,38 +36,29 @@ configurations {
 
 dependencies {
 	implementation platform("org.eclipse.jetty:jetty-bom:12.0.15")
-	api "org.wiremock:wiremock-jetty12:${wiremockVersion}"
+	api "org.wiremock:wiremock-jetty:4.0.0-beta.9"
+	/**
+	 * We don't want a user to accidentally test with another version of these dependencies.
+	 * Intentionally using compileOnly to avoid them being transitive.
+	 */
+	compileOnly 'org.springframework.boot:spring-boot-test:3.5.0'
+	compileOnly 'org.junit.jupiter:junit-jupiter-api:5.12.2'
+	compileOnly 'org.slf4j:slf4j-api:2.0.17'
 
-	api "org.springframework.boot:spring-boot-test:3.4.1"
-	api "org.springframework:spring-test:6.1.13"
-	api "org.slf4j:slf4j-api:2.0.16"
-	api 'org.junit.jupiter:junit-jupiter-api:5.11.2'
-
-	testImplementation "org.wiremock:wiremock-jetty12:${wiremockVersion}"
-	testImplementation "org.springframework.boot:spring-boot-starter-test:3.4.1"
-	testImplementation 'org.assertj:assertj-core:3.26.3'
-	testImplementation platform('org.junit:junit-bom:5.11.2')
+	testImplementation 'org.springframework.boot:spring-boot-starter-web:3.5.0'
+	testImplementation 'org.springframework.boot:spring-boot-test:3.5.0'
+	testImplementation 'org.slf4j:slf4j-api:2.0.17'
+	testImplementation 'org.assertj:assertj-core:3.27.3'
 	testImplementation 'org.junit.jupiter:junit-jupiter'
-	testImplementation 'org.junit.platform:junit-platform-launcher'
-	testImplementation 'io.rest-assured:rest-assured:5.5.0'
-	testImplementation 'io.rest-assured:rest-assured:5.5.0'
-	testImplementation "org.springframework.boot:spring-boot-starter-web:3.4.1"
-	testImplementation 'io.cucumber:cucumber-java:7.20.1'
-	testImplementation 'io.cucumber:cucumber-spring:7.20.1'
-	testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.20.1'
-	testImplementation 'org.junit.platform:junit-platform-suite:1.11.4'
-	testImplementation 'org.assertj:assertj-core:3.26.3'
-
-	constraints {
-		implementation('org.apache.commons:commons-compress:1.26.0') {
-			because 'version 1.24.0 has a vulnerability'
-		}
-	}
+	testImplementation 'io.rest-assured:rest-assured:5.5.5'
+	testImplementation 'io.cucumber:cucumber-java:7.23.0'
+	testImplementation 'io.cucumber:cucumber-spring:7.23.0'
+	testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.23.0'
+	testImplementation 'org.junit.platform:junit-platform-suite:1.12.2'
 }
 
 // Not using shadowJar, but currently not possible to disable in wiremock-extension-convention
 shadowJar {
 	mergeServiceFiles()
-
 	exclude '**/*'
 }
