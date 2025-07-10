@@ -2,6 +2,19 @@
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.wiremock.integrations/wiremock-spring-boot/badge.svg)](https://search.maven.org/artifact/org.wiremock.integrations/wiremock-spring-boot)
 
+---
+
+<table>
+<tr>
+<td>
+<img src="https://wiremock.org/images/wiremock-cloud/wiremock_cloud_logo.png" alt="WireMock Cloud Logo" height="20" align="left">
+<strong>WireMock open source is supported by <a href="https://www.wiremock.io/cloud-overview?utm_source=github.com&utm_campaign=wiremock-README.md-banner">WireMock Cloud</a>. Please consider trying it out if your team needs advanced capabilities such as OpenAPI, dynamic state, data sources and more.</strong>
+</td>
+</tr>
+</table>
+
+---
+
 **WireMock Spring Boot** library drastically simplifies WireMock configuration in a **Spring Boot** and **JUnit 5** application.
 
 See the [WireMock Spring Boot doc page](https://wiremock.org/docs/spring-boot/) for installation and usage details. There are also [running examples of use cases](https://github.com/wiremock/wiremock-spring-boot/tree/main/src/test/java/usecases).
