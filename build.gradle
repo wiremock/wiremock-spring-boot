@@ -49,7 +49,7 @@ dependencies {
 
 	testImplementation "org.wiremock:wiremock-jetty12:${wiremockVersion}"
 	testImplementation "org.springframework.boot:spring-boot-starter-test:3.4.1"
-	testImplementation 'org.assertj:assertj-core:3.26.3'
+	testImplementation 'org.assertj:assertj-core:3.27.3'
 	testImplementation platform('org.junit:junit-bom:5.11.2')
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 	testImplementation 'org.junit.platform:junit-platform-launcher'
@@ -60,7 +60,7 @@ dependencies {
 	testImplementation 'io.cucumber:cucumber-spring:7.20.1'
 	testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.20.1'
 	testImplementation 'org.junit.platform:junit-platform-suite:1.11.4'
-	testImplementation 'org.assertj:assertj-core:3.26.3'
+	testImplementation 'org.assertj:assertj-core:3.27.3'
 
 	constraints {
 		implementation('org.apache.commons:commons-compress:1.26.0') {
