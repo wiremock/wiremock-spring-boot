@@ -45,12 +45,12 @@ dependencies {
 	api "org.springframework.boot:spring-boot-test:3.4.1"
 	api "org.springframework:spring-test:6.1.13"
 	api "org.slf4j:slf4j-api:2.0.16"
-	api 'org.junit.jupiter:junit-jupiter-api:5.11.2'
+	api 'org.junit.jupiter:junit-jupiter-api:5.13.3'
 
 	testImplementation "org.wiremock:wiremock-jetty12:${wiremockVersion}"
 	testImplementation "org.springframework.boot:spring-boot-starter-test:3.4.1"
 	testImplementation 'org.assertj:assertj-core:3.26.3'
-	testImplementation platform('org.junit:junit-bom:5.11.2')
+	testImplementation platform('org.junit:junit-bom:5.13.3')
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 	testImplementation 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'io.rest-assured:rest-assured:5.5.0'
