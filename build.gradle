@@ -44,7 +44,7 @@ dependencies {
 
 	api "org.springframework.boot:spring-boot-test:3.4.1"
 	api "org.springframework:spring-test:6.1.13"
-	api "org.slf4j:slf4j-api:2.0.16"
+	api "org.slf4j:slf4j-api:2.0.17"
 	api 'org.junit.jupiter:junit-jupiter-api:5.11.2'
 
 	testImplementation "org.wiremock:wiremock-jetty12:${wiremockVersion}"
