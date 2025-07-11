@@ -29,7 +29,7 @@ jar {
 }
 
 // Because older version is set in wiremock-extension-convention
-def wiremockVersion = "3.13.0"
+def wiremockVersion = "3.13.1"
 
 configurations {
 	all*.exclude group: 'org.eclipse.jetty', module: 'jetty-servlet'
