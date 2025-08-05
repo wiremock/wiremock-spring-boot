@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.core.annotation.AnnotationUtils;
+import org.junit.platform.commons.support.AnnotationSupport;
 import org.springframework.test.context.ContextConfigurationAttributes;
 import org.springframework.test.context.ContextCustomizer;
 import org.springframework.test.context.ContextCustomizerFactory;
@@ -56,8 +56,9 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
 
   private List<EnableWireMock> getEnableWireMockAnnotations(final Class<?> testClass) {
     final List<EnableWireMock> annotations = new ArrayList<>();
-    Optional.ofNullable(AnnotationUtils.findAnnotation(testClass, EnableWireMock.class))
-        .ifPresent(it -> annotations.add(it));
+    Optional.ofNullable(
+            AnnotationSupport.findRepeatableAnnotations(testClass, EnableWireMock.class))
+        .ifPresent(annotations::addAll);
 
     Arrays.asList(testClass.getEnclosingClass(), testClass.getSuperclass()).stream()
         .filter(clazz -> clazz != null)

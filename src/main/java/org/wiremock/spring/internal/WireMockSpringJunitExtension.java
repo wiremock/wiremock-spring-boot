@@ -14,7 +14,6 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
 import org.wiremock.spring.InjectWireMock;
@@ -92,7 +91,10 @@ public class WireMockSpringJunitExtension
 
   private List<EnableWireMock> getEnableWireMockAnnotations(List<Object> instances) {
     return instances.stream()
-        .map(it -> AnnotationUtils.findAnnotation(it.getClass(), EnableWireMock.class))
+        .flatMap(
+            it ->
+                AnnotationSupport.findRepeatableAnnotations(it.getClass(), EnableWireMock.class)
+                    .stream())
         .filter(it -> it != null)
         .toList();
   }
