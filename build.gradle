@@ -7,17 +7,18 @@ buildscript {
 	dependencies {
 		classpath "se.bjurr.gradle.java-convention:se.bjurr.gradle.java-convention.gradle.plugin:0.+"
 		classpath "org.wiremock.tools.gradle:gradle-wiremock-extension-plugins:0.4.0"
+		classpath "com.github.johnrengelman:shadow:8.1.1"
 	}
 }
 
 apply plugin: "project-report"
 apply plugin: "se.bjurr.gradle.java-convention"
+apply plugin: "com.github.johnrengelman.shadow"
 
 // Or else it will be 11 in wiremock-extension-convention
 sourceCompatibility = 17
 targetCompatibility = 17
 apply plugin: "org.wiremock.tools.gradle.wiremock-extension-convention"
-
 
 group 'org.wiremock.integrations'
 
@@ -69,9 +70,42 @@ dependencies {
 	}
 }
 
-// Not using shadowJar, but currently not possible to disable in wiremock-extension-convention
 shadowJar {
+	archiveBaseName.set('wiremock-spring-boot-standalone')
+	archiveClassifier.set('')
+	configurations = [
+		project.configurations.runtimeClasspath,
+		project.configurations.standaloneOnly
+	]
+	relocate "org.wiremock", 'wiremock.org.wiremock'
+	relocate "org", 'wiremock.org'
+	relocate "com.google", 'wiremock.com'
+	relocate "net.minidev", 'wiremock.net'
+	relocate "jakarta.servlet", "wiremock.jakarta"
+	relocate "joptsimple", "wiremock.joptsimple"
+	exclude 'joptsimple/HelpFormatterMessages.properties'
+
 	mergeServiceFiles()
 
-	exclude '**/*'
+	exclude 'META-INF/maven/**'
+	exclude 'META-INF/versions/17/**'
+	exclude 'META-INF/versions/21/**'
+	exclude 'META-INF/versions/22/**'
+	exclude 'module-info.class'
+	exclude 'handlebars-*.js'
 }
+
+publishing {
+	getComponents().withType(AdhocComponentWithVariants).each { c ->
+		c.withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+			skip()
+		}
+	}
+	publications {
+		standaloneJar(MavenPublication) { publication ->
+			project.shadow.component(publication)
+		}
+	}
+}
+assemble.dependsOn shadowJar
+test.dependsOn shadowJar
