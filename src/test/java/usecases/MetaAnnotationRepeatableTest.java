@@ -1,4 +1,4 @@
-package test;
+package usecases;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,19 +8,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
 import org.wiremock.spring.InjectWireMock;
 
-@SpringBootTest(classes = WireMockSpringExtensionTest.AppConfiguration.class)
 @EnableWireMock({@ConfigureWireMock(name = "direct-wiremock")})
-@MetaAnnotationTest.MetaAnnotation
-public class MetaAnnotationTest {
-
-  @SpringBootApplication
-  static class AppConfiguration {}
+@MetaAnnotationRepeatableTest.MetaAnnotation
+public class MetaAnnotationRepeatableTest {
 
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)
