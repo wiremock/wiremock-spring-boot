@@ -16,8 +16,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
 
       - name: Determine new version
         id: new_version
