@@ -81,8 +81,6 @@ nexusPublishing {
 	repositories {
 		named("sonatype") {
 			nexusUrl = uri("https://ossrh-staging-api.central.sonatype.com/service/local/")
-			username = providers.environmentVariable("MAVEN_CENTRAL_USERNAME").orElse("").get()
-			password = providers.environmentVariable("MAVEN_CENTRAL_TOKEN").orElse("").get()
 		}
 	}
 }
