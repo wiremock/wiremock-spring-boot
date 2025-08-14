@@ -6,7 +6,7 @@ buildscript {
 	}
 	dependencies {
 		classpath "se.bjurr.gradle.java-convention:se.bjurr.gradle.java-convention.gradle.plugin:0.+"
-		classpath "org.wiremock.tools.gradle:gradle-wiremock-extension-plugins:0.5.0"
+		classpath "org.wiremock.tools.gradle:gradle-wiremock-extension-plugins:0.5.1"
 	}
 }
 
@@ -74,13 +74,4 @@ shadowJar {
 	mergeServiceFiles()
 
 	exclude '**/*'
-}
-
-// Remove when using gradle-wiremock-extension-plugins:0.5.2 or later
-nexusPublishing {
-	repositories {
-		named("sonatype") {
-			nexusUrl = uri("https://ossrh-staging-api.central.sonatype.com/service/local/")
-		}
-	}
 }
