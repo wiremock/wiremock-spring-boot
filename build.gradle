@@ -76,13 +76,13 @@ shadowJar {
 	exclude '**/*'
 }
 
-// Remove when using gradle-wiremock-extension-plugins:0.5.1 or later
+// Remove when using gradle-wiremock-extension-plugins:0.5.2 or later
 nexusPublishing {
 	repositories {
 		named("sonatype") {
 			nexusUrl = uri("https://ossrh-staging-api.central.sonatype.com/service/local/")
-			username = providers.environmentVariable("OSSRH_USERNAME").orElse("").get()
-			password = providers.environmentVariable("OSSRH_TOKEN").orElse("").get()
+			username = providers.environmentVariable("MAVEN_CENTRAL_USERNAME").orElse("").get()
+			password = providers.environmentVariable("MAVEN_CENTRAL_TOKEN").orElse("").get()
 		}
 	}
 }
