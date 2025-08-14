@@ -75,11 +75,3 @@ shadowJar {
 
 	exclude '**/*'
 }
-
-nexusPublishing {
-	repositories {
-		named("sonatype") {
-			nexusUrl = uri("https://ossrh-staging-api.central.sonatype.com/service/local/")
-		}
-	}
-}
