@@ -56,9 +56,9 @@ dependencies {
 	testImplementation 'io.rest-assured:rest-assured:5.5.0'
 	testImplementation 'io.rest-assured:rest-assured:5.5.0'
 	testImplementation "org.springframework.boot:spring-boot-starter-web:3.4.1"
-	testImplementation 'io.cucumber:cucumber-java:7.20.1'
-	testImplementation 'io.cucumber:cucumber-spring:7.20.1'
-	testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.20.1'
+	testImplementation 'io.cucumber:cucumber-java:7.30.0'
+	testImplementation 'io.cucumber:cucumber-spring:7.30.0'
+	testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.30.0'
 	testImplementation 'org.junit.platform:junit-platform-suite:1.11.4'
 	testImplementation 'org.assertj:assertj-core:3.27.4'
 
