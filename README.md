@@ -2,6 +2,9 @@
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.wiremock.integrations/wiremock-spring-boot/badge.svg)](https://search.maven.org/artifact/org.wiremock.integrations/wiremock-spring-boot)
 
+- [wiremock-spring-boot](https://search.maven.org/artifact/org.wiremock.integrations/wiremock-spring-boot)
+- [wiremock-spring-boot-standalone](https://search.maven.org/artifact/org.wiremock.integrations/wiremock-spring-boot-standalone)
+
 ---
 
 <table>
