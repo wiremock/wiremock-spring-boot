@@ -1,5 +1,5 @@
 plugins {
-	id "se.bjurr.gradle.bundle-jar" version "1.4.5"
+	id "se.bjurr.gradle.bundle-jar" version "1.5.0"
 }
 
 allprojects {
