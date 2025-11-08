@@ -1,23 +1,12 @@
-buildscript {
-	repositories {
-		gradlePluginPortal()
-		mavenCentral()
-		mavenLocal()
-	}
-	dependencies {
-		classpath "se.bjurr.gradle.java-convention:se.bjurr.gradle.java-convention.gradle.plugin:0.+"
-		classpath "org.wiremock.tools.gradle:gradle-wiremock-extension-plugins:0.5.1"
-	}
+plugins {
+	id "se.bjurr.gradle.java-convention" version "0.+"
+	id "org.wiremock.tools.gradle.publishing" version "0.5.1"
+	id "org.wiremock.tools.gradle.java" version "0.5.1"
+	id "project-report"
 }
 
-apply plugin: "project-report"
-apply plugin: "se.bjurr.gradle.java-convention"
-
-// Or else it will be 11 in wiremock-extension-convention
 sourceCompatibility = 17
 targetCompatibility = 17
-apply plugin: "org.wiremock.tools.gradle.wiremock-extension-convention"
-
 
 group 'org.wiremock.integrations'
 
@@ -41,7 +30,6 @@ configurations {
 dependencies {
 	implementation platform("org.eclipse.jetty:jetty-bom:12.0.15")
 	api "org.wiremock:wiremock-jetty12:${wiremockVersion}"
-
 	api "org.springframework.boot:spring-boot-test:3.4.1"
 	api "org.springframework:spring-test:6.1.13"
 	api "org.slf4j:slf4j-api:2.0.16"
@@ -67,11 +55,4 @@ dependencies {
 			because 'version 1.24.0 has a vulnerability'
 		}
 	}
-}
-
-// Not using shadowJar, but currently not possible to disable in wiremock-extension-convention
-shadowJar {
-	mergeServiceFiles()
-
-	exclude '**/*'
 }

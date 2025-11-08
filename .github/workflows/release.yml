@@ -27,7 +27,7 @@ jobs:
         id: publish_package
         uses: gradle/gradle-build-action@v2.9.0
         with:
-          arguments: -Pversion=${{ steps.new_version.outputs.new_version }} publish closeAndReleaseStagingRepository -x shadowJar -x publishStandaloneJarPublicationToGitHubPackagesRepository -x publishStandaloneJarPublicationToSonatypeRepository
+          arguments: -Pversion=${{ steps.new_version.outputs.new_version }} publish closeAndReleaseStagingRepository -x publishStandaloneJarPublicationToGitHubPackagesRepository -x publishStandaloneJarPublicationToSonatypeRepository
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OSSRH_USERNAME: ${{ vars.MAVEN_CENTRAL_USERNAME }}
