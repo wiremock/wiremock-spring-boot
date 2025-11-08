@@ -10,16 +10,16 @@ allprojects {
 	tasks.withType(Test).configureEach {
 		useJUnitPlatform()
 	}
-}
 
-releaseExtension {
-	nexusUsernameEnvOrProp = "OSSRH_USERNAME"
-	nexusPasswordEnvOrProp = "OSSRH_TOKEN"
-}
+	releaseExtension {
+		nexusUsernameEnvOrProp = "OSSRH_USERNAME"
+		nexusPasswordEnvOrProp = "OSSRH_TOKEN"
+	}
 
-signExtension {
-	signingKeyEnvOrProp = "OSSRH_GPG_SECRET_KEY"
-	signingPasswordEnvOrProp = "OSSRH_GPG_SECRET_KEY_PASSWORD"
+	signExtension {
+		signingKeyEnvOrProp = "OSSRH_GPG_SECRET_KEY"
+		signingPasswordEnvOrProp = "OSSRH_GPG_SECRET_KEY_PASSWORD"
+	}
 }
 
 project("wiremock-spring-boot", {
