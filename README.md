@@ -17,7 +17,7 @@
 
 **WireMock Spring Boot** library drastically simplifies WireMock configuration in a **Spring Boot** and **JUnit** application.
 
-See the [WireMock Spring Boot doc page](https://wiremock.org/docs/spring-boot/) for installation and usage details. There are also [running examples of use cases](https://github.com/wiremock/wiremock-spring-boot/tree/main/src/test/java/usecases).
+See the [WireMock Spring Boot doc page](https://wiremock.org/docs/spring-boot/) for installation and usage details. There are also [running examples of use cases](https://github.com/wiremock/wiremock-spring-boot/tree/main/wiremock-spring-boot/src/test/java/usecases).
 
 ## Highlights
 

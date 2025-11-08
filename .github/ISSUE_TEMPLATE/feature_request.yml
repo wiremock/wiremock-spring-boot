@@ -1,0 +1,22 @@
+name: "💡 Feature Request"
+description: Suggest an idea or improvement for this project.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: use-case
+    attributes:
+      label: "Use Case / Motivation"
+      description: "Clearly describe your use case or the problem this feature would solve."
+      placeholder: "Explain why this feature is needed."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: "Proposed Solution"
+      description: "How would you like this feature to work?"
+      placeholder: "Describe your proposed implementation or behavior."
+    validations:
+      required: false
