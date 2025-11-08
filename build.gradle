@@ -1,5 +1,5 @@
 plugins {
-	id "se.bjurr.gradle.bundle-jar" version "1.5.0"
+	id "se.bjurr.gradle.bundle-jar" version "1.5.1"
 }
 
 allprojects {
@@ -63,28 +63,11 @@ project("wiremock-spring-boot", {
 })
 
 project("wiremock-spring-boot-standalone", {
-	apply plugin: 'se.bjurr.gradle.shadow'
-
-	shadowJar {
-		relocate "org.wiremock", 'wiremock.org.wiremock'
-		relocate "org", 'wiremock.org'
-		relocate "com.google", 'wiremock.com'
-		relocate "net.minidev", 'wiremock.net'
-		relocate "jakarta.servlet", "wiremock.jakarta"
-		relocate "joptsimple", "wiremock.joptsimple"
-		exclude 'joptsimple/HelpFormatterMessages.properties'
-
-		mergeServiceFiles()
-
-		exclude 'META-INF/maven/**'
-		exclude 'META-INF/versions/17/**'
-		exclude 'META-INF/versions/21/**'
-		exclude 'META-INF/versions/22/**'
-		exclude 'module-info.class'
-		exclude 'handlebars-*.js'
-	}
-
 	dependencies {
-		implementation project(":wiremock-spring-boot")
+		api(project(":wiremock-spring-boot")) {
+			exclude group: 'org.wiremock'
+			exclude group: 'org.eclipse.jetty'
+		}
+		api "org.wiremock:wiremock-standalone:3.13.1"
 	}
 })
