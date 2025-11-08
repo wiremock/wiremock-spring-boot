@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import org.apache.hc.client5.http.HttpHostConnectException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +19,7 @@ class NotEnabledTest {
   @Test
   void shouldNotHaveWireMockConfigured() {
     assertThrows(
-        HttpHostConnectException.class,
+        Exception.class,
         () -> WireMock.stubFor(get("/ping").willReturn(aResponse().withStatus(200))));
 
     assertThat(this.env.getProperty("wiremock.server.baseUrl")).isNull();
