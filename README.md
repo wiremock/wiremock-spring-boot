@@ -15,7 +15,7 @@
 
 ---
 
-**WireMock Spring Boot** library drastically simplifies WireMock configuration in a **Spring Boot** and **JUnit 5** application.
+**WireMock Spring Boot** library drastically simplifies WireMock configuration in a **Spring Boot** and **JUnit** application.
 
 See the [WireMock Spring Boot doc page](https://wiremock.org/docs/spring-boot/) for installation and usage details. There are also [running examples of use cases](https://github.com/wiremock/wiremock-spring-boot/tree/main/src/test/java/usecases).
 
@@ -25,7 +25,7 @@ See the [WireMock Spring Boot doc page](https://wiremock.org/docs/spring-boot/) 
 * Support for **multiple** `WireMockServer` **instances** - one per HTTP client as recommended in the WireMock documentation
 * Automatically sets Spring environment properties
 * Does not pollute Spring application context with extra beans
-
+* Available in `org.wiremock.integrations:wiremock-spring-boot` and standalone without transitives in `org.wiremock.integrations:wiremock-spring-boot-standalone`
 
 ## Credits
 
