@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.extension.Extension;
 import com.github.tomakehurst.wiremock.extension.ExtensionFactory;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -15,6 +16,17 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigureWireMock {
+  public static final List<String> DEFAULT_FILES_UNDER_DIRECTORY =
+      List.of(
+          "wiremock",
+          "stubs",
+          "mappings",
+          "src/test/resources/wiremock",
+          "src/test/resources/stubs",
+          "src/test/resources/mappings",
+          "src/integtest/resources/wiremock",
+          "src/integtest/resources/stubs",
+          "src/integtest/resources/mappings");
 
   /**
    * Port on which WireMock server is going to listen.
@@ -80,20 +92,21 @@ public @interface ConfigureWireMock {
   String[] httpsBaseUrlProperties() default {"wiremock.server.httpsBaseUrl"};
 
   /**
-   * Classpaths to pass to {@link WireMockConfiguration#usingFilesUnderClasspath(String)}. First one
-   * that is found will be used. If a {@link #name()} is supplied, it will first look for {@link
-   * #filesUnderClasspath()}/{@link #name()} enabling different mappings for differently named
-   * WireMocks.
+   * Classpaths to pass to {@link WireMockConfiguration#usingFilesUnderClasspath(String)}. See also
+   * {@link #filesUnderDirectory()}.
    */
-  String[] filesUnderClasspath() default {};
+  String filesUnderClasspath() default "";
 
   /**
    * Directory paths to pass to {@link WireMockConfiguration#usingFilesUnderDirectory(String)}.
-   * First one that is found will be used. If a {@link #name()} is supplied, it will first look for
-   * {@link #filesUnderClasspath()}/{@link #name()} enabling different mappings for differently
-   * named WireMocks.
+   * First existing directory will be used if list is given.
+   *
+   * <p>It will search for mocks in this order:
+   * <li>In filesystem {@link #filesUnderDirectory()}
+   * <li>In classpath {@link #filesUnderClasspath()}
+   * <li>In filesystem {@link #DEFAULT_FILES_UNDER_DIRECTORY}
    */
-  String[] filesUnderDirectory() default {"wiremock", "stubs", "mappings"};
+  String[] filesUnderDirectory() default {};
 
   /**
    * WireMock extensions to register in {@link WireMockServer}.
