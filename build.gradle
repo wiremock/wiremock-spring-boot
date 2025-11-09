@@ -34,37 +34,35 @@ project("wiremock-spring-boot", {
 			compileOnly it
 			testImplementation it
 		}
-
-		testImplementation "org.wiremock:wiremock-jetty12:3.13.1"
-		testImplementation "org.springframework.boot:spring-boot-starter-test:4.0.0-RC2"
-		testImplementation "org.assertj:assertj-core:3.27.6"
-		testImplementation platform("org.junit:junit-bom:6.0.1")
-		testImplementation 'org.junit.jupiter:junit-jupiter'
-		testImplementation 'org.junit.platform:junit-platform-launcher'
-		testImplementation "io.rest-assured:rest-assured:5.5.6"
-		testImplementation "io.rest-assured:rest-assured:5.5.6"
-		testImplementation "org.springframework.boot:spring-boot-starter-web:4.0.0-RC2"
-		testImplementation "io.cucumber:cucumber-java:7.31.0"
-		testImplementation "io.cucumber:cucumber-spring:7.31.0"
-		testImplementation "io.cucumber:cucumber-junit-platform-engine:7.31.0"
-		testImplementation "org.junit.platform:junit-platform-suite:6.0.1"
-		testImplementation "org.assertj:assertj-core:3.27.6"
-
-		constraints {
-			implementation('org.apache.commons:commons-compress:1.26.0') {
-				because 'version 1.24.0 has a vulnerability'
-			}
-		}
 	}
 })
 
 project("wiremock-spring-boot-standalone", {
 	dependencies {
 		api(project(":wiremock-spring-boot")) {
-			exclude group: 'org.wiremock'
-			exclude group: 'org.eclipse.jetty'
-			exclude group: 'org.eclipse.jetty.ee10'
+			exclude group: '*'
 		}
 		api "org.wiremock:wiremock-standalone:3.13.1"
 	}
 })
+
+subprojects {
+	dependencies {
+		testImplementation "org.springframework.boot:spring-boot-starter-test:4.0.0-RC2"
+		testImplementation "org.springframework.boot:spring-boot-starter-web:4.0.0-RC2"
+
+		testImplementation "org.assertj:assertj-core:3.27.6"
+
+		testImplementation platform("org.junit:junit-bom:6.0.1")
+		testImplementation "org.junit.platform:junit-platform-suite:6.0.1"
+		testImplementation 'org.junit.jupiter:junit-jupiter'
+		testImplementation 'org.junit.platform:junit-platform-launcher'
+
+		testImplementation "io.rest-assured:rest-assured:5.5.6"
+		testImplementation "io.rest-assured:rest-assured:5.5.6"
+
+		testImplementation "io.cucumber:cucumber-java:7.31.0"
+		testImplementation "io.cucumber:cucumber-spring:7.31.0"
+		testImplementation "io.cucumber:cucumber-junit-platform-engine:7.31.0"
+	}
+}
