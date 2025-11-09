@@ -1,8 +1,4 @@
-# WireMock Spring Boot
-
-[![Maven Central](https://img.shields.io/maven-central/v/org.wiremock.integrations/wiremock-spring-boot.svg?label=wiremock-spring-boot)](https://central.sonatype.com/artifact/org.wiremock.integrations/wiremock-spring-boot)
-
-[![Maven Central](https://img.shields.io/maven-central/v/org.wiremock.integrations/wiremock-spring-boot.svg?label=wiremock-spring-boot-standalone)](https://central.sonatype.com/artifact/org.wiremock.integrations/wiremock-spring-boot-standalone)
+# WireMock Spring Boot [![Maven Central](https://img.shields.io/maven-central/v/org.wiremock.integrations/wiremock-spring-boot.svg?label=wiremock-spring-boot)](https://central.sonatype.com/artifact/org.wiremock.integrations/wiremock-spring-boot) [![Maven Central](https://img.shields.io/maven-central/v/org.wiremock.integrations/wiremock-spring-boot.svg?label=wiremock-spring-boot-standalone)](https://central.sonatype.com/artifact/org.wiremock.integrations/wiremock-spring-boot-standalone)
 
 ---
 
