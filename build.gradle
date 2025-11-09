@@ -7,10 +7,6 @@ allprojects {
 		javaVersion = 17
 	}
 
-	tasks.withType(Test).configureEach {
-		useJUnitPlatform()
-	}
-
 	releaseExtension {
 		nexusUsernameEnvOrProp = "OSSRH_USERNAME"
 		nexusPasswordEnvOrProp = "OSSRH_TOKEN"
