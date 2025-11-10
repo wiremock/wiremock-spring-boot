@@ -21,7 +21,7 @@ allprojects {
 project("wiremock-spring-boot", {
 	dependencies {
 		implementation platform("org.eclipse.jetty:jetty-bom:12.1.3")
-		implementation "org.eclipse.jetty.ee10:jetty-ee10-bom:12.1.3"
+		implementation platform("org.eclipse.jetty.ee10:jetty-ee10-bom:12.1.3")
 		api "org.wiremock:wiremock-jetty12:3.13.1"
 
 		// Don't want to force these versions on the user
