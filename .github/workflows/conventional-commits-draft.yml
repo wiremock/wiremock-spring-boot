@@ -1,0 +1,21 @@
+name: Draft Release based on Conventional Commits
+
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-tags: 'true'
+          fetch-depth: '0'
+      - name: Setup java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: 17
+      - uses: tomasbjerre/git-changelog-github-release@main
+        env:
+          # Needs write permission in Github menu '/settings/actions'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
