@@ -1,5 +1,7 @@
 name: "🐞 Bug Report"
-description: Report a reproducible problem or error.
+description: |
+  Keep in mind that chances are higher that your issue will be fixed if you provide a good description.
+  This repository is maintained by volunteers in their spare time.
 title: "[Bug]: "
 labels: [bug]
 body:
