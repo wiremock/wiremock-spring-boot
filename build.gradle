@@ -38,7 +38,7 @@ project("wiremock-spring-boot", {
 		// Don't want to force these versions on the user
 		[
 			"org.springframework.boot:spring-boot-test:4.0.0-RC2",
-			"org.springframework:spring-test:7.0.0",
+			"org.springframework:spring-test:7.0.1",
 			"org.slf4j:slf4j-api:2.0.17",
 			"org.junit.jupiter:junit-jupiter-api:6.0.1"
 		].each {
