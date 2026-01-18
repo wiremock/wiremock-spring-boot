@@ -46,20 +46,24 @@ public class WireMockContextCustomizer implements ContextCustomizer {
     for (final ConfigureWireMock configureWiremock : this.configuration) {
       this.resolveOrCreateWireMockServer(context, configureWiremock);
     }
+    WireMockPortResolver portResolver = new WireMockPortResolver(context.getEnvironment());
+    boolean isDirty = portResolver.staticPortConfigured(this.configuration);
+    if (isDirty) {
+      LOGGER.info("Will force dirty context because of static port");
+      WireMockTestExecutionListener.markContextAsDirty();
+    }
   }
 
-  private WireMockServer resolveOrCreateWireMockServer(
+  private void resolveOrCreateWireMockServer(
       final ConfigurableApplicationContext context, final ConfigureWireMock options) {
     final WireMockServer wireMockServer =
         Store.INSTANCE.findWireMockInstance(context, options.name());
 
     if (wireMockServer == null) {
-      return new WireMockServerCreator(options.name()).createWireMockServer(context, options);
+      new WireMockServerCreator(options.name()).createWireMockServer(context, options);
     } else {
       LOGGER.info("WireMockServer with name '{}' is already configured", options.name());
     }
-
-    return wireMockServer;
   }
 
   /**

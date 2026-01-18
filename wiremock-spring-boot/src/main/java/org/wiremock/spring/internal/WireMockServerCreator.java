@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.WireMockConfigurationCustomizer;
 
@@ -36,13 +35,15 @@ public class WireMockServerCreator {
 
     final WireMockConfiguration serverOptions = options();
 
-    final int serverHttpsPort = this.getServerHttpsPortProperty(context.getEnvironment(), options);
+    WireMockPortResolver portResolver = new WireMockPortResolver(context.getEnvironment());
+
+    final int serverHttpsPort = portResolver.getServerHttpsPortProperty(options);
     final boolean httpsEnabled = serverHttpsPort != PORT_DISABLED;
     if (httpsEnabled) {
       serverOptions.httpsPort(serverHttpsPort);
     }
 
-    final int serverHttpPort = this.getServerHttpPortProperty(context.getEnvironment(), options);
+    final int serverHttpPort = portResolver.getServerHttpPortProperty(options);
     final boolean httpEnabled = serverHttpPort != PORT_DISABLED;
     if (httpEnabled) {
       serverOptions.port(serverHttpPort);
@@ -170,50 +171,6 @@ public class WireMockServerCreator {
         this.logger.info("No mocks found under directory");
       }
     }
-  }
-
-  private int getServerHttpPortProperty(
-      final ConfigurableEnvironment environment, final ConfigureWireMock options) {
-    if (!options.usePortFromPredefinedPropertyIfFound()) {
-      return options.port();
-    }
-    return Arrays.stream(options.portProperties())
-        .filter(StringUtils::isNotBlank)
-        .filter(propertyName -> environment.containsProperty(propertyName))
-        .map(
-            propertyName -> {
-              final int predefinedPropertyValue =
-                  Integer.parseInt(environment.getProperty(propertyName));
-              this.logger.info(
-                  "Found predefined port in property with name '{}' on port: {}",
-                  propertyName,
-                  predefinedPropertyValue);
-              return predefinedPropertyValue;
-            })
-        .findFirst()
-        .orElse(options.port());
-  }
-
-  private int getServerHttpsPortProperty(
-      final ConfigurableEnvironment environment, final ConfigureWireMock options) {
-    if (!options.usePortFromPredefinedPropertyIfFound()) {
-      return options.httpsPort();
-    }
-    return Arrays.stream(options.httpsPortProperties())
-        .filter(StringUtils::isNotBlank)
-        .filter(propertyName -> environment.containsProperty(propertyName))
-        .map(
-            propertyName -> {
-              final int predefinedPropertyValue =
-                  Integer.parseInt(environment.getProperty(propertyName));
-              this.logger.info(
-                  "Found predefined https port in property with name '{}' on port: {}",
-                  propertyName,
-                  predefinedPropertyValue);
-              return predefinedPropertyValue;
-            })
-        .findFirst()
-        .orElse(options.httpsPort());
   }
 
   private void usingFilesUnderClasspath(
