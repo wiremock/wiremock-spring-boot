@@ -27,7 +27,7 @@ jobs:
         id: publish_package
         uses: gradle/gradle-build-action@v2.9.0
         with:
-          arguments: -Pversion=${{ steps.new_version.outputs.new_version }} publish closeAndReleaseStagingRepository
+          arguments: -Pversion=${{ steps.new_version.outputs.new_version }} publishAndReleaseToMavenCentral
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ vars.MAVEN_CENTRAL_USERNAME }}
