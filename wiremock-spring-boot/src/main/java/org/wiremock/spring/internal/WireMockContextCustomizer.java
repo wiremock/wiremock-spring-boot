@@ -46,8 +46,9 @@ public class WireMockContextCustomizer implements ContextCustomizer {
     for (final ConfigureWireMock configureWiremock : this.configuration) {
       this.resolveOrCreateWireMockServer(context, configureWiremock);
     }
+
     WireMockPortResolver portResolver = new WireMockPortResolver(context.getEnvironment());
-    boolean isDirty = portResolver.staticPortConfigured(this.configuration);
+    boolean isDirty = portResolver.anyStaticPortWithDirtySpringContext(this.configuration);
     if (isDirty) {
       LOGGER.info("Will force dirty context because of static port");
       WireMockTestExecutionListener.markContextAsDirty();
