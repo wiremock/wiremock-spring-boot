@@ -35,7 +35,9 @@ public @interface ConfigureWireMock {
    *
    * <p>{@code 0} means WireMock will pick random available port.
    *
-   * <p>{@code >0} means that static port will be used.
+   * <p>{@code >0} means that static port will be used. A static port will, by default, make Spring
+   * context dirty to avoid port collisions. Automatic dirty context can be turned off with {@link
+   * #staticPortDirtySpringContext()}.
    *
    * @return WireMock server port
    */
@@ -47,6 +49,14 @@ public @interface ConfigureWireMock {
    * @return HTTPS port to use.
    */
   int httpsPort() default -1;
+
+  /**
+   * If you are having performance problems, you may want to set this to false. Making context dirty
+   * is intended as a fix to avoid port collisions when using static port.
+   *
+   * @return true if a static port should make Spring context dirty.
+   */
+  boolean staticPortDirtySpringContext() default true;
 
   /**
    * The name of WireMock server.

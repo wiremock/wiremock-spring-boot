@@ -59,10 +59,12 @@ public class WireMockPortResolver {
         .orElse(options.httpsPort());
   }
 
-  public boolean staticPortConfigured(List<ConfigureWireMock> configureWireMocks) {
+  public boolean anyStaticPortWithDirtySpringContext(List<ConfigureWireMock> configureWireMocks) {
     return configureWireMocks.stream()
         .anyMatch(
             it ->
-                this.getServerHttpPortProperty(it) > 0 || this.getServerHttpsPortProperty(it) > 0);
+                it.staticPortDirtySpringContext()
+                    && (this.getServerHttpPortProperty(it) > 0
+                        || this.getServerHttpsPortProperty(it) > 0));
   }
 }
