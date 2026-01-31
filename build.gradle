@@ -17,23 +17,23 @@ project("wiremock-spring-boot", {
 	dependencies {
 		// Remove these when wiremock-jetty12:jar uses newer jetty
 		// https://github.com/wiremock/wiremock/issues/3139
-		implementation "org.eclipse.jetty:jetty-server:12.1.5"
-		implementation "org.eclipse.jetty:jetty-proxy:12.1.5"
-		implementation "org.eclipse.jetty:jetty-alpn-server:12.1.5"
-		implementation "org.eclipse.jetty:jetty-alpn-java-server:12.1.5"
-		implementation "org.eclipse.jetty:jetty-alpn-java-client:12.1.5"
-		implementation "org.eclipse.jetty:jetty-alpn-client:12.1.5"
-		implementation "org.eclipse.jetty.ee10:jetty-ee10-servlet:12.1.5"
-		implementation "org.eclipse.jetty.ee10:jetty-ee10-servlets:12.1.5"
-		implementation "org.eclipse.jetty.ee10:jetty-ee10-webapp:12.1.5"
-		implementation "org.eclipse.jetty.http2:jetty-http2-server:12.1.5"
+		implementation "org.eclipse.jetty:jetty-server:12.1.6"
+		implementation "org.eclipse.jetty:jetty-proxy:12.1.6"
+		implementation "org.eclipse.jetty:jetty-alpn-server:12.1.6"
+		implementation "org.eclipse.jetty:jetty-alpn-java-server:12.1.6"
+		implementation "org.eclipse.jetty:jetty-alpn-java-client:12.1.6"
+		implementation "org.eclipse.jetty:jetty-alpn-client:12.1.6"
+		implementation "org.eclipse.jetty.ee10:jetty-ee10-servlet:12.1.6"
+		implementation "org.eclipse.jetty.ee10:jetty-ee10-servlets:12.1.6"
+		implementation "org.eclipse.jetty.ee10:jetty-ee10-webapp:12.1.6"
+		implementation "org.eclipse.jetty.http2:jetty-http2-server:12.1.6"
 
 		api "org.wiremock:wiremock-jetty12:3.13.2"
 
 		// Don't want to force these versions on the user
 		[
-			"org.springframework.boot:spring-boot-test:4.0.1",
-			"org.springframework:spring-test:7.0.2",
+			"org.springframework.boot:spring-boot-test:4.0.2",
+			"org.springframework:spring-test:7.0.3",
 			"org.slf4j:slf4j-api:2.0.17",
 			"org.junit.jupiter:junit-jupiter-api:6.0.2"
 		].each {
@@ -54,10 +54,10 @@ project("wiremock-spring-boot-standalone", {
 
 subprojects {
 	dependencies {
-		testImplementation "org.springframework.boot:spring-boot-starter-test:4.0.1"
-		testImplementation "org.springframework.boot:spring-boot-starter-web:4.0.1"
+		testImplementation "org.springframework.boot:spring-boot-starter-test:4.0.2"
+		testImplementation "org.springframework.boot:spring-boot-starter-web:4.0.2"
 
-		testImplementation "org.assertj:assertj-core:3.27.6"
+		testImplementation "org.assertj:assertj-core:3.27.7"
 
 		testImplementation platform("org.junit:junit-bom:6.0.2")
 		testImplementation "org.junit.platform:junit-platform-suite:6.0.2"
@@ -67,8 +67,8 @@ subprojects {
 		testImplementation "io.rest-assured:rest-assured:6.0.0"
 		testImplementation "io.rest-assured:rest-assured:6.0.0"
 
-		testImplementation "io.cucumber:cucumber-java:7.33.0"
-		testImplementation "io.cucumber:cucumber-spring:7.33.0"
-		testImplementation "io.cucumber:cucumber-junit-platform-engine:7.33.0"
+		testImplementation "io.cucumber:cucumber-java:7.34.2"
+		testImplementation "io.cucumber:cucumber-spring:7.34.2"
+		testImplementation "io.cucumber:cucumber-junit-platform-engine:7.34.2"
 	}
 }
