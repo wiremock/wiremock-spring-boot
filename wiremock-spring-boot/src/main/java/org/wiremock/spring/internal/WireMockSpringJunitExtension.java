@@ -49,6 +49,10 @@ public class WireMockSpringJunitExtension
           .map(it -> Store.INSTANCE.findRequiredWireMockInstance(extensionContext, it.name()))
           .forEach(WireMockServer::resetAll);
     }
+    getStandaloneConfigureWireMockAnnotations(instances).stream()
+        .filter(it -> it.resetWireMockServer())
+        .map(it -> Store.INSTANCE.findRequiredWireMockInstance(extensionContext, it.name()))
+        .forEach(WireMockServer::resetAll);
   }
 
   private void configureWireMockForDefaultInstance(final ExtensionContext extensionContext) {
@@ -72,6 +76,17 @@ public class WireMockSpringJunitExtension
       wireMockName = wireMockServers[0].name();
       wiremock = Store.INSTANCE.findRequiredWireMockInstance(extensionContext, wireMockName);
     }
+    if (wiremock == null) {
+      final List<ConfigureWireMock> standaloneAnnotations =
+          getStandaloneConfigureWireMockAnnotations(instances);
+      if (standaloneAnnotations.size() == 1) {
+        wireMockName = standaloneAnnotations.get(0).name();
+        wiremock = Store.INSTANCE.findRequiredWireMockInstance(extensionContext, wireMockName);
+      } else if (standaloneAnnotations.size() > 1) {
+        LOGGER.info("Not configuring WireMock for default instance when several candidates found");
+        return;
+      }
+    }
     if (wiremock != null) {
       LOGGER.info(
           "Configuring WireMock for default instance, '"
@@ -94,6 +109,17 @@ public class WireMockSpringJunitExtension
         .flatMap(
             it ->
                 AnnotationSupport.findRepeatableAnnotations(it.getClass(), EnableWireMock.class)
+                    .stream())
+        .filter(it -> it != null)
+        .toList();
+  }
+
+  private List<ConfigureWireMock> getStandaloneConfigureWireMockAnnotations(
+      List<Object> instances) {
+    return instances.stream()
+        .flatMap(
+            it ->
+                AnnotationSupport.findRepeatableAnnotations(it.getClass(), ConfigureWireMock.class)
                     .stream())
         .filter(it -> it != null)
         .toList();
