@@ -32,10 +32,10 @@ project("wiremock-spring-boot", {
 
 		// Don't want to force these versions on the user
 		[
-			"org.springframework.boot:spring-boot-test:4.0.2",
-			"org.springframework:spring-test:7.0.3",
+			"org.springframework.boot:spring-boot-test:4.0.3",
+			"org.springframework:spring-test:7.0.5",
 			"org.slf4j:slf4j-api:2.0.17",
-			"org.junit.jupiter:junit-jupiter-api:6.0.2"
+			"org.junit.jupiter:junit-jupiter-api:6.0.3"
 		].each {
 			compileOnly it
 			testImplementation it
@@ -54,13 +54,13 @@ project("wiremock-spring-boot-standalone", {
 
 subprojects {
 	dependencies {
-		testImplementation "org.springframework.boot:spring-boot-starter-test:4.0.2"
-		testImplementation "org.springframework.boot:spring-boot-starter-web:4.0.2"
+		testImplementation "org.springframework.boot:spring-boot-starter-test:4.0.3"
+		testImplementation "org.springframework.boot:spring-boot-starter-web:4.0.3"
 
 		testImplementation "org.assertj:assertj-core:3.27.7"
 
-		testImplementation platform("org.junit:junit-bom:6.0.2")
-		testImplementation "org.junit.platform:junit-platform-suite:6.0.2"
+		testImplementation platform("org.junit:junit-bom:6.0.3")
+		testImplementation "org.junit.platform:junit-platform-suite:6.0.3"
 		testImplementation 'org.junit.jupiter:junit-jupiter'
 		testImplementation 'org.junit.platform:junit-platform-launcher'
 
