@@ -52,6 +52,29 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
     for (EnableWireMock enableWireMockAnnotation : getEnableWireMockAnnotations(testClass)) {
       parser.add(getConfigureWireMocksOrDefault(enableWireMockAnnotation.value()));
     }
+    for (ConfigureWireMock configureWireMock :
+        getStandaloneConfigureWireMockAnnotations(testClass)) {
+      parser.addIfAbsent(configureWireMock);
+    }
+  }
+
+  private List<ConfigureWireMock> getStandaloneConfigureWireMockAnnotations(
+      final Class<?> testClass) {
+    final List<ConfigureWireMock> annotations = new ArrayList<>();
+    Optional.ofNullable(
+            AnnotationSupport.findRepeatableAnnotations(testClass, ConfigureWireMock.class))
+        .ifPresent(annotations::addAll);
+
+    Arrays.asList(testClass.getEnclosingClass(), testClass.getSuperclass()).stream()
+        .filter(clazz -> clazz != null)
+        .forEach(
+            clazz ->
+                annotations.addAll(
+                    getStandaloneConfigureWireMockAnnotations(clazz).stream()
+                        .filter(it -> !annotations.contains(it))
+                        .toList()));
+
+    return annotations;
   }
 
   private List<EnableWireMock> getEnableWireMockAnnotations(final Class<?> testClass) {
@@ -81,6 +104,14 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
       this.sanityCheckHttpOrHttpsMustBeEnabled(this.annotations);
       this.sanityCheckHttpAndHttpsMustUseDifferentPorts(this.annotations);
       this.sanityCheckUniquePorts(this.annotations);
+    }
+
+    void addIfAbsent(final ConfigureWireMock annotation) {
+      final boolean nameAlreadyExists =
+          this.annotations.stream().anyMatch(it -> it.name().equals(annotation.name()));
+      if (!nameAlreadyExists) {
+        this.add(annotation);
+      }
     }
 
     private void sanityCheckDuplicateNames(final List<ConfigureWireMock> check) {

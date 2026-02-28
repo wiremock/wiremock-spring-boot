@@ -4,9 +4,13 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.extension.Extension;
 import com.github.tomakehurst.wiremock.extension.ExtensionFactory;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.List;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -14,7 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Maciej Walkowiak
  */
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(ConfigureWireMocks.class)
+@ExtendWith(org.wiremock.spring.internal.WireMockSpringJunitExtension.class)
 public @interface ConfigureWireMock {
   public static final List<String> DEFAULT_FILES_UNDER_DIRECTORY =
       List.of(
