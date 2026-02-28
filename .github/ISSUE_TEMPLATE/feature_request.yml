@@ -16,7 +16,7 @@ body:
     id: proposal
     attributes:
       label: "Proposed Solution"
-      description: "How would you like this feature to work?"
+      description: "How would you like this feature to work? A great way to describe it would be an example like the ones [here](https://github.com/wiremock/wiremock-spring-boot/tree/main/wiremock-spring-boot/src/test/java/usecases)."
       placeholder: "Describe your proposed implementation or behavior."
     validations:
       required: false
