@@ -1,0 +1,15 @@
+name: "💡 Support Request"
+description: Ask for help or clarification about this project.
+title: "[Support]: "
+labels: [question]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: "Issue"
+      description: |
+        Please describe the issue you need help with.
+        A great way to describe it would be an example like the ones [here](/wiremock-spring-boot/src/test/java/usecases).
+      placeholder: "Describe your issue."
+    validations:
+      required: true
