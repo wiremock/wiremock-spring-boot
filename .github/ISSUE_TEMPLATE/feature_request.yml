@@ -7,7 +7,8 @@ body:
     id: use-case
     attributes:
       label: "Use Case / Motivation"
-      description: "Clearly describe your use case or the problem this feature would solve."
+      description: |
+        Clearly describe your use case or the problem this feature would solve.
       placeholder: "Explain why this feature is needed."
     validations:
       required: true
@@ -16,7 +17,9 @@ body:
     id: proposal
     attributes:
       label: "Proposed Solution"
-      description: "How would you like this feature to work? A great way to describe it would be an example like the ones [here](https://github.com/wiremock/wiremock-spring-boot/tree/main/wiremock-spring-boot/src/test/java/usecases)."
+      description: |
+        How would you like this feature to work?
+        A great way to describe it would be an example like the ones [here](/wiremock-spring-boot/src/test/java/usecases).
       placeholder: "Describe your proposed implementation or behavior."
     validations:
       required: false
