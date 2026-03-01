@@ -33,7 +33,7 @@ body:
       description: |
         It helps a lot if you provide a small example project that reproduces the issue.
         You can upload a zip file or provide a link to a public repository.
-        If you fork this repository you can probably create an example in [here](/wiremock-spring-boot/src/test/java/usecases).
+        If you fork this repository you can probably create an example in [here](tree/main/wiremock-spring-boot/src/test/java/usecases).
     validations:
       required: false
 

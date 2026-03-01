@@ -9,7 +9,7 @@ body:
       label: "Issue"
       description: |
         Please describe the issue you need help with.
-        A great way to describe it would be an example like the ones [here](/wiremock-spring-boot/src/test/java/usecases).
+        A great way to describe it would be an example like the ones [here](tree/main/wiremock-spring-boot/src/test/java/usecases).
       placeholder: "Describe your issue."
     validations:
       required: true
