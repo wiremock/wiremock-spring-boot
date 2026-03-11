@@ -100,7 +100,7 @@ public class WireMockSpringJunitExtension
       final String host = "localhost";
       if (isHttps) {
         WireMock.configureFor(
-          WireMock.create().https().host(host).port(port).build());
+            WireMock.create().https().host(host).port(port).build());
       } else {
         WireMock.configureFor(WireMock.create().http().host(host).port(port).build());
       }
