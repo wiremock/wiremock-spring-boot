@@ -45,6 +45,7 @@ public class WireMockServerCreator {
 
     final int serverHttpPort = portResolver.getServerHttpPortProperty(options);
     final boolean httpEnabled = serverHttpPort != PORT_DISABLED;
+    serverOptions.httpDisabled(!httpEnabled);
     if (httpEnabled) {
       serverOptions.port(serverHttpPort);
     }
