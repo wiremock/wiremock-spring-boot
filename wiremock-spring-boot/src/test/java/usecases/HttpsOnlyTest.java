@@ -5,6 +5,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.anyRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -58,5 +59,11 @@ class HttpsOnlyTest {
     RestAssured.when().get(this.wiremockHttpsUrl + "/with-default-client").then().statusCode(202);
 
     assertThat(WireMock.findAll(anyRequestedFor(anyUrl()))).hasSize(1);
+  }
+
+  @Test
+  void testHttpDisabled() {
+    assertThat(wiremock.isHttpEnabled()).isFalse();
+    assertThatThrownBy(() -> wiremock.port()).isExactlyInstanceOf(IllegalStateException.class);
   }
 }

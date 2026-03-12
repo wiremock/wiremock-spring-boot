@@ -88,18 +88,21 @@ public class WireMockSpringJunitExtension
       }
     }
     if (wiremock != null) {
+      final boolean isHttps = wiremock.isHttpsEnabled();
+      final int port = isHttps ? wiremock.httpsPort() : wiremock.port();
+
       LOGGER.info(
           "Configuring WireMock for default instance, '"
               + wireMockName
               + "' on '"
-              + wiremock.port()
+              + port
               + "'.");
       final String host = "localhost";
-      if (wiremock.isHttpsEnabled()) {
+      if (isHttps) {
         WireMock.configureFor(
-            WireMock.create().https().host(host).port(wiremock.httpsPort()).build());
+            WireMock.create().https().host(host).port(port).build());
       } else {
-        WireMock.configureFor(WireMock.create().http().host(host).port(wiremock.port()).build());
+        WireMock.configureFor(WireMock.create().http().host(host).port(port).build());
       }
     }
   }
