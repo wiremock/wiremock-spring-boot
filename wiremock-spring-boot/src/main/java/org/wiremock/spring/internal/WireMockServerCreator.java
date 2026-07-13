@@ -16,6 +16,7 @@ import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.commons.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
@@ -83,10 +84,14 @@ public class WireMockServerCreator {
     context.addApplicationListener(
         event -> {
           if (event instanceof ContextClosedEvent) {
-            this.logger.info("Stopping WireMockServer with name '{}'", options.name());
-            newServer.stop();
+            this.stopWireMockServer(options.name(), newServer);
           }
         });
+
+    if (context.getBeanFactory() instanceof DefaultSingletonBeanRegistry singletonBeanRegistry) {
+      singletonBeanRegistry.registerDisposableBean(
+          options.name() + "-shutdown", () -> this.stopWireMockServer(options.name(), newServer));
+    }
 
     if (httpEnabled) {
       Arrays.stream(options.baseUrlProperties())
@@ -148,6 +153,13 @@ public class WireMockServerCreator {
     }
 
     return newServer;
+  }
+
+  private void stopWireMockServer(final String name, final WireMockServer server) {
+    if (server.isRunning()) {
+      this.logger.info("Stopping WireMockServer with name '{}'", name);
+      server.stop();
+    }
   }
 
   private void configureMappings(ConfigureWireMock options, WireMockConfiguration serverOptions) {
