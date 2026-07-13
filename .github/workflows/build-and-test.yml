@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ '17', '21' ]
+        java: [ '17', '21', '25' ]
         os: [ 'ubuntu-latest' ]
     name: Java ${{ matrix.Java }}
     steps:
