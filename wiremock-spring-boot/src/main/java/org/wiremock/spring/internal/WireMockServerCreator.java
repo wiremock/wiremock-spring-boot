@@ -28,7 +28,7 @@ public class WireMockServerCreator {
   private final Logger logger;
 
   public WireMockServerCreator(final String name) {
-    this.logger = LoggerFactory.getLogger(WireMockServerCreator.class + " " + name);
+    this.logger = LoggerFactory.getLogger(WireMockServerCreator.class.getName() + "." + name);
   }
 
   public WireMockServer createWireMockServer(
