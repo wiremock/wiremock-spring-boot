@@ -2,13 +2,14 @@ package org.wiremock.spring.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.springframework.test.context.ContextConfigurationAttributes;
 import org.springframework.test.context.ContextCustomizer;
@@ -156,15 +157,19 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
     }
 
     private void sanityCheckDuplicateNames(final List<ConfigureWireMock> check) {
-      final List<String> names = check.stream().map(it -> it.name()).toList();
-      final Set<String> dublicateNames =
-          names.stream()
-              .filter(it -> Collections.frequency(names, it) > 1)
+      final Set<String> duplicateNames =
+          check.stream()
+              .map(ConfigureWireMock::name)
+              .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+              .entrySet()
+              .stream()
+              .filter(entry -> entry.getValue() > 1)
+              .map(Map.Entry::getKey)
               .collect(Collectors.toSet());
-      if (!dublicateNames.isEmpty()) {
+      if (!duplicateNames.isEmpty()) {
         throw new IllegalStateException(
             "Names of mocks must be unique, found duplicates of: "
-                + dublicateNames.stream().sorted().collect(Collectors.joining(",")));
+                + duplicateNames.stream().sorted().collect(Collectors.joining(",")));
       }
     }
 
@@ -180,18 +185,20 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
     }
 
     private void sanityCheckUniquePorts(final List<ConfigureWireMock> check) {
-      final List<Integer> ports =
-          check.stream().map(it -> List.of(it.port(), it.httpsPort())).toList().stream()
-              .collect(ArrayList::new, List::addAll, List::addAll);
-      final Set<Integer> dublicatePors =
-          ports.stream()
+      final Set<Integer> duplicatePorts =
+          check.stream()
+              .flatMap(it -> Stream.of(it.port(), it.httpsPort()))
               .filter(it -> it > 0)
-              .filter(it -> Collections.frequency(ports, it) > 1)
+              .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+              .entrySet()
+              .stream()
+              .filter(entry -> entry.getValue() > 1)
+              .map(Map.Entry::getKey)
               .collect(Collectors.toSet());
-      if (!dublicatePors.isEmpty()) {
+      if (!duplicatePorts.isEmpty()) {
         throw new IllegalStateException(
             "Some statically configured ports are being used mor than once: "
-                + dublicatePors.stream()
+                + duplicatePorts.stream()
                     .sorted()
                     .map(it -> it.toString())
                     .collect(Collectors.joining(",")));
