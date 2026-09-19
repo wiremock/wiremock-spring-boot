@@ -6,3 +6,7 @@ Feature: Test that features can be used
     Then it should respond 200
     When WireMock is invoked with pang
     Then it should respond 404
+
+  Scenario: WireMock is reset between scenarios
+    When WireMock is invoked with ping
+    Then it should respond 404

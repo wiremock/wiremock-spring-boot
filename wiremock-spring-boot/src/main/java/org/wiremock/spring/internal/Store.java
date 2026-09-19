@@ -29,7 +29,12 @@ enum Store {
   }
 
   WireMockServer findRequiredWireMockInstance(ExtensionContext extensionContext, String name) {
-    WireMockServer wiremock = resolve(extensionContext).get(name);
+    return findRequiredWireMockInstance(
+        SpringExtension.getApplicationContext(extensionContext), name);
+  }
+
+  WireMockServer findRequiredWireMockInstance(ApplicationContext applicationContext, String name) {
+    WireMockServer wiremock = resolve(applicationContext).get(name);
 
     if (wiremock == null) {
       throw new IllegalStateException(
