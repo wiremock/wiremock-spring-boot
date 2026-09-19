@@ -25,8 +25,6 @@ public class Steps {
 
   @Before
   public void beforeEach() {
-    // WireMock is reset automatically between scenarios; only the RestAssured client needs
-    // pointing at this scenario's server here.
     RestAssured.baseURI = "http://localhost:" + wireMockServer.port();
   }
 
