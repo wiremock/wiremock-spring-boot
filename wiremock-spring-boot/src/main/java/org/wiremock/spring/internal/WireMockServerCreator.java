@@ -42,6 +42,7 @@ public class WireMockServerCreator {
     final boolean httpsEnabled = serverHttpsPort != PORT_DISABLED;
     if (httpsEnabled) {
       serverOptions.httpsPort(serverHttpsPort);
+      this.configureTls(options, serverOptions);
     }
 
     final int serverHttpPort = portResolver.getServerHttpPortProperty(options);
@@ -183,6 +184,38 @@ public class WireMockServerCreator {
       if (fondFilesUnderDirOpt.isEmpty()) {
         this.logger.info("No mocks found under directory");
       }
+    }
+  }
+
+  private void configureTls(
+      final ConfigureWireMock options, final WireMockConfiguration serverOptions) {
+    if (StringUtils.isNotBlank(options.keystorePath())) {
+      this.logger.info("Using keystore from '{}' for HTTPS", options.keystorePath());
+      serverOptions.keystorePath(options.keystorePath());
+      if (StringUtils.isNotBlank(options.keystorePassword())) {
+        serverOptions.keystorePassword(options.keystorePassword());
+      }
+      if (StringUtils.isNotBlank(options.keystoreType())) {
+        serverOptions.keystoreType(options.keystoreType());
+      }
+      if (StringUtils.isNotBlank(options.keyManagerPassword())) {
+        serverOptions.keyManagerPassword(options.keyManagerPassword());
+      }
+    }
+
+    if (StringUtils.isNotBlank(options.trustStorePath())) {
+      this.logger.info("Using trust store from '{}' for HTTPS", options.trustStorePath());
+      serverOptions.trustStorePath(options.trustStorePath());
+      if (StringUtils.isNotBlank(options.trustStorePassword())) {
+        serverOptions.trustStorePassword(options.trustStorePassword());
+      }
+      if (StringUtils.isNotBlank(options.trustStoreType())) {
+        serverOptions.trustStoreType(options.trustStoreType());
+      }
+    }
+
+    if (options.needClientAuth()) {
+      serverOptions.needClientAuth(true);
     }
   }
 
