@@ -37,9 +37,6 @@ class HttpsTlsConfigurationTest {
   @BeforeEach
   @AfterEach
   void resetSslConfig() {
-    // RestAssured.config is a static field, so other test classes running in the same JVM (e.g.
-    // ones calling RestAssured.useRelaxedHTTPSValidation()) can otherwise leak state into these
-    // tests depending on execution order.
     RestAssured.reset();
   }
 
