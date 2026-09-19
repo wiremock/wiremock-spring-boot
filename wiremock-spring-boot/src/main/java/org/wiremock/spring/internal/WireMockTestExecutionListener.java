@@ -5,6 +5,8 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,11 @@ import org.wiremock.spring.InjectWireMock;
  */
 public class WireMockTestExecutionListener extends AbstractTestExecutionListener {
   private static final Logger LOGGER = LoggerFactory.getLogger(WireMockTestExecutionListener.class);
+
+  // A test class's @InjectWireMock fields never change at runtime, and this is scanned on every
+  // test method (not just once per test class), so the reflection-based lookup is memoized.
+  private static final Map<Class<?>, List<Field>> INJECT_WIRE_MOCK_FIELDS_CACHE =
+      new ConcurrentHashMap<>();
 
   private static boolean isDirty = false;
 
@@ -69,7 +76,9 @@ public class WireMockTestExecutionListener extends AbstractTestExecutionListener
   private void injectWireMockFields(final TestContext testContext) {
     final Object testInstance = testContext.getTestInstance();
     final List<Field> annotatedFields =
-        AnnotationSupport.findAnnotatedFields(testInstance.getClass(), InjectWireMock.class);
+        INJECT_WIRE_MOCK_FIELDS_CACHE.computeIfAbsent(
+            testInstance.getClass(),
+            clazz -> AnnotationSupport.findAnnotatedFields(clazz, InjectWireMock.class));
 
     for (final Field field : annotatedFields) {
       final InjectWireMock annotation = field.getAnnotation(InjectWireMock.class);
