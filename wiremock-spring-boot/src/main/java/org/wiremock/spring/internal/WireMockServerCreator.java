@@ -34,37 +34,7 @@ public class WireMockServerCreator {
   public WireMockServer createWireMockServer(
       final ConfigurableApplicationContext context, final ConfigureWireMock options) {
 
-    final WireMockConfiguration serverOptions = options();
-
-    WireMockPortResolver portResolver = new WireMockPortResolver(context.getEnvironment());
-
-    final int serverHttpsPort = portResolver.getServerHttpsPortProperty(options);
-    final boolean httpsEnabled = serverHttpsPort != PORT_DISABLED;
-    if (httpsEnabled) {
-      serverOptions.httpsPort(serverHttpsPort);
-      this.configureTls(options, serverOptions);
-    }
-
-    final int serverHttpPort = portResolver.getServerHttpPortProperty(options);
-    final boolean httpEnabled = serverHttpPort != PORT_DISABLED;
-    serverOptions.httpDisabled(!httpEnabled);
-    if (httpEnabled) {
-      serverOptions.port(serverHttpPort);
-    }
-    serverOptions.notifier(new Slf4jNotifier(options.name()));
-    configureMappings(options, serverOptions);
-
-    if (options.extensionFactories().length > 0) {
-      serverOptions.extensionFactories(options.extensionFactories());
-    }
-
-    if (options.extensions().length > 0) {
-      serverOptions.extensions(options.extensions());
-    }
-
-    serverOptions.globalTemplating(options.globalTemplating());
-
-    this.applyCustomizers(options, serverOptions);
+    final WireMockConfiguration serverOptions = this.buildServerOptions(context, options);
 
     this.logger.info(
         "Configuring WireMockServer with name '{}' on HTTP port: {} and HTTPS port: {}",
@@ -78,75 +48,9 @@ public class WireMockServerCreator {
     this.logger.info(
         "Started WireMockServer with name '{}':{}", options.name(), newServer.baseUrl());
 
-    // save server to store
     Store.INSTANCE.store(context, options.name(), newServer);
-
-    // add shutdown hook
-    context.addApplicationListener(
-        event -> {
-          if (event instanceof ContextClosedEvent) {
-            this.stopWireMockServer(options.name(), newServer);
-          }
-        });
-
-    if (context.getBeanFactory() instanceof DefaultSingletonBeanRegistry singletonBeanRegistry) {
-      singletonBeanRegistry.registerDisposableBean(
-          options.name() + "-shutdown", () -> this.stopWireMockServer(options.name(), newServer));
-    }
-
-    if (httpEnabled) {
-      Arrays.stream(options.baseUrlProperties())
-          .filter(StringUtils::isNotBlank)
-          .collect(Collectors.toList())
-          .forEach(
-              propertyName -> {
-                final String property =
-                    propertyName + "=" + String.format("http://localhost:%d", newServer.port());
-                this.logger.info(
-                    "Adding property '{}' with HTTP base URL to Spring application context",
-                    property);
-                TestPropertyValues.of(property).applyTo(context.getEnvironment());
-              });
-
-      Arrays.stream(options.portProperties())
-          .filter(StringUtils::isNotBlank)
-          .collect(Collectors.toList())
-          .forEach(
-              propertyName -> {
-                final String property = propertyName + "=" + newServer.port();
-                this.logger.info(
-                    "Adding property '{}' with HTTP port to Spring application context", property);
-                TestPropertyValues.of(property).applyTo(context.getEnvironment());
-              });
-    }
-
-    if (httpsEnabled) {
-      Arrays.stream(options.httpsBaseUrlProperties())
-          .filter(StringUtils::isNotBlank)
-          .collect(Collectors.toList())
-          .forEach(
-              propertyName -> {
-                final String property =
-                    propertyName
-                        + "="
-                        + String.format("https://localhost:%d", newServer.httpsPort());
-                this.logger.info(
-                    "Adding property '{}' with HTTPS base URL to Spring application context",
-                    property);
-                TestPropertyValues.of(property).applyTo(context.getEnvironment());
-              });
-
-      Arrays.stream(options.httpsPortProperties())
-          .filter(StringUtils::isNotBlank)
-          .collect(Collectors.toList())
-          .forEach(
-              propertyName -> {
-                final String property = propertyName + "=" + newServer.httpsPort();
-                this.logger.info(
-                    "Adding property '{}' with HTTPS port to Spring application context", property);
-                TestPropertyValues.of(property).applyTo(context.getEnvironment());
-              });
-    }
+    this.registerShutdownHooks(context, options.name(), newServer);
+    this.publishServerProperties(context, options, newServer);
 
     if (options.registerSpringBean()) {
       this.logger.info("Registering WireMockServer '" + options.name() + "' as a Spring Bean.");
@@ -154,6 +58,106 @@ public class WireMockServerCreator {
     }
 
     return newServer;
+  }
+
+  private WireMockConfiguration buildServerOptions(
+      final ConfigurableApplicationContext context, final ConfigureWireMock options) {
+    final WireMockConfiguration serverOptions = options();
+    final WireMockPortResolver portResolver = new WireMockPortResolver(context.getEnvironment());
+
+    final int serverHttpsPort = portResolver.getServerHttpsPortProperty(options);
+    if (serverHttpsPort != PORT_DISABLED) {
+      serverOptions.httpsPort(serverHttpsPort);
+      this.configureTls(options, serverOptions);
+    }
+
+    final int serverHttpPort = portResolver.getServerHttpPortProperty(options);
+    final boolean httpEnabled = serverHttpPort != PORT_DISABLED;
+    serverOptions.httpDisabled(!httpEnabled);
+    if (httpEnabled) {
+      serverOptions.port(serverHttpPort);
+    }
+
+    serverOptions.notifier(new Slf4jNotifier(options.name()));
+    this.configureMappings(options, serverOptions);
+
+    if (options.extensionFactories().length > 0) {
+      serverOptions.extensionFactories(options.extensionFactories());
+    }
+    if (options.extensions().length > 0) {
+      serverOptions.extensions(options.extensions());
+    }
+
+    serverOptions.globalTemplating(options.globalTemplating());
+    this.applyCustomizers(options, serverOptions);
+
+    return serverOptions;
+  }
+
+  private void registerShutdownHooks(
+      final ConfigurableApplicationContext context,
+      final String name,
+      final WireMockServer server) {
+    context.addApplicationListener(
+        event -> {
+          if (event instanceof ContextClosedEvent) {
+            this.stopWireMockServer(name, server);
+          }
+        });
+
+    if (context.getBeanFactory() instanceof DefaultSingletonBeanRegistry singletonBeanRegistry) {
+      singletonBeanRegistry.registerDisposableBean(
+          name + "-shutdown", () -> this.stopWireMockServer(name, server));
+    }
+  }
+
+  private void publishServerProperties(
+      final ConfigurableApplicationContext context,
+      final ConfigureWireMock options,
+      final WireMockServer newServer) {
+    if (newServer.isHttpEnabled()) {
+      this.publishProperties(
+          context,
+          options.baseUrlProperties(),
+          String.format("http://localhost:%d", newServer.port()),
+          "HTTP base URL");
+      this.publishProperties(
+          context, options.portProperties(), String.valueOf(newServer.port()), "HTTP port");
+    }
+
+    if (newServer.isHttpsEnabled()) {
+      this.publishProperties(
+          context,
+          options.httpsBaseUrlProperties(),
+          String.format("https://localhost:%d", newServer.httpsPort()),
+          "HTTPS base URL");
+      this.publishProperties(
+          context,
+          options.httpsPortProperties(),
+          String.valueOf(newServer.httpsPort()),
+          "HTTPS port");
+    }
+  }
+
+  private void publishProperties(
+      final ConfigurableApplicationContext context,
+      final String[] propertyNames,
+      final String value,
+      final String description) {
+    Arrays.stream(propertyNames)
+        .filter(StringUtils::isNotBlank)
+        .forEach(propertyName -> this.publishProperty(context, propertyName, value, description));
+  }
+
+  private void publishProperty(
+      final ConfigurableApplicationContext context,
+      final String propertyName,
+      final String value,
+      final String description) {
+    final String property = propertyName + "=" + value;
+    this.logger.info(
+        "Adding property '{}' with {} to Spring application context", property, description);
+    TestPropertyValues.of(property).applyTo(context.getEnvironment());
   }
 
   private void stopWireMockServer(final String name, final WireMockServer server) {
