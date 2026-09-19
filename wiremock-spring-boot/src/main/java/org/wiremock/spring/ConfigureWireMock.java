@@ -167,4 +167,66 @@ public @interface ConfigureWireMock {
    * @see WireMockConfiguration#globalTemplating(boolean)
    */
   boolean globalTemplating() default false;
+
+  /**
+   * Path to the keystore used to serve HTTPS. Only used when {@link #httpsPort()} is enabled. Can
+   * point to a file on the filesystem or, if no such file exists, a resource on the classpath.
+   *
+   * @see WireMockConfiguration#keystorePath(String)
+   */
+  String keystorePath() default "";
+
+  /**
+   * Password of the keystore configured with {@link #keystorePath()}.
+   *
+   * @see WireMockConfiguration#keystorePassword(String)
+   */
+  String keystorePassword() default "";
+
+  /**
+   * Type of the keystore configured with {@link #keystorePath()}, e.g. {@code JKS} or {@code
+   * PKCS12}.
+   *
+   * @see WireMockConfiguration#keystoreType(String)
+   */
+  String keystoreType() default "";
+
+  /**
+   * Key manager password to use with the keystore configured with {@link #keystorePath()}.
+   *
+   * @see WireMockConfiguration#keyManagerPassword(String)
+   */
+  String keyManagerPassword() default "";
+
+  /**
+   * Path to the trust store used to verify client certificates. Only used when {@link #httpsPort()}
+   * is enabled. Can point to a file on the filesystem or, if no such file exists, a resource on the
+   * classpath.
+   *
+   * @see WireMockConfiguration#trustStorePath(String)
+   */
+  String trustStorePath() default "";
+
+  /**
+   * Password of the trust store configured with {@link #trustStorePath()}.
+   *
+   * @see WireMockConfiguration#trustStorePassword(String)
+   */
+  String trustStorePassword() default "";
+
+  /**
+   * Type of the trust store configured with {@link #trustStorePath()}, e.g. {@code JKS} or {@code
+   * PKCS12}.
+   *
+   * @see WireMockConfiguration#trustStoreType(String)
+   */
+  String trustStoreType() default "";
+
+  /**
+   * If {@code true}, requires clients to present a certificate trusted by the trust store
+   * configured with {@link #trustStorePath()}.
+   *
+   * @see WireMockConfiguration#needClientAuth(boolean)
+   */
+  boolean needClientAuth() default false;
 }
