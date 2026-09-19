@@ -61,6 +61,22 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
     }
   }
 
+  /**
+   * All {@link ConfigureWireMock} entries that apply to {@code testClass}: those declared directly
+   * or via {@link EnableWireMock} (falling back to the default when none are given), plus any
+   * standalone ones. Unlike {@link #parseDefinitions}, this does not validate or de-duplicate by
+   * name - it is for callers that just need the flat list of entries, such as resolving which
+   * {@link com.github.tomakehurst.wiremock.WireMockServer} instances a test method should reset.
+   */
+  static List<ConfigureWireMock> resolveConfigureWireMocks(final Class<?> testClass) {
+    final List<ConfigureWireMock> result = new ArrayList<>();
+    for (final EnableWireMock enableWireMockAnnotation : getEnableWireMockAnnotations(testClass)) {
+      result.addAll(List.of(getConfigureWireMocksOrDefault(enableWireMockAnnotation.value())));
+    }
+    result.addAll(getStandaloneConfigureWireMockAnnotations(testClass));
+    return result;
+  }
+
   // Test classes don't change at runtime, and this is invoked on every test method (not just
   // once per test class) via WireMockTestExecutionListener, so the reflection-based scan below
   // is memoized per Class.
