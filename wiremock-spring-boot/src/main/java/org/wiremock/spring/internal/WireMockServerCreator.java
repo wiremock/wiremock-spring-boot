@@ -97,7 +97,6 @@ public class WireMockServerCreator {
     if (httpEnabled) {
       Arrays.stream(options.baseUrlProperties())
           .filter(StringUtils::isNotBlank)
-          .collect(Collectors.toList())
           .forEach(
               propertyName -> {
                 final String property =
@@ -110,7 +109,6 @@ public class WireMockServerCreator {
 
       Arrays.stream(options.portProperties())
           .filter(StringUtils::isNotBlank)
-          .collect(Collectors.toList())
           .forEach(
               propertyName -> {
                 final String property = propertyName + "=" + newServer.port();
@@ -123,7 +121,6 @@ public class WireMockServerCreator {
     if (httpsEnabled) {
       Arrays.stream(options.httpsBaseUrlProperties())
           .filter(StringUtils::isNotBlank)
-          .collect(Collectors.toList())
           .forEach(
               propertyName -> {
                 final String property =
@@ -138,7 +135,6 @@ public class WireMockServerCreator {
 
       Arrays.stream(options.httpsPortProperties())
           .filter(StringUtils::isNotBlank)
-          .collect(Collectors.toList())
           .forEach(
               propertyName -> {
                 final String property = propertyName + "=" + newServer.httpsPort();
