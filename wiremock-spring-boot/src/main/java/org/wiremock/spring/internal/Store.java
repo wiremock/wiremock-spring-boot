@@ -59,7 +59,7 @@ enum Store {
   }
 
   private Map<String, WireMockServer> resolve(ApplicationContext applicationContext) {
-    LOGGER.info("Resolving store from context: {}", applicationContext.getId());
+    LOGGER.debug("Resolving store from context: {}", applicationContext.getId());
     return store.computeIfAbsent(applicationContext, ctx -> new ConcurrentHashMap<>());
   }
 }
