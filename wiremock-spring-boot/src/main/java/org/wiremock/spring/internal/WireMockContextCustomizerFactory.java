@@ -58,7 +58,7 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
     }
   }
 
-  private List<ConfigureWireMock> getStandaloneConfigureWireMockAnnotations(
+  static List<ConfigureWireMock> getStandaloneConfigureWireMockAnnotations(
       final Class<?> testClass) {
     final List<ConfigureWireMock> annotations = new ArrayList<>();
     Optional.ofNullable(
@@ -77,7 +77,7 @@ public class WireMockContextCustomizerFactory implements ContextCustomizerFactor
     return annotations;
   }
 
-  private List<EnableWireMock> getEnableWireMockAnnotations(final Class<?> testClass) {
+  static List<EnableWireMock> getEnableWireMockAnnotations(final Class<?> testClass) {
     final List<EnableWireMock> annotations = new ArrayList<>();
     Optional.ofNullable(
             AnnotationSupport.findRepeatableAnnotations(testClass, EnableWireMock.class))
