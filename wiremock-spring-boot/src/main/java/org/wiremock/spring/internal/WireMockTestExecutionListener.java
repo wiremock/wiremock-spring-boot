@@ -96,23 +96,7 @@ public class WireMockTestExecutionListener extends AbstractTestExecutionListener
   }
 
   private void resetWireMockServersIfConfigured(final TestContext testContext) {
-    final Class<?> testClass = testContext.getTestClass();
-
-    for (final EnableWireMock enableWireMockAnnotation :
-        WireMockContextCustomizerFactory.getEnableWireMockAnnotations(testClass)) {
-      final ConfigureWireMock[] wireMockServers =
-          WireMockContextCustomizerFactory.getConfigureWireMocksOrDefault(
-              enableWireMockAnnotation.value());
-      List.of(wireMockServers).stream()
-          .filter(ConfigureWireMock::resetWireMockServer)
-          .map(
-              it ->
-                  Store.INSTANCE.findRequiredWireMockInstance(
-                      testContext.getApplicationContext(), it.name()))
-          .forEach(WireMockServer::resetAll);
-    }
-
-    WireMockContextCustomizerFactory.getStandaloneConfigureWireMockAnnotations(testClass).stream()
+    WireMockContextCustomizerFactory.resolveConfigureWireMocks(testContext.getTestClass()).stream()
         .filter(ConfigureWireMock::resetWireMockServer)
         .map(
             it ->
