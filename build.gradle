@@ -65,7 +65,6 @@ subprojects {
 		testImplementation 'org.junit.platform:junit-platform-launcher'
 
 		testImplementation "io.rest-assured:rest-assured:6.0.0"
-		testImplementation "io.rest-assured:rest-assured:6.0.0"
 
 		testImplementation "io.cucumber:cucumber-java:7.34.2"
 		testImplementation "io.cucumber:cucumber-spring:7.34.2"
