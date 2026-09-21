@@ -56,6 +56,9 @@ subprojects {
 	dependencies {
 		testImplementation "org.springframework.boot:spring-boot-starter-test:4.0.3"
 		testImplementation "org.springframework.boot:spring-boot-starter-web:4.0.3"
+		// Auto-configures RestClient.Builder, used by the reproduction of
+		// https://github.com/wiremock/wiremock-spring-boot/issues/210
+		testImplementation "org.springframework.boot:spring-boot-starter-restclient:4.0.3"
 
 		testImplementation "org.assertj:assertj-core:3.27.7"
 

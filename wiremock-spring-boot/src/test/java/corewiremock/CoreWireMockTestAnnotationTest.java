@@ -1,4 +1,4 @@
-package usecases;
+package corewiremock;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
@@ -24,6 +24,8 @@ import org.springframework.boot.test.context.SpringBootTest;
  * client after each test method unconditionally. {@link WireMockTest} configures that client once
  * per test class, so every test method but the first one then talked to {@code localhost:80}
  * instead of the WireMock server (refs #210).
+ *
+ * @see GetNumberAdapterTest
  */
 @SpringBootTest
 @WireMockTest
