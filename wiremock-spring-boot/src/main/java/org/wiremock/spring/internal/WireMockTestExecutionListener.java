@@ -55,12 +55,18 @@ public class WireMockTestExecutionListener extends AbstractTestExecutionListener
 
   @Override
   public void beforeTestMethod(final TestContext testContext) {
+    if (!isWireMockSpringBootTest(testContext)) {
+      return;
+    }
     this.resetWireMockServersIfConfigured(testContext);
     this.configureWireMockForDefaultInstance(testContext);
   }
 
   @Override
   public void afterTestMethod(final TestContext testContext) {
+    if (!isWireMockSpringBootTest(testContext)) {
+      return;
+    }
     WireMock.configureFor(-1);
   }
 
@@ -71,6 +77,21 @@ public class WireMockTestExecutionListener extends AbstractTestExecutionListener
       isDirty = false;
       testContext.markApplicationContextDirty(DirtiesContext.HierarchyMode.EXHAUSTIVE);
     }
+  }
+
+  /**
+   * Whether this listener manages any WireMock instance for {@code testContext}'s test class.
+   *
+   * <p>This listener is registered in {@code META-INF/spring.factories}, so Spring invokes it for
+   * <em>every</em> test in a project that has wiremock-spring-boot on its test classpath - also
+   * tests that never opt in with {@link EnableWireMock} or {@link ConfigureWireMock}. Those tests
+   * must be left entirely alone: resetting the default {@link WireMock} client for them would
+   * clobber a client that something else configured, such as WireMock's own {@code @WireMockTest}
+   * JUnit 5 extension or a hand written {@code WireMock.configureFor(...)}.
+   */
+  private static boolean isWireMockSpringBootTest(final TestContext testContext) {
+    return !WireMockContextCustomizerFactory.resolveConfigureWireMocks(testContext.getTestClass())
+        .isEmpty();
   }
 
   private void injectWireMockFields(final TestContext testContext) {
