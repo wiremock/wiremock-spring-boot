@@ -7,6 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Enables creating WireMock servers.
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(org.wiremock.spring.internal.WireMockSpringJunitExtension.class)
+@ExtendWith(SpringExtension.class)
 @Repeatable(EnableWireMocks.class)
 public @interface EnableWireMock {
   /**

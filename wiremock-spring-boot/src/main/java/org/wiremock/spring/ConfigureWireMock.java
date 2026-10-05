@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 import java.util.List;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Configures WireMock instance.
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(ConfigureWireMocks.class)
 @ExtendWith(org.wiremock.spring.internal.WireMockSpringJunitExtension.class)
+@ExtendWith(SpringExtension.class)
 public @interface ConfigureWireMock {
   public static final List<String> DEFAULT_FILES_UNDER_DIRECTORY =
       List.of(
