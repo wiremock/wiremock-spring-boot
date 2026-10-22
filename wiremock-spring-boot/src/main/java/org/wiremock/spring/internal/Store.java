@@ -50,6 +50,10 @@ enum Store {
     resolve(applicationContext).put(name, wireMockServer);
   }
 
+  void remove(ApplicationContext applicationContext) {
+    store.remove(applicationContext);
+  }
+
   Collection<WireMockServer> findAllInstances(ExtensionContext extensionContext) {
     return resolve(extensionContext).values();
   }
