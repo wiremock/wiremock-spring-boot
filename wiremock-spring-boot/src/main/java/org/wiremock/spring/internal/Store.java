@@ -54,6 +54,10 @@ enum Store {
     return resolve(extensionContext).values();
   }
 
+  void remove(ApplicationContext applicationContext) {
+    store.remove(applicationContext);
+  }
+
   private Map<String, WireMockServer> resolve(ExtensionContext extensionContext) {
     return resolve(SpringExtension.getApplicationContext(extensionContext));
   }
