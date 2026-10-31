@@ -101,7 +101,11 @@ public class WireMockServerCreator {
     context.addApplicationListener(
         event -> {
           if (event instanceof ContextClosedEvent) {
-            this.stopWireMockServer(name, server);
+            try {
+              this.stopWireMockServer(name, server);
+            } finally {
+              Store.INSTANCE.remove(context);
+            }
           }
         });
 
